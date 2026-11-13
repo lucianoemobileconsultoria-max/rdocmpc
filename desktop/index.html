@@ -18,7 +18,8 @@
   <!-- AUTH / LOGIN VIEW -->
   <div id="view-login" class="view auth-view">
     <div class="auth-card">
-      <button type="button" class="btn-credits-info" onclick="app.openCreditsModal()" title="Idealização e Desenvolvimento">
+      <button type="button" class="btn-credits-info" onclick="app.openCreditsModal()"
+        title="Idealização e Desenvolvimento">
         !
       </button>
       <div class="auth-header">
@@ -55,7 +56,8 @@
           </svg>
         </button>
         <div style="text-align: center; margin-top: 14px;">
-          <a href="../mobile/" style="font-size: 0.85rem; color: #006837; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+          <a href="../mobile/"
+            style="font-size: 0.85rem; color: #006837; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
             <span>📱 Acessar Versão Mobile (Celular)</span>
           </a>
         </div>
@@ -124,7 +126,8 @@
             <span id="connected-users-text">1 conectado</span>
           </div>
         </div>
-        <a href="../mobile/" class="btn btn-outline btn-xs no-print" title="Mudar para Versão Mobile (Celular)" style="text-decoration: none; color: #0284c7; border-color: #bae6fd; background: #f0f9ff; display: inline-flex; align-items: center; gap: 5px;">
+        <a href="../mobile/" class="btn btn-outline btn-xs no-print" title="Mudar para Versão Mobile (Celular)"
+          style="text-decoration: none; color: #0284c7; border-color: #bae6fd; background: #f0f9ff; display: inline-flex; align-items: center; gap: 5px;">
           <span>📱 Versão Mobile</span>
         </a>
         <button class="btn btn-outline btn-xs no-print" onclick="app.openManualModal()"
@@ -237,7 +240,9 @@
             <h2 id="editor-page-heading" class="editor-title">Preenchimento de RDO</h2>
           </div>
           <div class="editor-actions">
-            <button class="btn btn-outline" id="btn-editor-send" onclick="app.openSendModalFromEditor()" title="Enviar RDO por E-mail" style="color: #059669; border-color: #a7f3d0; background: #ecfdf5; font-weight: 600;">
+            <button class="btn btn-outline" id="btn-editor-send" onclick="app.openSendModalFromEditor()"
+              title="Enviar RDO por E-mail"
+              style="color: #059669; border-color: #a7f3d0; background: #ecfdf5; font-weight: 600;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -252,7 +257,9 @@
               </svg>
               <span>Imprimir / PDF</span>
             </button>
-            <button class="btn btn-outline" id="btn-editor-duplicate" onclick="app.duplicateCurrentRDO()" title="Duplicar RDO (mantém equipe e dados base, limpando fotos, comentários e assinaturas)" style="color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 600;">
+            <button class="btn btn-outline" id="btn-editor-duplicate" onclick="app.duplicateCurrentRDO()"
+              title="Duplicar RDO (mantém equipe e dados base, limpando fotos, comentários e assinaturas)"
+              style="color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 600;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -291,573 +298,635 @@
           <table id="cmpc-rdo-sheet" class="cmpc-sheet">
             <thead>
               <tr>
-              <td class="print-master-header-cell">
-                <!-- 1. HEADER SECTION -->
-                <div class="rdo-grid-header">
-                  <div class="rdo-box logo-box">
-                    <div id="logo-preview-container" class="logo-preview"
-                      onclick="document.getElementById('logo-file-input').click()" title="Clique para alterar a logo">
-                      <img id="cmpc-logo-img" src="logo cmpc.png" alt="Logo CMPC">
-                      <div id="logo-placeholder-text" class="logo-text hidden">LOGO DA EMPRESA<br><small>(Clique para
-                          inserir)</small></div>
+                <td class="print-master-header-cell">
+                  <!-- 1. HEADER SECTION -->
+                  <div class="rdo-grid-header">
+                    <div class="rdo-box logo-box">
+                      <div id="logo-preview-container" class="logo-preview"
+                        onclick="document.getElementById('logo-file-input').click()" title="Clique para alterar a logo">
+                        <img id="cmpc-logo-img" src="logo cmpc.png" alt="Logo CMPC">
+                        <div id="logo-placeholder-text" class="logo-text hidden">LOGO DA EMPRESA<br><small>(Clique para
+                            inserir)</small></div>
+                      </div>
+                      <input type="file" id="logo-file-input" accept="image/*" class="hidden"
+                        onchange="app.handleLogoUpload(event)">
                     </div>
-                    <input type="file" id="logo-file-input" accept="image/*" class="hidden"
-                      onchange="app.handleLogoUpload(event)">
+                    <div class="rdo-box title-box">
+                      <div class="sgq-header-title">Sistema de Gestão da Qualidade - ENGENHARIA CMPC</div>
+                    </div>
                   </div>
-                  <div class="rdo-box title-box">
-                    <div class="sgq-header-title">Sistema de Gestão da Qualidade - ENGENHARIA CMPC</div>
-                  </div>
-                </div>
 
-                <!-- 2. NUMBER, DATE & TITLE BANNER -->
-                <div class="rdo-num-date-row">
-                  <div class="rdo-box rdo-num-label">NÚMERO:</div>
-                  <div class="rdo-box rdo-num-val">
-                    <input type="text" id="rdo-numero" class="rdo-input text-center font-bold" placeholder="0000/ANO">
+                  <!-- 2. NUMBER, DATE & TITLE BANNER -->
+                  <div class="rdo-num-date-row">
+                    <div class="rdo-box rdo-num-label">NÚMERO:</div>
+                    <div class="rdo-box rdo-num-val">
+                      <input type="text" id="rdo-numero" class="rdo-input text-center font-bold" placeholder="0000/ANO">
+                    </div>
+                    <div class="rdo-box rdo-date-label">DATA / HORA</div>
+                    <div class="rdo-box rdo-date-val">
+                      <input type="datetime-local" id="rdo-data" class="rdo-input text-center"
+                        onchange="app.handleDateChange(event)">
+                    </div>
                   </div>
-                  <div class="rdo-box rdo-date-label">DATA / HORA</div>
-                  <div class="rdo-box rdo-date-val">
-                    <input type="datetime-local" id="rdo-data" class="rdo-input text-center" onchange="app.handleDateChange(event)">
-                  </div>
-                </div>
 
-                <div class="rdo-main-title-row">
-                  <div class="rdo-main-title-text">RELATÓRIO DIÁRIO DE OBRA</div>
-                  <div class="rdo-clima-box">
-                    <div class="clima-header-label">CONDIÇÃO CLIMÁTICA</div>
-                    <div class="clima-turnos-grid">
-                      <div class="clima-turno-col">
-                        <span class="clima-turno-tag">MANHÃ</span>
-                        <select id="rdo-clima-manha" class="clima-select" title="Condição climática no turno da manhã">
-                          <option value="Sol">☀️ Sol</option>
-                          <option value="Nublado">⛅ Nublado</option>
-                          <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
-                          <option value="Chuva Forte">⛈️ Ch. Forte</option>
-                          <option value="Vento Forte">🌬️ Vento</option>
-                          <option value="Impraticável">🚫 Imprat.</option>
+                  <div class="rdo-main-title-row">
+                    <div class="rdo-main-title-text">RELATÓRIO DIÁRIO DE OBRA</div>
+                    <div class="rdo-clima-box">
+                      <div class="clima-header-label">CONDIÇÃO CLIMÁTICA</div>
+                      <div class="clima-turnos-grid">
+                        <div class="clima-turno-col">
+                          <span class="clima-turno-tag">MANHÃ</span>
+                          <select id="rdo-clima-manha" class="clima-select"
+                            title="Condição climática no turno da manhã">
+                            <option value="Sol">☀️ Sol</option>
+                            <option value="Nublado">⛅ Nublado</option>
+                            <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
+                            <option value="Chuva Forte">⛈️ Ch. Forte</option>
+                            <option value="Vento Forte">🌬️ Vento</option>
+                            <option value="Impraticável">🚫 Imprat.</option>
+                          </select>
+                        </div>
+                        <div class="clima-turno-col">
+                          <span class="clima-turno-tag">TARDE</span>
+                          <select id="rdo-clima-tarde" class="clima-select"
+                            title="Condição climática no turno da tarde">
+                            <option value="Sol">☀️ Sol</option>
+                            <option value="Nublado">⛅ Nublado</option>
+                            <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
+                            <option value="Chuva Forte">⛈️ Ch. Forte</option>
+                            <option value="Vento Forte">🌬️ Vento</option>
+                            <option value="Impraticável">🚫 Imprat.</option>
+                          </select>
+                        </div>
+                        <div class="clima-turno-col">
+                          <span class="clima-turno-tag">NOITE</span>
+                          <select id="rdo-clima-noite" class="clima-select"
+                            title="Condição climática no turno da noite">
+                            <option value="Sem Trabalho">— S/ Trab.</option>
+                            <option value="Bom / Estável">🌙 Estável</option>
+                            <option value="Nublado">⛅ Nublado</option>
+                            <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
+                            <option value="Chuva Forte">⛈️ Ch. Forte</option>
+                            <option value="Vento Forte">🌬️ Vento</option>
+                            <option value="Impraticável">🚫 Imprat.</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 3. CONTRACT AND TEAM METADATA ROW -->
+                  <div class="rdo-meta-grid">
+                    <div class="rdo-meta-left">
+                      <div class="meta-row">
+                        <span class="meta-label">CONTRATO N.º:</span>
+                        <input type="text" id="rdo-contrato" class="rdo-input" placeholder="Digite o nº do contrato">
+                      </div>
+                      <div class="meta-row">
+                        <span class="meta-label">CONTRATANTE:</span>
+                        <input type="text" id="rdo-contratante" class="rdo-input" placeholder="Nome da contratante">
+                      </div>
+                      <div class="meta-row">
+                        <span class="meta-label">CONTRATADA:</span>
+                        <input type="text" id="rdo-contratada" class="rdo-input" placeholder="Nome da contratada">
+                      </div>
+                    </div>
+
+                    <div class="rdo-meta-middle">
+                      <div class="meta-middle-header-row">
+                        <div class="meta-header-box header-equipe">EQUIPE</div>
+                        <div class="meta-header-box header-dia">DIA SEMANA</div>
+                      </div>
+                      <div class="meta-middle-val-row">
+                        <div class="meta-val-box val-equipe">
+                          <div class="sub-label">Nome Encarregado</div>
+                          <input type="text" id="rdo-encarregado" class="rdo-input font-bold"
+                            placeholder="Nome do encarregado">
+                        </div>
+                        <div class="meta-val-box val-dia">
+                          <select id="rdo-dia-semana" class="rdo-input text-center">
+                            <option value="">Selecione...</option>
+                            <option value="Segunda-feira">Segunda-feira</option>
+                            <option value="Terça-feira">Terça-feira</option>
+                            <option value="Quarta-feira">Quarta-feira</option>
+                            <option value="Quinta-feira">Quinta-feira</option>
+                            <option value="Sexta-feira">Sexta-feira</option>
+                            <option value="Sábado">Sábado</option>
+                            <option value="Domingo">Domingo</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="rdo-meta-turno-col">
+                      <div class="meta-header-box header-turno">TURNO</div>
+                      <div class="meta-val-box val-turno">
+                        <select id="rdo-turno" class="rdo-input text-center font-bold"
+                          title="Selecione o turno de trabalho">
+                          <option value="Diurno">☀️ Diurno (Manhã e Tarde)</option>
+                          <option value="1º Turno (Manhã)">🌅 1º Turno (Manhã)</option>
+                          <option value="2º Turno (Tarde)">🌇 2º Turno (Tarde)</option>
+                          <option value="Noturno">🌙 Turno Noturno</option>
+                          <option value="Integral (24h)">⚡ Integral (24h)</option>
                         </select>
                       </div>
-                      <div class="clima-turno-col">
-                        <span class="clima-turno-tag">TARDE</span>
-                        <select id="rdo-clima-tarde" class="clima-select" title="Condição climática no turno da tarde">
-                          <option value="Sol">☀️ Sol</option>
-                          <option value="Nublado">⛅ Nublado</option>
-                          <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
-                          <option value="Chuva Forte">⛈️ Ch. Forte</option>
-                          <option value="Vento Forte">🌬️ Vento</option>
-                          <option value="Impraticável">🚫 Imprat.</option>
-                        </select>
-                      </div>
-                      <div class="clima-turno-col">
-                        <span class="clima-turno-tag">NOITE</span>
-                        <select id="rdo-clima-noite" class="clima-select" title="Condição climática no turno da noite">
-                          <option value="Sem Trabalho">— S/ Trab.</option>
-                          <option value="Bom / Estável">🌙 Estável</option>
-                          <option value="Nublado">⛅ Nublado</option>
-                          <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
-                          <option value="Chuva Forte">⛈️ Ch. Forte</option>
-                          <option value="Vento Forte">🌬️ Vento</option>
-                          <option value="Impraticável">🚫 Imprat.</option>
-                        </select>
-                      </div>
                     </div>
                   </div>
-                </div>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 4. WORKERS AND ACTIVITY HOURS TABLE -->
+              <tr class="rdo-print-row">
+                <td class="print-row-td">
+                  <div class="rdo-section-wrapper">
+                    <div class="table-actions-strip no-print">
+                      <span class="strip-label">Efetivo de Obra e Apropriação de Horas: <small
+                          style="font-weight: 600; color: #15803d; margin-left: 6px;">(Máx. 11 horas por colaborador na
+                          jornada)</small></span>
+                      <button type="button" class="btn btn-xs btn-outline-success" onclick="app.addWorkerRow()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>+ Adicionar Colaborador</span>
+                      </button>
+                    </div>
 
-                <!-- 3. CONTRACT AND TEAM METADATA ROW -->
-                <div class="rdo-meta-grid">
-                  <div class="rdo-meta-left">
-                    <div class="meta-row">
-                      <span class="meta-label">CONTRATO N.º:</span>
-                      <input type="text" id="rdo-contrato" class="rdo-input" placeholder="Digite o nº do contrato">
-                    </div>
-                    <div class="meta-row">
-                      <span class="meta-label">CONTRATANTE:</span>
-                      <input type="text" id="rdo-contratante" class="rdo-input" placeholder="Nome da contratante">
-                    </div>
-                    <div class="meta-row">
-                      <span class="meta-label">CONTRATADA:</span>
-                      <input type="text" id="rdo-contratada" class="rdo-input" placeholder="Nome da contratada">
-                    </div>
-                  </div>
-
-                  <div class="rdo-meta-middle">
-                    <div class="meta-middle-header-row">
-                      <div class="meta-header-box header-equipe">EQUIPE</div>
-                      <div class="meta-header-box header-dia">DIA SEMANA</div>
-                    </div>
-                    <div class="meta-middle-val-row">
-                      <div class="meta-val-box val-equipe">
-                        <div class="sub-label">Nome Encarregado</div>
-                        <input type="text" id="rdo-encarregado" class="rdo-input font-bold" placeholder="Nome do encarregado">
-                      </div>
-                      <div class="meta-val-box val-dia">
-                        <select id="rdo-dia-semana" class="rdo-input text-center">
-                          <option value="">Selecione...</option>
-                          <option value="Segunda-feira">Segunda-feira</option>
-                          <option value="Terça-feira">Terça-feira</option>
-                          <option value="Quarta-feira">Quarta-feira</option>
-                          <option value="Quinta-feira">Quinta-feira</option>
-                          <option value="Sexta-feira">Sexta-feira</option>
-                          <option value="Sábado">Sábado</option>
-                          <option value="Domingo">Domingo</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="rdo-meta-turno-col">
-                    <div class="meta-header-box header-turno">TURNO</div>
-                    <div class="meta-val-box val-turno">
-                      <select id="rdo-turno" class="rdo-input text-center font-bold" title="Selecione o turno de trabalho">
-                        <option value="Diurno">☀️ Diurno (Manhã e Tarde)</option>
-                        <option value="1º Turno (Manhã)">🌅 1º Turno (Manhã)</option>
-                        <option value="2º Turno (Tarde)">🌇 2º Turno (Tarde)</option>
-                        <option value="Noturno">🌙 Turno Noturno</option>
-                        <option value="Integral (24h)">⚡ Integral (24h)</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- 4. WORKERS AND ACTIVITY HOURS TABLE -->
-            <tr class="rdo-print-row">
-              <td class="print-row-td">
-                <div class="rdo-section-wrapper">
-                  <div class="table-actions-strip no-print">
-                    <span class="strip-label">Efetivo de Obra e Apropriação de Horas: <small style="font-weight: 600; color: #15803d; margin-left: 6px;">(Máx. 11 horas por colaborador na jornada)</small></span>
-                    <button type="button" class="btn btn-xs btn-outline-success" onclick="app.addWorkerRow()">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <div id="workers-limit-alert" class="workers-limit-alert no-print hidden">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5" style="flex-shrink: 0;">
+                        <path
+                          d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                        </path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
                       </svg>
-                      <span>+ Adicionar Colaborador</span>
-                    </button>
-                  </div>
+                      <span id="workers-limit-alert-text">Atenção: Há colaborador(es) excedendo o limite máximo de
+                        <strong>11 horas</strong> na jornada! Corrija as linhas em vermelho para liberar o salvamento do
+                        RDO.</span>
+                    </div>
 
-                  <div id="workers-limit-alert" class="workers-limit-alert no-print hidden">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink: 0;">
-                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                      <line x1="12" y1="9" x2="12" y2="13"></line>
-                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                    <span id="workers-limit-alert-text">Atenção: Há colaborador(es) excedendo o limite máximo de <strong>11 horas</strong> na jornada! Corrija as linhas em vermelho para liberar o salvamento do RDO.</span>
-                  </div>
-
-                  <div class="table-responsive rdo-workers-scroll">
-                    <table class="rdo-table workers-table" id="table-workers">
-                      <thead>
-                        <tr>
-                          <th rowspan="2" class="col-matricula">MATRÍCULA</th>
-                          <th rowspan="2" class="col-funcao">FUNÇÃO</th>
-                          <th rowspan="2" class="col-nome">NOME</th>
-                          <th colspan="10" class="col-atividades-header">ATIVIDADES</th>
-                          <th rowspan="2" class="col-worker-total">TOTAL</th>
-                        </tr>
-                        <tr class="sub-header-activities">
-                          <th class="col-act">A</th>
-                          <th class="col-act">B</th>
-                          <th class="col-act">C</th>
-                          <th class="col-act">D</th>
-                          <th class="col-act">E</th>
-                          <th class="col-act">F</th>
-                          <th class="col-act">G</th>
-                          <th class="col-act">H</th>
-                          <th class="col-act">I</th>
-                          <th class="col-act">J</th>
-                        </tr>
-                      </thead>
-                      <tbody id="workers-tbody">
-                        <!-- Worker rows generated dynamically -->
-                      </tbody>
-                      <tfoot>
-                        <tr class="total-hh-row">
-                          <td colspan="3" class="empty-foot-cell"></td>
-                          <td colspan="10" class="total-hh-label">TOTAL HH</td>
-                          <td colspan="1" class="total-hh-value-cell">
-                            <span id="total-hh-sum">0</span> Horas
-                          </td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
-                </div>
-              </td>
-            </tr>
-
-            <!-- 5. ACTIVITY DESCRIPTIONS TABLE -->
-            <tr class="rdo-print-row">
-              <td class="print-row-td">
-                <div class="rdo-section-wrapper border-top-divider">
-                  <div class="table-responsive">
-                    <table class="rdo-table activities-table" id="table-activities">
-                      <thead>
-                        <tr>
-                          <th class="col-ativ-id">ATIV.</th>
-                          <th class="col-ativ-desc">DESCRIÇÕES DAS ATIVIDADES</th>
-                          <th class="col-ativ-ass">Ass. Encarregado</th>
-                        </tr>
-                      </thead>
-                      <tbody id="activities-tbody">
-                        <!-- Rows A through J -->
-                        <tr data-act="A">
-                          <td class="act-letter">A</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade A"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="B">
-                          <td class="act-letter">B</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade B"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="C">
-                          <td class="act-letter">C</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade C"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="D">
-                          <td class="act-letter">D</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade D"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="E">
-                          <td class="act-letter">E</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade E"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="F">
-                          <td class="act-letter">F</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade F"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="G">
-                          <td class="act-letter">G</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade G"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="H">
-                          <td class="act-letter">H</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade H"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="I">
-                          <td class="act-letter">I</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade I"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                        <tr data-act="J">
-                          <td class="act-letter">J</td>
-                          <td><input type="text" class="rdo-input act-desc-input" placeholder="Descrição da atividade J"></td>
-                          <td><input type="text" class="rdo-input text-center act-ass-input" placeholder="Assinatura / Visto">
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </td>
-            </tr>
-
-            <!-- 6. COMENTÁRIOS & EQUIPAMENTOS SECTION -->
-            <tr class="rdo-print-row">
-              <td class="print-row-td">
-                <div class="rdo-comments-section rdo-comments-equip-grid">
-                  <!-- Coluna Esquerda: Comentários -->
-                  <div class="rdo-comments-pane">
-                    <div class="comments-header">COMENTÁRIOS:</div>
-                    <div class="comments-body">
-                      <textarea id="rdo-comentarios" class="rdo-textarea" rows="5"
-                        placeholder="Insira observações, condições climáticas, ocorrências, atrasos ou notas gerais da obra..."></textarea>
+                    <div class="table-responsive rdo-workers-scroll">
+                      <table class="rdo-table workers-table" id="table-workers">
+                        <thead>
+                          <tr>
+                            <th rowspan="2" class="col-matricula">MATRÍCULA</th>
+                            <th rowspan="2" class="col-funcao">FUNÇÃO</th>
+                            <th rowspan="2" class="col-nome">NOME</th>
+                            <th colspan="10" class="col-atividades-header">ATIVIDADES</th>
+                            <th rowspan="2" class="col-worker-total">TOTAL</th>
+                          </tr>
+                          <tr class="sub-header-activities">
+                            <th class="col-act">A</th>
+                            <th class="col-act">B</th>
+                            <th class="col-act">C</th>
+                            <th class="col-act">D</th>
+                            <th class="col-act">E</th>
+                            <th class="col-act">F</th>
+                            <th class="col-act">G</th>
+                            <th class="col-act">H</th>
+                            <th class="col-act">I</th>
+                            <th class="col-act">J</th>
+                          </tr>
+                        </thead>
+                        <tbody id="workers-tbody">
+                          <!-- Worker rows generated dynamically -->
+                        </tbody>
+                        <tfoot>
+                          <tr class="total-hh-row">
+                            <td colspan="3" class="empty-foot-cell"></td>
+                            <td colspan="10" class="total-hh-label">TOTAL HH</td>
+                            <td colspan="1" class="total-hh-value-cell">
+                              <span id="total-hh-sum">0</span> Horas
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
                     </div>
                   </div>
+                </td>
+              </tr>
 
-                  <!-- Coluna Direita: Equipamentos e QT -->
-                  <div class="rdo-equipments-pane">
-                    <table class="rdo-table equipments-table" id="table-equipments">
-                      <thead>
-                        <tr>
-                          <th class="col-equip-name">
-                            <div class="equip-header-flex">
-                              <span>EQUIPAMENTOS</span>
-                              <button type="button" class="btn-add-equip no-print" onclick="app.addEquipmentRow()" title="Adicionar linha de equipamento">
-                                + Adicionar
-                              </button>
-                            </div>
-                          </th>
-                          <th class="col-equip-qt">QT</th>
-                        </tr>
-                      </thead>
-                      <tbody id="equipments-tbody">
-                        <!-- Preenchido via JS -->
-                      </tbody>
-                    </table>
+              <!-- 5. ACTIVITY DESCRIPTIONS TABLE -->
+              <tr class="rdo-print-row">
+                <td class="print-row-td">
+                  <div class="rdo-section-wrapper border-top-divider">
+                    <div class="table-responsive">
+                      <table class="rdo-table activities-table" id="table-activities">
+                        <thead>
+                          <tr>
+                            <th class="col-ativ-id">ATIV.</th>
+                            <th class="col-ativ-desc">DESCRIÇÕES DAS ATIVIDADES</th>
+                            <th class="col-ativ-ass">Ass. Encarregado</th>
+                          </tr>
+                        </thead>
+                        <tbody id="activities-tbody">
+                          <!-- Rows A through J -->
+                          <tr data-act="A">
+                            <td class="act-letter">A</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade A"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="B">
+                            <td class="act-letter">B</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade B"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="C">
+                            <td class="act-letter">C</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade C"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="D">
+                            <td class="act-letter">D</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade D"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="E">
+                            <td class="act-letter">E</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade E"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="F">
+                            <td class="act-letter">F</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade F"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="G">
+                            <td class="act-letter">G</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade G"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="H">
+                            <td class="act-letter">H</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade H"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="I">
+                            <td class="act-letter">I</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade I"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                          <tr data-act="J">
+                            <td class="act-letter">J</td>
+                            <td><input type="text" class="rdo-input act-desc-input"
+                                placeholder="Descrição da atividade J"></td>
+                            <td><input type="text" class="rdo-input text-center act-ass-input"
+                                placeholder="Assinatura / Visto">
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
 
-            <!-- 6.1 OBSERVAÇÕES / MENSAGEM ADICIONAL -->
-            <tr class="rdo-print-row" id="rdo-obs-adicional-row">
-              <td class="print-row-td">
-                <div class="rdo-obs-section">
-                  <div class="obs-header">OBSERVAÇÕES / MENSAGEM ADICIONAL:</div>
-                  <div class="obs-body">
-                    <textarea id="rdo-obs-adicional" class="rdo-textarea" rows="2"
-                      placeholder="Observações complementares ou mensagem adicional registrada no envio do RDO..."></textarea>
-                  </div>
-                </div>
-              </td>
-            </tr>
-
-            <!-- 6.2 FOTOS / REGISTRO FOTOGRÁFICO (4 CAMPOS DE IMAGENS PEQUENAS) -->
-            <tr class="rdo-print-row">
-              <td class="print-row-td">
-                <div class="rdo-photos-section">
-                  <div class="photos-header">REGISTRO FOTOGRÁFICO (4 IMAGENS):</div>
-                  <div class="photos-grid">
-                    <!-- Foto 1 (Obrigatória: FOTO DA PT) -->
-                    <div class="photo-slot photo-slot-pt-required" id="photo-slot-0">
-                      <span class="badge-pt-tag no-print">PT Obrigatória</span>
-                      <input type="file" id="photo-input-0" accept="image/*" class="hidden"
-                        onchange="app.handlePhotoUpload(event, 0)">
-                      <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 0)"
-                        title="Clique para visualizar ou carregar a Foto da PT (Obrigatória)">
-                        <img id="photo-img-0" src="" alt="FOTO DA PT" class="photo-thumb hidden">
-                        <div class="photo-overlay hidden" id="photo-overlay-0">
-                          <span class="badge-zoom">🔍 Clique para Ampliar</span>
-                        </div>
-                        <div id="photo-placeholder-0" class="photo-placeholder">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                            <circle cx="8.5" cy="8.5" r="1.5" />
-                            <polyline points="21 15 16 10 5 21" />
-                          </svg>
-                          <span style="font-weight: 800; color: #b45309;">FOTO DA PT *</span>
-                          <small style="color: #b45309; font-weight: 600;">Clique para carregar</small>
-                        </div>
-                      </div>
-                      <div class="photo-actions">
-                        <input type="text" id="photo-desc-0" class="rdo-input photo-caption-input font-bold"
-                          placeholder="FOTO DA PT" value="FOTO DA PT" title="Legenda obrigatória: FOTO DA PT">
-                        <button type="button" class="btn-change-photo no-print hidden" id="photo-change-0"
-                          onclick="document.getElementById('photo-input-0').click()" title="Trocar foto da PT">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                            <circle cx="12" cy="13" r="4" />
-                          </svg>
-                        </button>
-                        <button type="button" class="btn-remove-photo no-print hidden" id="photo-del-0"
-                          onclick="app.removePhoto(0)" title="Remover Foto da PT">&times;</button>
+              <!-- 6. COMENTÁRIOS & EQUIPAMENTOS SECTION -->
+              <tr class="rdo-print-row">
+                <td class="print-row-td">
+                  <div class="rdo-comments-section rdo-comments-equip-grid">
+                    <!-- Coluna Esquerda: Comentários -->
+                    <div class="rdo-comments-pane">
+                      <div class="comments-header">COMENTÁRIOS:</div>
+                      <div class="comments-body">
+                        <textarea id="rdo-comentarios" class="rdo-textarea" rows="5"
+                          placeholder="Insira observações, condições climáticas, ocorrências, atrasos ou notas gerais da obra..."></textarea>
                       </div>
                     </div>
 
-                    <!-- Foto 2 -->
-                    <div class="photo-slot" id="photo-slot-1">
-                      <input type="file" id="photo-input-1" accept="image/*" class="hidden"
-                        onchange="app.handlePhotoUpload(event, 1)">
-                      <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 1)"
-                        title="Clique para visualizar ou carregar foto 2">
-                        <img id="photo-img-1" src="" alt="Foto 2" class="photo-thumb hidden">
-                        <div class="photo-overlay hidden" id="photo-overlay-1">
-                          <span class="badge-zoom">🔍 Clique para Ampliar</span>
-                        </div>
-                        <div id="photo-placeholder-1" class="photo-placeholder">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                            <circle cx="8.5" cy="8.5" r="1.5" />
-                            <polyline points="21 15 16 10 5 21" />
-                          </svg>
-                          <span>Foto 2</span>
-                          <small>Clique para carregar</small>
-                        </div>
-                      </div>
-                      <div class="photo-actions">
-                        <input type="text" id="photo-desc-1" class="rdo-input photo-caption-input"
-                          placeholder="Legenda Foto 2">
-                        <button type="button" class="btn-change-photo no-print hidden" id="photo-change-1"
-                          onclick="document.getElementById('photo-input-1').click()" title="Trocar foto">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                            <circle cx="12" cy="13" r="4" />
-                          </svg>
-                        </button>
-                        <button type="button" class="btn-remove-photo no-print hidden" id="photo-del-1"
-                          onclick="app.removePhoto(1)" title="Remover Foto 2">&times;</button>
-                      </div>
+                    <!-- Coluna Direita: Equipamentos e QT -->
+                    <div class="rdo-equipments-pane">
+                      <table class="rdo-table equipments-table" id="table-equipments">
+                        <thead>
+                          <tr>
+                            <th class="col-equip-name">
+                              <div class="equip-header-flex">
+                                <span>EQUIPAMENTOS</span>
+                                <button type="button" class="btn-add-equip no-print" onclick="app.addEquipmentRow()"
+                                  title="Adicionar linha de equipamento">
+                                  + Adicionar
+                                </button>
+                              </div>
+                            </th>
+                            <th class="col-equip-qt">QT</th>
+                          </tr>
+                        </thead>
+                        <tbody id="equipments-tbody">
+                          <!-- Preenchido via JS -->
+                        </tbody>
+                      </table>
                     </div>
+                  </div>
+                </td>
+              </tr>
 
-                    <!-- Foto 3 -->
-                    <div class="photo-slot" id="photo-slot-2">
-                      <input type="file" id="photo-input-2" accept="image/*" class="hidden"
-                        onchange="app.handlePhotoUpload(event, 2)">
-                      <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 2)"
-                        title="Clique para visualizar ou carregar foto 3">
-                        <img id="photo-img-2" src="" alt="Foto 3" class="photo-thumb hidden">
-                        <div class="photo-overlay hidden" id="photo-overlay-2">
-                          <span class="badge-zoom">🔍 Clique para Ampliar</span>
-                        </div>
-                        <div id="photo-placeholder-2" class="photo-placeholder">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                            <circle cx="8.5" cy="8.5" r="1.5" />
-                            <polyline points="21 15 16 10 5 21" />
-                          </svg>
-                          <span>Foto 3</span>
-                          <small>Clique para carregar</small>
-                        </div>
-                      </div>
-                      <div class="photo-actions">
-                        <input type="text" id="photo-desc-2" class="rdo-input photo-caption-input"
-                          placeholder="Legenda Foto 3">
-                        <button type="button" class="btn-change-photo no-print hidden" id="photo-change-2"
-                          onclick="document.getElementById('photo-input-2').click()" title="Trocar foto">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                            <circle cx="12" cy="13" r="4" />
-                          </svg>
-                        </button>
-                        <button type="button" class="btn-remove-photo no-print hidden" id="photo-del-2"
-                          onclick="app.removePhoto(2)" title="Remover Foto 3">&times;</button>
-                      </div>
+              <!-- 6.1 OBSERVAÇÕES / MENSAGEM ADICIONAL -->
+              <tr class="rdo-print-row" id="rdo-obs-adicional-row">
+                <td class="print-row-td">
+                  <div class="rdo-obs-section">
+                    <div class="obs-header">OBSERVAÇÕES / MENSAGEM ADICIONAL:</div>
+                    <div class="obs-body">
+                      <textarea id="rdo-obs-adicional" class="rdo-textarea" rows="2"
+                        placeholder="Observações complementares ou mensagem adicional registrada no envio do RDO..."></textarea>
                     </div>
+                  </div>
+                </td>
+              </tr>
 
-                    <!-- Foto 4 -->
-                    <div class="photo-slot" id="photo-slot-3">
-                      <input type="file" id="photo-input-3" accept="image/*" class="hidden"
-                        onchange="app.handlePhotoUpload(event, 3)">
-                      <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 3)"
-                        title="Clique para visualizar ou carregar foto 4">
-                        <img id="photo-img-3" src="" alt="Foto 4" class="photo-thumb hidden">
-                        <div class="photo-overlay hidden" id="photo-overlay-3">
-                          <span class="badge-zoom">🔍 Clique para Ampliar</span>
+              <!-- 6.2 FOTOS / REGISTRO FOTOGRÁFICO (4 CAMPOS DE IMAGENS PEQUENAS) -->
+              <tr class="rdo-print-row">
+                <td class="print-row-td">
+                  <div class="rdo-photos-section">
+                    <div class="photos-header">REGISTRO FOTOGRÁFICO (4 IMAGENS):</div>
+                    <div class="photos-grid">
+                      <!-- Foto 1 (Obrigatória: FOTO DA PT) -->
+                      <div class="photo-slot photo-slot-pt-required" id="photo-slot-0">
+                        <span class="badge-pt-tag no-print">PT Obrigatória</span>
+                        <input type="file" id="photo-input-0" accept="image/*" class="hidden"
+                          onchange="app.handlePhotoUpload(event, 0)">
+                        <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 0)"
+                          title="Clique para visualizar ou carregar a Foto da PT (Obrigatória)">
+                          <img id="photo-img-0" src="" alt="FOTO DA PT" class="photo-thumb hidden">
+                          <div class="photo-overlay hidden" id="photo-overlay-0">
+                            <span class="badge-zoom">🔍 Clique para Ampliar</span>
+                          </div>
+                          <div id="photo-placeholder-0" class="photo-placeholder">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                              <circle cx="8.5" cy="8.5" r="1.5" />
+                              <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                            <span style="font-weight: 800; color: #b45309;">FOTO DA PT *</span>
+                            <small style="color: #b45309; font-weight: 600;">Clique para carregar</small>
+                          </div>
                         </div>
-                        <div id="photo-placeholder-3" class="photo-placeholder">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                            <circle cx="8.5" cy="8.5" r="1.5" />
-                            <polyline points="21 15 16 10 5 21" />
-                          </svg>
-                          <span>Foto 4</span>
-                          <small>Clique para carregar</small>
+                        <div class="photo-actions">
+                          <input type="text" id="photo-desc-0" class="rdo-input photo-caption-input font-bold"
+                            placeholder="FOTO DA PT" value="FOTO DA PT" title="Legenda obrigatória: FOTO DA PT">
+                          <button type="button" class="btn-change-photo no-print hidden" id="photo-change-0"
+                            onclick="document.getElementById('photo-input-0').click()" title="Trocar foto da PT">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2">
+                              <path
+                                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                              <circle cx="12" cy="13" r="4" />
+                            </svg>
+                          </button>
+                          <button type="button" class="btn-remove-photo no-print hidden" id="photo-del-0"
+                            onclick="app.removePhoto(0)" title="Remover Foto da PT">&times;</button>
                         </div>
                       </div>
-                      <div class="photo-actions">
-                        <input type="text" id="photo-desc-3" class="rdo-input photo-caption-input"
-                          placeholder="Legenda Foto 4">
-                        <button type="button" class="btn-change-photo no-print hidden" id="photo-change-3"
-                          onclick="document.getElementById('photo-input-3').click()" title="Trocar foto">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                            <circle cx="12" cy="13" r="4" />
-                          </svg>
-                        </button>
-                        <button type="button" class="btn-remove-photo no-print hidden" id="photo-del-3"
-                          onclick="app.removePhoto(3)" title="Remover Foto 4">&times;</button>
+
+                      <!-- Foto 2 -->
+                      <div class="photo-slot" id="photo-slot-1">
+                        <input type="file" id="photo-input-1" accept="image/*" class="hidden"
+                          onchange="app.handlePhotoUpload(event, 1)">
+                        <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 1)"
+                          title="Clique para visualizar ou carregar foto 2">
+                          <img id="photo-img-1" src="" alt="Foto 2" class="photo-thumb hidden">
+                          <div class="photo-overlay hidden" id="photo-overlay-1">
+                            <span class="badge-zoom">🔍 Clique para Ampliar</span>
+                          </div>
+                          <div id="photo-placeholder-1" class="photo-placeholder">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                              <circle cx="8.5" cy="8.5" r="1.5" />
+                              <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                            <span>Foto 2</span>
+                            <small>Clique para carregar</small>
+                          </div>
+                        </div>
+                        <div class="photo-actions">
+                          <input type="text" id="photo-desc-1" class="rdo-input photo-caption-input"
+                            placeholder="Legenda Foto 2">
+                          <button type="button" class="btn-change-photo no-print hidden" id="photo-change-1"
+                            onclick="document.getElementById('photo-input-1').click()" title="Trocar foto">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2">
+                              <path
+                                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                              <circle cx="12" cy="13" r="4" />
+                            </svg>
+                          </button>
+                          <button type="button" class="btn-remove-photo no-print hidden" id="photo-del-1"
+                            onclick="app.removePhoto(1)" title="Remover Foto 2">&times;</button>
+                        </div>
+                      </div>
+
+                      <!-- Foto 3 -->
+                      <div class="photo-slot" id="photo-slot-2">
+                        <input type="file" id="photo-input-2" accept="image/*" class="hidden"
+                          onchange="app.handlePhotoUpload(event, 2)">
+                        <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 2)"
+                          title="Clique para visualizar ou carregar foto 3">
+                          <img id="photo-img-2" src="" alt="Foto 3" class="photo-thumb hidden">
+                          <div class="photo-overlay hidden" id="photo-overlay-2">
+                            <span class="badge-zoom">🔍 Clique para Ampliar</span>
+                          </div>
+                          <div id="photo-placeholder-2" class="photo-placeholder">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                              <circle cx="8.5" cy="8.5" r="1.5" />
+                              <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                            <span>Foto 3</span>
+                            <small>Clique para carregar</small>
+                          </div>
+                        </div>
+                        <div class="photo-actions">
+                          <input type="text" id="photo-desc-2" class="rdo-input photo-caption-input"
+                            placeholder="Legenda Foto 3">
+                          <button type="button" class="btn-change-photo no-print hidden" id="photo-change-2"
+                            onclick="document.getElementById('photo-input-2').click()" title="Trocar foto">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2">
+                              <path
+                                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                              <circle cx="12" cy="13" r="4" />
+                            </svg>
+                          </button>
+                          <button type="button" class="btn-remove-photo no-print hidden" id="photo-del-2"
+                            onclick="app.removePhoto(2)" title="Remover Foto 3">&times;</button>
+                        </div>
+                      </div>
+
+                      <!-- Foto 4 -->
+                      <div class="photo-slot" id="photo-slot-3">
+                        <input type="file" id="photo-input-3" accept="image/*" class="hidden"
+                          onchange="app.handlePhotoUpload(event, 3)">
+                        <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 3)"
+                          title="Clique para visualizar ou carregar foto 4">
+                          <img id="photo-img-3" src="" alt="Foto 4" class="photo-thumb hidden">
+                          <div class="photo-overlay hidden" id="photo-overlay-3">
+                            <span class="badge-zoom">🔍 Clique para Ampliar</span>
+                          </div>
+                          <div id="photo-placeholder-3" class="photo-placeholder">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                              <circle cx="8.5" cy="8.5" r="1.5" />
+                              <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                            <span>Foto 4</span>
+                            <small>Clique para carregar</small>
+                          </div>
+                        </div>
+                        <div class="photo-actions">
+                          <input type="text" id="photo-desc-3" class="rdo-input photo-caption-input"
+                            placeholder="Legenda Foto 4">
+                          <button type="button" class="btn-change-photo no-print hidden" id="photo-change-3"
+                            onclick="document.getElementById('photo-input-3').click()" title="Trocar foto">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                              stroke-width="2">
+                              <path
+                                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                              <circle cx="12" cy="13" r="4" />
+                            </svg>
+                          </button>
+                          <button type="button" class="btn-remove-photo no-print hidden" id="photo-del-3"
+                            onclick="app.removePhoto(3)" title="Remover Foto 4">&times;</button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
 
-            <!-- 7. SIGNATURES / ASSINATURAS FOOTER -->
-            <tr class="rdo-print-row">
-              <td class="print-row-td">
-                <div class="rdo-signatures-grid">
-                  <!-- 1. PLANEJAMENTO EXECUTANTE -->
-                  <div class="sig-box" id="sig-box-planejamento">
-                    <div class="sig-digital-zone">
-                      <div class="sig-image-container" onclick="app.openSignatureModal('planejamento')" title="Clique para assinar, colar ou alterar assinatura digital">
-                        <img id="sig-img-planejamento" class="sig-digital-img hidden" alt="Assinatura Planejamento">
-                        <div class="sig-placeholder-prompt no-print" id="sig-prompt-planejamento">
-                          <span class="sig-prompt-icon">✍️</span>
-                          <span class="sig-prompt-text">Assinar / Colar</span>
+              <!-- 7. SIGNATURES / ASSINATURAS FOOTER -->
+              <tr class="rdo-print-row">
+                <td class="print-row-td">
+                  <div class="rdo-signatures-grid">
+                    <!-- 1. PLANEJAMENTO EXECUTANTE -->
+                    <div class="sig-box" id="sig-box-planejamento">
+                      <div class="sig-digital-zone">
+                        <div class="sig-image-container" onclick="app.openSignatureModal('planejamento')"
+                          title="Clique para assinar, colar ou alterar assinatura digital">
+                          <img id="sig-img-planejamento" class="sig-digital-img hidden" alt="Assinatura Planejamento">
+                          <div class="sig-placeholder-prompt no-print" id="sig-prompt-planejamento">
+                            <span class="sig-prompt-icon">✍️</span>
+                            <span class="sig-prompt-text">Assinar / Colar</span>
+                          </div>
+                        </div>
+                        <div class="sig-actions-bar no-print">
+                          <button type="button" class="btn-sig-clear hidden" id="sig-clear-planejamento"
+                            onclick="app.clearDigitalSignature('planejamento')" title="Remover assinatura digital">
+                            &times;
+                          </button>
                         </div>
                       </div>
-                      <div class="sig-actions-bar no-print">
-                        <button type="button" class="btn-sig-clear hidden" id="sig-clear-planejamento" onclick="app.clearDigitalSignature('planejamento')" title="Remover assinatura digital">
-                          &times;
-                        </button>
+                      <div class="sig-line-divider"></div>
+                      <div class="sig-user-row">
+                        <select id="rdo-sig-planejamento" class="sig-user-select"
+                          onchange="app.onSigUserSelectChange('planejamento', this.value)"
+                          title="Selecione o usuário cadastrado">
+                          <option value="">-- Selecionar Nome --</option>
+                        </select>
+                        <input type="text" id="rdo-sig-email-planejamento" class="sig-user-email" readonly
+                          placeholder="E-mail automático" title="E-mail preenchido automaticamente">
                       </div>
+                      <div class="sig-label">PLANEJAMENTO EXECUTANTE</div>
                     </div>
-                    <div class="sig-line-divider"></div>
-                    <div class="sig-user-row">
-                      <select id="rdo-sig-planejamento" class="sig-user-select" onchange="app.onSigUserSelectChange('planejamento', this.value)" title="Selecione o usuário cadastrado">
-                        <option value="">-- Selecionar Nome --</option>
-                      </select>
-                      <input type="text" id="rdo-sig-email-planejamento" class="sig-user-email" readonly placeholder="E-mail automático" title="E-mail preenchido automaticamente">
-                    </div>
-                    <div class="sig-label">PLANEJAMENTO EXECUTANTE</div>
-                  </div>
 
-                  <!-- 2. ENGENHEIRO DE PRODUÇÃO EXECUTANTE -->
-                  <div class="sig-box" id="sig-box-engenheiro">
-                    <div class="sig-digital-zone">
-                      <div class="sig-image-container" onclick="app.openSignatureModal('engenheiro')" title="Clique para assinar, colar ou alterar assinatura digital">
-                        <img id="sig-img-engenheiro" class="sig-digital-img hidden" alt="Assinatura Engenheiro">
-                        <div class="sig-placeholder-prompt no-print" id="sig-prompt-engenheiro">
-                          <span class="sig-prompt-icon">✍️</span>
-                          <span class="sig-prompt-text">Assinar / Colar</span>
+                    <!-- 2. ENGENHEIRO DE PRODUÇÃO EXECUTANTE -->
+                    <div class="sig-box" id="sig-box-engenheiro">
+                      <div class="sig-digital-zone">
+                        <div class="sig-image-container" onclick="app.openSignatureModal('engenheiro')"
+                          title="Clique para assinar, colar ou alterar assinatura digital">
+                          <img id="sig-img-engenheiro" class="sig-digital-img hidden" alt="Assinatura Engenheiro">
+                          <div class="sig-placeholder-prompt no-print" id="sig-prompt-engenheiro">
+                            <span class="sig-prompt-icon">✍️</span>
+                            <span class="sig-prompt-text">Assinar / Colar</span>
+                          </div>
+                        </div>
+                        <div class="sig-actions-bar no-print">
+                          <button type="button" class="btn-sig-clear hidden" id="sig-clear-engenheiro"
+                            onclick="app.clearDigitalSignature('engenheiro')" title="Remover assinatura digital">
+                            &times;
+                          </button>
                         </div>
                       </div>
-                      <div class="sig-actions-bar no-print">
-                        <button type="button" class="btn-sig-clear hidden" id="sig-clear-engenheiro" onclick="app.clearDigitalSignature('engenheiro')" title="Remover assinatura digital">
-                          &times;
-                        </button>
+                      <div class="sig-line-divider"></div>
+                      <div class="sig-user-row">
+                        <select id="rdo-sig-engenheiro" class="sig-user-select"
+                          onchange="app.onSigUserSelectChange('engenheiro', this.value)"
+                          title="Selecione o usuário cadastrado">
+                          <option value="">-- Selecionar Nome --</option>
+                        </select>
+                        <input type="text" id="rdo-sig-email-engenheiro" class="sig-user-email" readonly
+                          placeholder="E-mail automático" title="E-mail preenchido automaticamente">
                       </div>
+                      <div class="sig-label">ENGENHEIRO DE PRODUÇÃO EXECUTANTE</div>
                     </div>
-                    <div class="sig-line-divider"></div>
-                    <div class="sig-user-row">
-                      <select id="rdo-sig-engenheiro" class="sig-user-select" onchange="app.onSigUserSelectChange('engenheiro', this.value)" title="Selecione o usuário cadastrado">
-                        <option value="">-- Selecionar Nome --</option>
-                      </select>
-                      <input type="text" id="rdo-sig-email-engenheiro" class="sig-user-email" readonly placeholder="E-mail automático" title="E-mail preenchido automaticamente">
-                    </div>
-                    <div class="sig-label">ENGENHEIRO DE PRODUÇÃO EXECUTANTE</div>
-                  </div>
 
-                  <!-- 3. FISCALIZAÇÃO CMPC -->
-                  <div class="sig-box" id="sig-box-fiscalizacao">
-                    <div class="sig-digital-zone">
-                      <div class="sig-image-container" onclick="app.openSignatureModal('fiscalizacao')" title="Clique para assinar, colar ou alterar assinatura digital">
-                        <img id="sig-img-fiscalizacao" class="sig-digital-img hidden" alt="Assinatura Fiscalização">
-                        <div class="sig-placeholder-prompt no-print" id="sig-prompt-fiscalizacao">
-                          <span class="sig-prompt-icon">✍️</span>
-                          <span class="sig-prompt-text">Assinar / Colar</span>
+                    <!-- 3. FISCALIZAÇÃO CMPC -->
+                    <div class="sig-box" id="sig-box-fiscalizacao">
+                      <div class="sig-digital-zone">
+                        <div class="sig-image-container" onclick="app.openSignatureModal('fiscalizacao')"
+                          title="Clique para assinar, colar ou alterar assinatura digital">
+                          <img id="sig-img-fiscalizacao" class="sig-digital-img hidden" alt="Assinatura Fiscalização">
+                          <div class="sig-placeholder-prompt no-print" id="sig-prompt-fiscalizacao">
+                            <span class="sig-prompt-icon">✍️</span>
+                            <span class="sig-prompt-text">Assinar / Colar</span>
+                          </div>
+                        </div>
+                        <div class="sig-actions-bar no-print">
+                          <button type="button" class="btn-sig-clear hidden" id="sig-clear-fiscalizacao"
+                            onclick="app.clearDigitalSignature('fiscalizacao')" title="Remover assinatura digital">
+                            &times;
+                          </button>
                         </div>
                       </div>
-                      <div class="sig-actions-bar no-print">
-                        <button type="button" class="btn-sig-clear hidden" id="sig-clear-fiscalizacao" onclick="app.clearDigitalSignature('fiscalizacao')" title="Remover assinatura digital">
-                          &times;
-                        </button>
+                      <div class="sig-line-divider"></div>
+                      <div class="sig-user-row">
+                        <select id="rdo-sig-fiscalizacao" class="sig-user-select"
+                          onchange="app.onSigUserSelectChange('fiscalizacao', this.value)"
+                          title="Selecione o usuário cadastrado">
+                          <option value="">-- Selecionar Nome --</option>
+                        </select>
+                        <input type="text" id="rdo-sig-email-fiscalizacao" class="sig-user-email" readonly
+                          placeholder="E-mail automático" title="E-mail preenchido automaticamente">
                       </div>
+                      <div class="sig-label">FISCALIZAÇÃO CMPC</div>
                     </div>
-                    <div class="sig-line-divider"></div>
-                    <div class="sig-user-row">
-                      <select id="rdo-sig-fiscalizacao" class="sig-user-select" onchange="app.onSigUserSelectChange('fiscalizacao', this.value)" title="Selecione o usuário cadastrado">
-                        <option value="">-- Selecionar Nome --</option>
-                      </select>
-                      <input type="text" id="rdo-sig-email-fiscalizacao" class="sig-user-email" readonly placeholder="E-mail automático" title="E-mail preenchido automaticamente">
-                    </div>
-                    <div class="sig-label">FISCALIZAÇÃO CMPC</div>
                   </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table> <!-- /cmpc-rdo-sheet -->
+                </td>
+              </tr>
+            </tbody>
+          </table> <!-- /cmpc-rdo-sheet -->
         </div> <!-- /rdo-sheet-wrapper -->
 
         <!-- BOTTOM ACTION BUTTONS -->
@@ -1071,29 +1140,39 @@
                 </svg>
                 <span>Configuração de Envio de E-mail (Brevo API)</span>
               </h3>
-              <p class="panel-card-desc">Configure a chave de API v3 da Brevo (Sendinblue) para envio automático dos relatórios aos clientes e fiscais.</p>
+              <p class="panel-card-desc">Configure a chave de API v3 da Brevo (Sendinblue) para envio automático dos
+                relatórios aos clientes e fiscais.</p>
             </div>
-            <span class="badge-tag" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;">Disparo Automático</span>
+            <span class="badge-tag" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;">Disparo
+              Automático</span>
           </div>
 
           <form id="form-brevo-settings" onsubmit="admin.handleSaveBrevoConfig(event)" class="mt-3">
-            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 0.82rem; color: #1e40af;">
+            <div
+              style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 0.82rem; color: #1e40af;">
               <strong>ℹ️ Instrução importante sobre a Chave da Brevo:</strong><br>
-              Acesse sua conta no <strong>Brevo (app.brevo.com) &gt; SMTP &amp; API &gt; Chaves de API</strong> e gere uma chave que começa com <code>xkeysib-...</code>.<br>
-              <em>(Nota: Senhas SMTP que começam com <code>xsmtpsib-...</code> são apenas para clientes de e-mail e não funcionam na API REST).</em>
+              Acesse sua conta no <strong>Brevo (app.brevo.com) &gt; SMTP &amp; API &gt; Chaves de API</strong> e gere
+              uma chave que começa com <code>xkeysib-...</code>.<br>
+              <em>(Nota: Senhas SMTP que começam com <code>xsmtpsib-...</code> são apenas para clientes de e-mail e não
+                funcionam na API REST).</em>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
               <div class="form-group" style="grid-column: 1 / -1;">
-                <label for="brevo-api-key" style="font-weight: 600; font-size: 0.85rem; color: var(--slate-700);">Chave de API da Brevo (<code>xkeysib-...</code>):</label>
+                <label for="brevo-api-key" style="font-weight: 600; font-size: 0.85rem; color: var(--slate-700);">Chave
+                  de API da Brevo (<code>xkeysib-...</code>):</label>
                 <input type="text" id="brevo-api-key" class="form-control" placeholder="xkeysib-..." autocomplete="off">
               </div>
               <div class="form-group">
-                <label for="brevo-sender-email" style="font-weight: 600; font-size: 0.85rem; color: var(--slate-700);">E-mail do Remetente (Cadastrado no Brevo):</label>
-                <input type="email" id="brevo-sender-email" class="form-control" placeholder="sistemasengenharia@cmpcrs.com.br">
+                <label for="brevo-sender-email"
+                  style="font-weight: 600; font-size: 0.85rem; color: var(--slate-700);">E-mail do Remetente (Cadastrado
+                  no Brevo):</label>
+                <input type="email" id="brevo-sender-email" class="form-control"
+                  placeholder="sistemasengenharia@cmpcrs.com.br">
               </div>
               <div class="form-group">
-                <label for="brevo-sender-name" style="font-weight: 600; font-size: 0.85rem; color: var(--slate-700);">Nome do Remetente:</label>
+                <label for="brevo-sender-name"
+                  style="font-weight: 600; font-size: 0.85rem; color: var(--slate-700);">Nome do Remetente:</label>
                 <input type="text" id="brevo-sender-name" class="form-control" placeholder="Engenharia CMPC - SGQ">
               </div>
             </div>
@@ -1186,27 +1265,36 @@
     <div class="modal-dialog" onclick="event.stopPropagation()" style="max-width: 440px;">
       <div class="modal-header">
         <div class="modal-title-group" style="display: flex; align-items: center; gap: 8px;">
-          <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary-100); color: var(--primary-800); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;">!</div>
+          <div
+            style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary-100); color: var(--primary-800); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;">
+            !</div>
           <h3 class="modal-title">Sobre o Sistema</h3>
         </div>
         <button class="btn-close" onclick="app.closeCreditsModal()">&times;</button>
       </div>
       <div class="modal-body" style="padding: 24px;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <img src="logo cmpc.png" alt="Logo CMPC" style="max-height: 48px; max-width: 140px; margin: 0 auto 10px; display: block; object-fit: contain;">
-          <h4 style="font-weight: 800; color: var(--slate-900); font-size: 1.15rem; margin-bottom: 2px;">Sistema de Relatório Diário de Obra</h4>
+          <img src="logo cmpc.png" alt="Logo CMPC"
+            style="max-height: 48px; max-width: 140px; margin: 0 auto 10px; display: block; object-fit: contain;">
+          <h4 style="font-weight: 800; color: var(--slate-900); font-size: 1.15rem; margin-bottom: 2px;">Sistema de
+            Relatório Diário de Obra</h4>
           <span style="font-size: 0.85rem; color: var(--primary-700); font-weight: 600;">Engenharia CMPC</span>
         </div>
 
-        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+        <div
+          style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 14px;">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 50%; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+            <div
+              style="width: 40px; height: 40px; border-radius: 50%; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
               💡
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500); letter-spacing: 0.04em;">Idealizador</div>
+              <div
+                style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500); letter-spacing: 0.04em;">
+                Idealizador</div>
               <div style="font-size: 1.02rem; font-weight: 800; color: var(--slate-900);">Vitor Schneider Abrahão</div>
-              <a href="mailto:vitor.abrahao@cmpc.com" style="font-size: 0.82rem; color: var(--primary-700); font-weight: 600; text-decoration: none; display: block; margin-top: 2px;">
+              <a href="mailto:vitor.abrahao@cmpc.com"
+                style="font-size: 0.82rem; color: var(--primary-700); font-weight: 600; text-decoration: none; display: block; margin-top: 2px;">
                 vitor.abrahao@cmpc.com
               </a>
             </div>
@@ -1215,13 +1303,17 @@
           <div style="height: 1px; background: var(--slate-200);"></div>
 
           <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-100); color: var(--primary-800); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+            <div
+              style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-100); color: var(--primary-800); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
               💻
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500); letter-spacing: 0.04em;">Desenvolvedor</div>
+              <div
+                style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--slate-500); letter-spacing: 0.04em;">
+                Desenvolvedor</div>
               <div style="font-size: 1.02rem; font-weight: 800; color: var(--slate-900);">Luciano Engel</div>
-              <a href="mailto:sistemasengenharia@cmpcrs.com.br" style="font-size: 0.82rem; color: var(--primary-700); font-weight: 600; text-decoration: none; display: block; margin-top: 2px;">
+              <a href="mailto:sistemasengenharia@cmpcrs.com.br"
+                style="font-size: 0.82rem; color: var(--primary-700); font-weight: 600; text-decoration: none; display: block; margin-top: 2px;">
                 sistemasengenharia@cmpcrs.com.br
               </a>
             </div>
@@ -1306,7 +1398,9 @@
           <div class="manual-step-item">
             <div class="step-badge">Passo 1</div>
             <div>
-              <strong>Definir Logotipo da Empresa:</strong> Acesse a aba <code>Meu Painel</code> e no card <strong>Logotipo Padrão da Minha Empresa</strong> selecione a imagem da sua marca. Ela sairá impressa em todos os seus RDOs.
+              <strong>Definir Logotipo da Empresa:</strong> Acesse a aba <code>Meu Painel</code> e no card
+              <strong>Logotipo Padrão da Minha Empresa</strong> selecione a imagem da sua marca. Ela sairá impressa em
+              todos os seus RDOs.
             </div>
           </div>
 
@@ -1338,21 +1432,25 @@
             <div class="step-badge">Passo 5</div>
             <div>
               <strong>Impressão / PDF:</strong> Clique em <code>Imprimir / PDF</code> para gerar a folha oficial no
-              padrão da Engenharia CMPC. Em documentos com mais de uma página, o cabeçalho oficial com logotipo e dados do contrato é repetido automaticamente no topo de cada folha.
+              padrão da Engenharia CMPC. Em documentos com mais de uma página, o cabeçalho oficial com logotipo e dados
+              do contrato é repetido automaticamente no topo de cada folha.
             </div>
           </div>
 
           <div class="manual-step-item" style="border-left: 3px solid #dc2626;">
             <div class="step-badge" style="background:#fee2e2; color:#991b1b;">Segurança</div>
             <div>
-              <strong>Exclusão Protegida por Senha:</strong> Para evitar exclusões acidentais, a exclusão de qualquer RDO ou usuário requer a confirmação com a senha de segurança global <code>123456</code> (válida para todos os perfis).
+              <strong>Exclusão Protegida por Senha:</strong> Para evitar exclusões acidentais, a exclusão de qualquer
+              RDO ou usuário requer a confirmação com a senha de segurança global <code>123456</code> (válida para todos
+              os perfis).
             </div>
           </div>
 
           <div class="manual-step-item" style="border-left: 3px solid #b91c1c;">
             <div class="step-badge" style="background:#fee2e2; color:#991b1b;">Bloqueio 24h</div>
             <div>
-              <strong>Bloqueio Automático após 24 Horas:</strong> Relatórios com mais de 24 horas recebem a tarja transparente <code>BLOQUEADO APÓS 24hrs</code> e ficam protegidos contra modificações.
+              <strong>Bloqueio Automático após 24 Horas:</strong> Relatórios com mais de 24 horas recebem a tarja
+              transparente <code>BLOQUEADO APÓS 24hrs</code> e ficam protegidos contra modificações.
             </div>
           </div>
         </div>
@@ -1399,8 +1497,11 @@
               <span>Senha Obrigatória para Exclusão</span>
             </div>
             <div class="form-group" style="margin-bottom: 6px;">
-              <label for="delete-security-password" style="font-size: 0.8rem; color: var(--slate-700); font-weight: 600;">Digite a senha de segurança (<code>123456</code> ou sua senha de Admin):</label>
-              <input type="password" id="delete-security-password" class="form-control delete-pwd-input" placeholder="••••••••" required autocomplete="off">
+              <label for="delete-security-password"
+                style="font-size: 0.8rem; color: var(--slate-700); font-weight: 600;">Digite a senha de segurança
+                (<code>123456</code> ou sua senha de Admin):</label>
+              <input type="password" id="delete-security-password" class="form-control delete-pwd-input"
+                placeholder="••••••••" required autocomplete="off">
             </div>
             <div id="delete-pwd-error" class="delete-error-msg hidden">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1412,7 +1513,8 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer" style="background: var(--slate-50); border-top: 1px solid var(--slate-200); padding: 14px 20px;">
+        <div class="modal-footer"
+          style="background: var(--slate-50); border-top: 1px solid var(--slate-200); padding: 14px 20px;">
           <button type="button" class="btn btn-outline btn-sm" onclick="app.closeDeleteModal()">Cancelar</button>
           <button type="submit" class="btn btn-danger btn-sm" id="btn-confirm-delete-action">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1429,17 +1531,21 @@
   <!-- MODAL: ENVIAR RDO POR E-MAIL / CONFIRMAÇÃO DE ENVIO -->
   <div id="modal-send-rdo" class="modal-backdrop hidden" onclick="app.closeSendModal(event)">
     <div class="modal-dialog modal-send-dialog" onclick="event.stopPropagation()" style="max-width: 520px;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #fff; padding: 18px 24px; border-radius: 12px 12px 0 0;">
+      <div class="modal-header"
+        style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #fff; padding: 18px 24px; border-radius: 12px 12px 0 0;">
         <div class="modal-title-group" style="display: flex; align-items: center; gap: 12px;">
-          <div style="background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <div
+            style="background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <line x1="22" y1="2" x2="11" y2="13"></line>
               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
             </svg>
           </div>
           <div>
-            <h3 class="modal-title" style="color: #fff; font-size: 1.15rem; font-weight: 700; margin: 0;">Enviar RDO por E-mail</h3>
-            <span class="modal-subtitle" style="color: rgba(255,255,255,0.85); font-size: 0.8rem;">Confirmar envio e finalizar prazo de 24h</span>
+            <h3 class="modal-title" style="color: #fff; font-size: 1.15rem; font-weight: 700; margin: 0;">Enviar RDO por
+              E-mail</h3>
+            <span class="modal-subtitle" style="color: rgba(255,255,255,0.85); font-size: 0.8rem;">Confirmar envio e
+              finalizar prazo de 24h</span>
           </div>
         </div>
         <button class="btn-close" style="color: #fff; opacity: 0.85;" onclick="app.closeSendModal()">&times;</button>
@@ -1448,38 +1554,51 @@
         <input type="hidden" id="send-rdo-target-id" value="">
         <div class="modal-body" style="padding: 22px 24px;">
           <!-- RDO Info Summary Box -->
-          <div id="send-rdo-summary-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.85rem; color: #166534;">
+          <div id="send-rdo-summary-box"
+            style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.85rem; color: #166534;">
             <!-- Rendered dynamically by JS -->
           </div>
 
           <div class="form-group" style="margin-bottom: 16px;">
-            <label for="send-rdo-email" style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
+            <label for="send-rdo-email"
+              style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
               E-mail(s) do Destinatário: <span style="color: #dc2626;">*</span>
             </label>
-            <input type="text" id="send-rdo-email" class="form-control" placeholder="exemplo@cmpc.com.br, fiscal@cmpc.com.br" required style="font-size: 0.95rem; padding: 10px 12px;">
-            <small style="color: var(--slate-500); font-size: 0.75rem; margin-top: 4px; display: block;">Você pode inserir um ou mais e-mails separados por vírgula.</small>
+            <input type="text" id="send-rdo-email" class="form-control"
+              placeholder="exemplo@cmpc.com.br, fiscal@cmpc.com.br" required
+              style="font-size: 0.95rem; padding: 10px 12px;">
+            <small style="color: var(--slate-500); font-size: 0.75rem; margin-top: 4px; display: block;">Você pode
+              inserir um ou mais e-mails separados por vírgula.</small>
           </div>
 
           <div class="form-group" style="margin-bottom: 14px;">
-            <label for="send-rdo-obs" style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
+            <label for="send-rdo-obs"
+              style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
               Observações / Mensagem Adicional (Opcional):
             </label>
-            <textarea id="send-rdo-obs" class="form-control" rows="2" placeholder="Ex: Segue anexo o RDO referente às atividades do dia..." style="resize: vertical;"></textarea>
+            <textarea id="send-rdo-obs" class="form-control" rows="2"
+              placeholder="Ex: Segue anexo o RDO referente às atividades do dia..."
+              style="resize: vertical;"></textarea>
           </div>
 
-          <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; color: #1e40af;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+          <div
+            style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; color: #1e40af;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="flex-shrink: 0; margin-top: 2px;">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="12" y1="16" x2="12" y2="12"></line>
               <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
-            <div>Ao confirmar o envio, o RDO será registrado como <strong>Confirmado</strong>, garantindo a validação e prevenindo o bloqueio por expiração de 24h.</div>
+            <div>Ao confirmar o envio, o RDO será registrado como <strong>Confirmado</strong>, garantindo a validação e
+              prevenindo o bloqueio por expiração de 24h.</div>
           </div>
         </div>
 
-        <div class="modal-footer" style="background: var(--slate-50); border-top: 1px solid var(--slate-200); padding: 14px 24px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+        <div class="modal-footer"
+          style="background: var(--slate-50); border-top: 1px solid var(--slate-200); padding: 14px 24px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
           <button type="button" class="btn btn-outline btn-sm" onclick="app.closeSendModal()">Cancelar</button>
-          <button type="submit" id="btn-confirm-send-rdo" class="btn btn-primary btn-sm" style="background: #059669; border-color: #059669; display: inline-flex; align-items: center; gap: 6px;">
+          <button type="submit" id="btn-confirm-send-rdo" class="btn btn-primary btn-sm"
+            style="background: #059669; border-color: #059669; display: inline-flex; align-items: center; gap: 6px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="22" y1="2" x2="11" y2="13"></line>
               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -1494,17 +1613,21 @@
   <!-- MODAL: APROVAÇÃO DO RDO (FISCALIZAÇÃO / ENGENHARIA) -->
   <div id="modal-approve-rdo" class="modal-backdrop hidden" onclick="app.closeApproveModal(event)">
     <div class="modal-dialog modal-approve-dialog" onclick="event.stopPropagation()" style="max-width: 540px;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; padding: 18px 24px; border-radius: 12px 12px 0 0;">
+      <div class="modal-header"
+        style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; padding: 18px 24px; border-radius: 12px 12px 0 0;">
         <div class="modal-title-group" style="display: flex; align-items: center; gap: 12px;">
-          <div style="background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <div
+            style="background: rgba(255,255,255,0.2); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
               <polyline points="22 4 12 14.01 9 11.01"></polyline>
             </svg>
           </div>
           <div>
-            <h3 class="modal-title" style="color: #fff; font-size: 1.15rem; font-weight: 700; margin: 0;">Aprovação de RDO</h3>
-            <span class="modal-subtitle" style="color: rgba(255,255,255,0.85); font-size: 0.8rem;">Fiscalização CMPC & Engenharia</span>
+            <h3 class="modal-title" style="color: #fff; font-size: 1.15rem; font-weight: 700; margin: 0;">Aprovação de
+              RDO</h3>
+            <span class="modal-subtitle" style="color: rgba(255,255,255,0.85); font-size: 0.8rem;">Fiscalização CMPC &
+              Engenharia</span>
           </div>
         </div>
         <button class="btn-close" style="color: #fff; opacity: 0.85;" onclick="app.closeApproveModal()">&times;</button>
@@ -1513,45 +1636,58 @@
         <input type="hidden" id="approve-rdo-target-id" value="">
         <div class="modal-body" style="padding: 22px 24px;">
           <!-- Resumo do RDO -->
-          <div id="approve-rdo-summary-box" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.85rem; color: #334155;">
+          <div id="approve-rdo-summary-box"
+            style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.85rem; color: #334155;">
             <!-- Rendered dynamically by JS -->
           </div>
 
           <!-- Decisão / Parecer -->
           <div class="form-group" style="margin-bottom: 16px;">
-            <label style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 8px; display: block;">
+            <label
+              style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 8px; display: block;">
               Decisão da Fiscalização: <span style="color: #dc2626;">*</span>
             </label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <label id="label-decision-aprovado" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 2px solid #10b981; border-radius: 8px; background: #ecfdf5; cursor: pointer; font-weight: 600; color: #065f46;">
-                <input type="radio" name="approval_decision" value="aprovado" checked onchange="app.onApprovalDecisionChange(this.value)">
+              <label id="label-decision-aprovado"
+                style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 2px solid #10b981; border-radius: 8px; background: #ecfdf5; cursor: pointer; font-weight: 600; color: #065f46;">
+                <input type="radio" name="approval_decision" value="aprovado" checked
+                  onchange="app.onApprovalDecisionChange(this.value)">
                 <span>✅ APROVADO</span>
               </label>
-              <label id="label-decision-reprovado" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; color: #64748b;">
-                <input type="radio" name="approval_decision" value="reprovado" onchange="app.onApprovalDecisionChange(this.value)">
+              <label id="label-decision-reprovado"
+                style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; color: #64748b;">
+                <input type="radio" name="approval_decision" value="reprovado"
+                  onchange="app.onApprovalDecisionChange(this.value)">
                 <span>❌ REPROVADO</span>
               </label>
             </div>
           </div>
 
           <div class="form-group" style="margin-bottom: 14px;">
-            <label for="approve-fiscal-name" style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
+            <label for="approve-fiscal-name"
+              style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
               Nome / Matrícula / CREA do Fiscalizador: <span style="color: #dc2626;">*</span>
             </label>
-            <input type="text" id="approve-fiscal-name" class="form-control" required placeholder="Ex: Eng. Carlos Silva - CREA 12345/RS">
+            <input type="text" id="approve-fiscal-name" class="form-control" required
+              placeholder="Ex: Eng. Carlos Silva - CREA 12345/RS">
           </div>
 
           <div class="form-group" style="margin-bottom: 14px;">
-            <label for="approve-notes" style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
+            <label for="approve-notes"
+              style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
               Parecer Técnico / Observações da Aprovação:
             </label>
-            <textarea id="approve-notes" class="form-control" rows="3" placeholder="Ex: Atividades vistoriadas e em conformidade com as especificações de projeto e segurança." style="resize: vertical;"></textarea>
+            <textarea id="approve-notes" class="form-control" rows="3"
+              placeholder="Ex: Atividades vistoriadas e em conformidade com as especificações de projeto e segurança."
+              style="resize: vertical;"></textarea>
           </div>
         </div>
 
-        <div class="modal-footer" style="background: var(--slate-50); border-top: 1px solid var(--slate-200); padding: 14px 24px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+        <div class="modal-footer"
+          style="background: var(--slate-50); border-top: 1px solid var(--slate-200); padding: 14px 24px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
           <button type="button" class="btn btn-outline btn-sm" onclick="app.closeApproveModal()">Cancelar</button>
-          <button type="submit" id="btn-save-approval" class="btn btn-primary btn-sm" style="background: #2563eb; border-color: #2563eb; display: inline-flex; align-items: center; gap: 6px;">
+          <button type="submit" id="btn-save-approval" class="btn btn-primary btn-sm"
+            style="background: #2563eb; border-color: #2563eb; display: inline-flex; align-items: center; gap: 6px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
@@ -1563,17 +1699,25 @@
   </div>
 
   <!-- MODAL: DIGITAL SIGNATURE (DRAW, PASTE OR UPLOAD) -->
-  <div id="modal-digital-signature" class="modal-backdrop hidden" onclick="app.closeSignatureModal(event)" style="background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 9999;">
-    <div class="modal-dialog modal-signature-dialog" style="max-width: 680px; width: 95%; background: #ffffff !important; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0,0,0,0.1); overflow: hidden; border: none;" onclick="event.stopPropagation()">
-      <div class="modal-header" style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: #ffffff; padding: 14px 20px; border-bottom: 1px solid #1e40af; display: flex; align-items: center; justify-content: space-between;">
+  <div id="modal-digital-signature" class="modal-backdrop hidden" onclick="app.closeSignatureModal(event)"
+    style="background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 9999;">
+    <div class="modal-dialog modal-signature-dialog"
+      style="max-width: 680px; width: 95%; background: #ffffff !important; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0,0,0,0.1); overflow: hidden; border: none;"
+      onclick="event.stopPropagation()">
+      <div class="modal-header"
+        style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: #ffffff; padding: 14px 20px; border-bottom: 1px solid #1e40af; display: flex; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 1.35rem;">✍️</span>
           <div>
-            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #ffffff;" id="sig-modal-title">Assinatura Digital</h3>
-            <span style="font-size: 0.78rem; opacity: 0.9; color: #e0e7ff;" id="sig-modal-subtitle">Desenhe sua rubrica, cole com Ctrl+V ou carregue uma imagem</span>
+            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #ffffff;" id="sig-modal-title">Assinatura
+              Digital</h3>
+            <span style="font-size: 0.78rem; opacity: 0.9; color: #e0e7ff;" id="sig-modal-subtitle">Desenhe sua rubrica,
+              cole com Ctrl+V ou carregue uma imagem</span>
           </div>
         </div>
-        <button type="button" class="btn-close" style="color: #ffffff; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; transition: background 0.15s;" onclick="app.closeSignatureModal()">&times;</button>
+        <button type="button" class="btn-close"
+          style="color: #ffffff; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; transition: background 0.15s;"
+          onclick="app.closeSignatureModal()">&times;</button>
       </div>
 
       <div class="modal-body" style="padding: 18px 22px; background: #ffffff !important;">
@@ -1582,7 +1726,9 @@
           <div style="display: flex; align-items: flex-start; gap: 8px;">
             <span style="font-size: 1.15rem; line-height: 1.2;">📋</span>
             <div style="flex: 1;">
-              <div><strong>Dica:</strong> Se já tiver a imagem da sua assinatura copiada (WhatsApp, PDF ou print), basta pressionar <strong>Ctrl + V</strong> para colar diretamente aqui, carregar a imagem ou assinar na tela!</div>
+              <div><strong>Dica:</strong> Se já tiver a imagem da sua assinatura copiada (WhatsApp, PDF ou print), basta
+                pressionar <strong>Ctrl + V</strong> para colar diretamente aqui, carregar a imagem ou assinar na tela!
+              </div>
             </div>
           </div>
         </div>
@@ -1591,45 +1737,58 @@
         <div class="sig-toolbar">
           <div class="sig-tool-group">
             <span class="sig-tool-label">Cor da Caneta:</span>
-            <button type="button" class="sig-color-btn active" id="btn-color-blue" data-color="#1d4ed8" onclick="app.setSignatureColor('#1d4ed8')" title="Azul Caneta Oficial">
+            <button type="button" class="sig-color-btn active" id="btn-color-blue" data-color="#1d4ed8"
+              onclick="app.setSignatureColor('#1d4ed8')" title="Azul Caneta Oficial">
               <span class="sig-color-dot" style="background: #1d4ed8;"></span> Azul Caneta
             </button>
-            <button type="button" class="sig-color-btn" id="btn-color-black" data-color="#111827" onclick="app.setSignatureColor('#111827')" title="Preto">
+            <button type="button" class="sig-color-btn" id="btn-color-black" data-color="#111827"
+              onclick="app.setSignatureColor('#111827')" title="Preto">
               <span class="sig-color-dot" style="background: #111827;"></span> Preto
             </button>
           </div>
 
           <div class="sig-tool-group">
             <span class="sig-tool-label">Espessura:</span>
-            <button type="button" class="sig-size-btn" id="btn-size-thin" onclick="app.setSignatureWidth(1.8)" title="Fina">Fina</button>
-            <button type="button" class="sig-size-btn active" id="btn-size-med" onclick="app.setSignatureWidth(3.0)" title="Média (Recomendada)">Média</button>
-            <button type="button" class="sig-size-btn" id="btn-size-thick" onclick="app.setSignatureWidth(4.5)" title="Grossa">Grossa</button>
+            <button type="button" class="sig-size-btn" id="btn-size-thin" onclick="app.setSignatureWidth(1.8)"
+              title="Fina">Fina</button>
+            <button type="button" class="sig-size-btn active" id="btn-size-med" onclick="app.setSignatureWidth(3.0)"
+              title="Média (Recomendada)">Média</button>
+            <button type="button" class="sig-size-btn" id="btn-size-thick" onclick="app.setSignatureWidth(4.5)"
+              title="Grossa">Grossa</button>
           </div>
 
           <div class="sig-tool-group" style="margin-left: auto;">
-            <button type="button" class="btn btn-outline btn-xs" onclick="document.getElementById('sig-file-upload').click()" title="Carregar imagem PNG/JPG do seu computador">
+            <button type="button" class="btn btn-outline btn-xs"
+              onclick="document.getElementById('sig-file-upload').click()"
+              title="Carregar imagem PNG/JPG do seu computador">
               📁 Carregar Imagem
             </button>
-            <input type="file" id="sig-file-upload" accept="image/*" class="hidden" onchange="app.handleSignatureFileUpload(event)">
-            <button type="button" class="btn btn-outline btn-xs text-danger" onclick="app.clearSignatureCanvas()" title="Limpar todo o quadro para assinar novamente">
+            <input type="file" id="sig-file-upload" accept="image/*" class="hidden"
+              onchange="app.handleSignatureFileUpload(event)">
+            <button type="button" class="btn btn-outline btn-xs text-danger" onclick="app.clearSignatureCanvas()"
+              title="Limpar todo o quadro para assinar novamente">
               🗑️ Limpar Traço
             </button>
           </div>
         </div>
 
         <!-- Signature Canvas Box -->
-        <div class="sig-canvas-container" id="sig-canvas-container" style="background: #ffffff !important; border: 2px solid #cbd5e1; border-radius: 8px;">
+        <div class="sig-canvas-container" id="sig-canvas-container"
+          style="background: #ffffff !important; border: 2px solid #cbd5e1; border-radius: 8px;">
           <canvas id="sig-pad-canvas" width="600" height="175" style="background: #ffffff !important;"></canvas>
           <div class="sig-canvas-guide">
             <div class="sig-guide-line"></div>
             <span class="sig-guide-text">Linha de base da assinatura</span>
           </div>
           <!-- Seleção de Usuário (Nome) + E-mail Automático abaixo da linha de base -->
-          <div class="sig-modal-user-bar" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
-            <select id="sig-modal-user-select" class="sig-modal-select" onchange="app.onSigModalUserChange(this.value)" title="Selecione o nome do usuário cadastrado">
+          <div class="sig-modal-user-bar" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()"
+            ontouchstart="event.stopPropagation()">
+            <select id="sig-modal-user-select" class="sig-modal-select" onchange="app.onSigModalUserChange(this.value)"
+              title="Selecione o nome do usuário cadastrado">
               <option value="">-- Selecionar Nome --</option>
             </select>
-            <input type="text" id="sig-modal-user-email" class="sig-modal-email" readonly placeholder="E-mail preenchido automaticamente..." title="E-mail do usuário selecionado">
+            <input type="text" id="sig-modal-user-email" class="sig-modal-email" readonly
+              placeholder="E-mail preenchido automaticamente..." title="E-mail do usuário selecionado">
           </div>
         </div>
 
@@ -1638,14 +1797,21 @@
         </div>
       </div>
 
-      <div class="modal-footer" style="background: #f8fafc !important; border-top: 1px solid var(--slate-200); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div class="modal-footer"
+        style="background: #f8fafc !important; border-top: 1px solid var(--slate-200); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
         <button type="button" class="btn btn-outline btn-sm" onclick="app.closeSignatureModal()">Cancelar</button>
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-          <button type="button" class="btn btn-outline btn-sm" id="btn-save-user-profile-sig" style="color: #047857; border-color: #10b981; background: #ecfdf5; font-weight: 700;" onclick="app.saveSignatureToUserProfile()" title="Salva esta assinatura permanentemente no cadastro do usuário selecionado">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-save-user-profile-sig"
+            style="color: #047857; border-color: #10b981; background: #ecfdf5; font-weight: 700;"
+            onclick="app.saveSignatureToUserProfile()"
+            title="Salva esta assinatura permanentemente no cadastro do usuário selecionado">
             💾 Salvar no Perfil Permanente
           </button>
-          <button type="button" class="btn btn-primary btn-sm" style="background: #1d4ed8; border-color: #1d4ed8; font-weight: 700; padding: 7px 18px;" onclick="app.applySignatureFromModal()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: -2px; margin-right: 4px;">
+          <button type="button" class="btn btn-primary btn-sm"
+            style="background: #1d4ed8; border-color: #1d4ed8; font-weight: 700; padding: 7px 18px;"
+            onclick="app.applySignatureFromModal()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              style="vertical-align: -2px; margin-right: 4px;">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
             Confirmar Assinatura
