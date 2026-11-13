@@ -507,8 +507,8 @@ input, select, textarea, button {
    MAIN CONTAINER & PAGES
    ========================================================================== */
 .main-container {
-  max-width: 1720px;
-  width: 98%;
+  max-width: 99vw;
+  width: 99%;
   margin: 0 auto;
   padding: 14px 16px 50px;
   box-sizing: border-box;
@@ -610,6 +610,21 @@ input, select, textarea, button {
   vertical-align: middle;
   white-space: nowrap;
 }
+.data-table th:nth-child(10),
+.data-table td:nth-child(10),
+.data-table th:nth-child(11),
+.data-table td:nth-child(11) {
+  width: 1%;
+  white-space: nowrap;
+  text-align: center;
+}
+.data-table th:last-child,
+.data-table td:last-child {
+  text-align: left;
+  padding-left: 8px;
+  width: 1%;
+  white-space: nowrap;
+}
 .data-table tr:hover td {
   background-color: var(--primary-50);
 }
@@ -675,6 +690,8 @@ input, select, textarea, button {
   align-items: center;
   justify-content: flex-start;
   gap: 4px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .btn-duplicate {
