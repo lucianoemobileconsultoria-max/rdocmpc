@@ -592,17 +592,19 @@ input, select, textarea, button {
 .data-table th {
   background: var(--slate-50);
   color: var(--slate-600);
-  font-size: 0.69rem;
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 8px 10px;
+  letter-spacing: 0.02em;
+  padding: 6px 6px;
   border-bottom: 1px solid var(--slate-200);
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.25;
+  vertical-align: middle;
 }
 .data-table td {
-  padding: 6px 10px;
-  font-size: 0.78rem;
+  padding: 5px 6px;
+  font-size: 0.73rem;
   border-bottom: 1px solid var(--slate-100);
   color: var(--slate-800);
   vertical-align: middle;
