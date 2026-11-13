@@ -507,10 +507,10 @@ input, select, textarea, button {
    MAIN CONTAINER & PAGES
    ========================================================================== */
 .main-container {
-  max-width: 1360px;
+  max-width: 1720px;
   width: 98%;
   margin: 0 auto;
-  padding: 14px 12px 50px;
+  padding: 14px 16px 50px;
   box-sizing: border-box;
 }
 
@@ -592,16 +592,16 @@ input, select, textarea, button {
 .data-table th {
   background: var(--slate-50);
   color: var(--slate-600);
-  font-size: 0.68rem;
+  font-size: 0.69rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 8px 8px;
+  letter-spacing: 0.03em;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--slate-200);
   white-space: nowrap;
 }
 .data-table td {
-  padding: 6px 8px;
+  padding: 6px 10px;
   font-size: 0.78rem;
   border-bottom: 1px solid var(--slate-100);
   color: var(--slate-800);

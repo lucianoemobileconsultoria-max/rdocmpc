@@ -2079,6 +2079,25 @@ const app = {
       const heCellHtml = realHE > 0
         ? `<span class="badge-he-prevista">+${displayHE} HE</span>`
         : `<span class="badge-he-zero">0 HE</span>`;
+
+      // Registros / Responsáveis (Planejamento Executante, Engenheiro de Produção Executante, Fiscalização CMPC)
+      const planejaNome = (r.sigPlanejamento || '').trim();
+      const planejaHasSig = !!(r.sigImgPlanejamento);
+      const planejaCell = planejaNome
+        ? `<div style="font-weight:600; color:var(--slate-800); white-space:nowrap;" title="${this.escapeHtml(planejaNome)}">${this.escapeHtml(planejaNome)} ${planejaHasSig ? '<span title="Assinatura Digital anexada" style="font-size:0.75rem;">✍️</span>' : ''}</div>`
+        : `<span style="color:var(--slate-400); font-size:0.8rem;">-</span>`;
+
+      const engNome = (r.sigEngenheiro || '').trim();
+      const engHasSig = !!(r.sigImgEngenheiro);
+      const engCell = engNome
+        ? `<div style="font-weight:600; color:var(--slate-800); white-space:nowrap;" title="${this.escapeHtml(engNome)}">${this.escapeHtml(engNome)} ${engHasSig ? '<span title="Assinatura Digital anexada" style="font-size:0.75rem;">✍️</span>' : ''}</div>`
+        : `<span style="color:var(--slate-400); font-size:0.8rem;">-</span>`;
+
+      const fiscalNome = (info.approvedBy || r.sigFiscalizacao || '').trim();
+      const fiscalHasSig = !!(r.sigImgFiscalizacao || info.isApproved);
+      const fiscalCell = fiscalNome
+        ? `<div style="font-weight:600; color:var(--slate-800); white-space:nowrap;" title="${this.escapeHtml(fiscalNome)}">${this.escapeHtml(fiscalNome)} ${fiscalHasSig ? '<span title="Assinatura / Visto anexado" style="font-size:0.75rem;">✍️</span>' : ''}</div>`
+        : `<span style="color:var(--slate-400); font-size:0.8rem;">-</span>`;
       
       const info = this.getRDOExpiryInfo(r);
       let statusBadge = '';
@@ -2170,6 +2189,9 @@ const app = {
             <div style="font-weight:600; color:var(--slate-800); white-space:nowrap;">${this.escapeHtml(r.encarregado || '-')}</div>
             ${creatorBadge}
           </td>
+          <td>${planejaCell}</td>
+          <td>${engCell}</td>
+          <td>${fiscalCell}</td>
           <td><span class="badge-hours">${displayHH} HH</span></td>
           <td>${heCellHtml}</td>
           <td>
