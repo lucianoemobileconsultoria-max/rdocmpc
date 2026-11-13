@@ -1152,6 +1152,12 @@ body {
   white-space: nowrap;
 }
 
+.worker-total-badge.extra {
+  background: #fff7ed !important;
+  color: #ea580c !important;
+  border-color: #fed7aa !important;
+}
+
 .worker-total-badge.exceeded {
   background: #dc2626 !important;
   color: #ffffff !important;

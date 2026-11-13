@@ -402,12 +402,20 @@ const mobileApp = {
     const fmtTotal = totalWorker % 1 === 0 ? totalWorker : totalWorker.toFixed(1);
 
     if (badge) {
-      badge.textContent = `${fmtTotal}h`;
       if (totalWorker > 11) {
         badge.classList.add('exceeded');
+        badge.classList.remove('extra');
         badge.textContent = `⚠️ ${fmtTotal}h (Máx 11h)`;
+      } else if (totalWorker > 8) {
+        badge.classList.remove('exceeded');
+        badge.classList.add('extra');
+        const he = totalWorker - 8;
+        const fmtHE = he % 1 === 0 ? he : he.toFixed(1);
+        badge.textContent = `${fmtTotal}h (+${fmtHE} HE)`;
       } else {
         badge.classList.remove('exceeded');
+        badge.classList.remove('extra');
+        badge.textContent = `${fmtTotal}h`;
       }
     }
 
