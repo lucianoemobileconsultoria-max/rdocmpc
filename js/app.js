@@ -193,25 +193,56 @@ const app = {
   // DIGITAL SIGNATURES CONTROLLER (DRAW, PASTE VIA CTRL+V, OR UPLOAD)
   // ==========================================================================
   openSignatureModal(target) {
-    this.currentSigTarget = target;
-    const modal = document.getElementById('modal-digital-signature');
-    const titleEl = document.getElementById('sig-modal-title');
-    const subtitleEl = document.getElementById('sig-modal-subtitle');
-    const statusEl = document.getElementById('sig-status-indicator');
+    const session = StorageService.getSession();
+    if (!session) {
+      this.showToast('Faça login no sistema para assinar.', 'warning');
+      return;
+    }
+
+    const select = document.getElementById(`rdo-sig-${target}`);
+    const selectedName = select ? select.value.trim() : '';
+    const emailInput = document.getElementById(`rdo-sig-email-${target}`);
+    const selectedEmail = emailInput ? emailInput.value.trim() : '';
 
     const titles = {
       planejamento: 'Planejamento Executante',
       engenheiro: 'Engenheiro de Produção Executante',
       fiscalizacao: 'Fiscalização CMPC'
     };
-
     const targetTitle = titles[target] || 'Responsável';
+
+    if (!selectedName) {
+      this.showToast(`Selecione primeiro o responsável no campo "${targetTitle}" na caixa de seleção abaixo antes de assinar.`, 'warning');
+      if (select) select.focus();
+      return;
+    }
+
+    // REGRA DE PERFIL:
+    // Quem abre o RDO pode colocar o nome pela caixa de seleção mas NÃO pode assinar pelo outro!
+    // Só pode assinar quando o perfil do usuário logado for o dele mesmo!
+    const sessionName = (session.name || '').trim().toLowerCase();
+    const sessionEmail = (session.email || '').trim().toLowerCase();
+    const selName = selectedName.toLowerCase();
+    const selEmail = selectedEmail.toLowerCase();
+
+    const isMatch = (sessionName === selName) || (sessionEmail && selectedEmail && sessionEmail === selEmail);
+
+    if (!isMatch) {
+      this.showToast(`⛔ Apenas o usuário "${selectedName}" pode assinar este campo com seu perfil. Você está conectado como "${session.name}".`, 'error');
+      return;
+    }
+
+    this.currentSigTarget = target;
+    const modal = document.getElementById('modal-digital-signature');
+    const titleEl = document.getElementById('sig-modal-title');
+    const subtitleEl = document.getElementById('sig-modal-subtitle');
+    const statusEl = document.getElementById('sig-status-indicator');
 
     if (titleEl) {
       titleEl.textContent = `✍️ Assinatura: ${targetTitle}`;
     }
     if (subtitleEl) {
-      subtitleEl.textContent = `Rubrica oficial para o campo "${targetTitle}"`;
+      subtitleEl.textContent = `Assinando como "${selectedName}" (${session.role || 'Usuário'})`;
     }
     if (statusEl) {
       statusEl.innerHTML = 'Pronto para assinar na tela, colar com <strong>Ctrl+V</strong> ou carregar imagem.';
@@ -228,6 +259,11 @@ const app = {
       const existing = this.currentSignatures[target];
       if (existing) {
         this.loadSignatureImageToCanvas(existing);
+      } else if (session.signature) {
+        this.loadSignatureImageToCanvas(session.signature);
+        if (statusEl) {
+          statusEl.innerHTML = `<span style="color:#059669; font-weight:700;">✅ Sua assinatura permanente (${session.name}) foi carregada. Clique em "Confirmar Assinatura" ou altere abaixo.</span>`;
+        }
       }
     }, 60);
 
@@ -503,6 +539,25 @@ const app = {
   },
 
   clearDigitalSignature(target) {
+    const session = StorageService.getSession();
+    const select = document.getElementById(`rdo-sig-${target}`);
+    const selectedName = select ? select.value.trim() : '';
+    const emailInput = document.getElementById(`rdo-sig-email-${target}`);
+    const selectedEmail = emailInput ? emailInput.value.trim() : '';
+
+    if (session && selectedName) {
+      const sessionName = (session.name || '').trim().toLowerCase();
+      const sessionEmail = (session.email || '').trim().toLowerCase();
+      const selName = selectedName.toLowerCase();
+      const selEmail = selectedEmail.toLowerCase();
+      const isMatch = (sessionName === selName) || (sessionEmail && selectedEmail && sessionEmail === selEmail) || (session.role === 'Admin');
+
+      if (!isMatch) {
+        this.showToast(`⛔ Apenas o usuário "${selectedName}" (ou Administrador) pode remover esta assinatura.`, 'error');
+        return;
+      }
+    }
+
     this.currentSignatures[target] = '';
     this.updateSignatureBoxUI(target, '');
     this.showToast('Assinatura digital removida.', 'info');
@@ -548,6 +603,7 @@ const app = {
 
     if (!selectedName) {
       emailInput.value = '';
+      this.updateSignatureBoxUI(target, this.currentSignatures[target] || '');
       return;
     }
 
@@ -560,11 +616,21 @@ const app = {
       emailInput.value = opt?.dataset?.email || '';
     }
 
-    // Auto-carrega assinatura salva no perfil do usuário, se houver
-    if (matched && matched.signature && !this.currentSignatures[target]) {
+    // REGRA DE PERFIL:
+    // Quem abre o RDO pode colocar o nome pela caixa de seleção, mas NÃO PODE assinar pelo outro!
+    // NÃO auto-carrega a assinatura se o usuário logado for diferente do usuário selecionado!
+    const session = StorageService.getSession();
+    const isMe = session && (
+      (session.name && session.name.trim().toLowerCase() === selectedName.trim().toLowerCase()) ||
+      (session.email && matched && session.email.trim().toLowerCase() === matched.email.trim().toLowerCase())
+    );
+
+    if (isMe && matched && matched.signature && !this.currentSignatures[target]) {
       this.currentSignatures[target] = matched.signature;
       this.updateSignatureBoxUI(target, matched.signature);
-      this.showToast(`Assinatura permanente de "${matched.name}" carregada automaticamente!`, 'info');
+      this.showToast(`Sua assinatura permanente (${matched.name}) foi carregada!`, 'info');
+    } else {
+      this.updateSignatureBoxUI(target, this.currentSignatures[target] || '');
     }
   },
 
@@ -699,6 +765,18 @@ const app = {
     const img = document.getElementById(`sig-img-${target}`);
     const prompt = document.getElementById(`sig-prompt-${target}`);
     const clearBtn = document.getElementById(`sig-clear-${target}`);
+    const select = document.getElementById(`rdo-sig-${target}`);
+    const emailInput = document.getElementById(`rdo-sig-email-${target}`);
+    const selectedName = select ? select.value.trim() : '';
+    const selectedEmail = emailInput ? emailInput.value.trim() : '';
+
+    const session = StorageService.getSession();
+    const sessionName = (session?.name || '').trim().toLowerCase();
+    const sessionEmail = (session?.email || '').trim().toLowerCase();
+    const isMatch = session && selectedName && (
+      sessionName === selectedName.toLowerCase() ||
+      (sessionEmail && selectedEmail && sessionEmail === selectedEmail.toLowerCase())
+    );
 
     if (base64Url) {
       if (img) {
@@ -706,13 +784,40 @@ const app = {
         img.classList.remove('hidden');
       }
       if (prompt) prompt.classList.add('hidden');
-      if (clearBtn) clearBtn.classList.remove('hidden');
+      if (clearBtn) {
+        // Apenas o próprio usuário ou Admin pode remover
+        const canDelete = isMatch || (session && session.role === 'Admin');
+        clearBtn.classList.toggle('hidden', !canDelete);
+      }
     } else {
       if (img) {
         img.src = '';
         img.classList.add('hidden');
       }
-      if (prompt) prompt.classList.remove('hidden');
+      if (prompt) {
+        prompt.classList.remove('hidden');
+        if (selectedName) {
+          if (isMatch) {
+            prompt.innerHTML = `
+              <span class="sig-prompt-icon">✍️</span>
+              <span class="sig-prompt-text">Assinar (${this.escapeHtml(session.name)})</span>
+            `;
+            prompt.style.color = '#1e40af';
+          } else {
+            prompt.innerHTML = `
+              <span class="sig-prompt-icon">🔒</span>
+              <span class="sig-prompt-text" style="font-size:0.75rem;">Aguardando ${this.escapeHtml(selectedName)}</span>
+            `;
+            prompt.style.color = '#64748b';
+          }
+        } else {
+          prompt.innerHTML = `
+            <span class="sig-prompt-icon">✍️</span>
+            <span class="sig-prompt-text">Assinar / Colar</span>
+          `;
+          prompt.style.color = '';
+        }
+      }
       if (clearBtn) clearBtn.classList.add('hidden');
     }
   },

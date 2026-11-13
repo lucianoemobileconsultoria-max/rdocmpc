@@ -578,6 +578,7 @@ const mobileApp = {
     const emailInput = document.getElementById(`m-rdo-sig-email-${target}`);
     if (!selectedName) {
       if (emailInput) emailInput.value = '';
+      this.updateSignatureBoxUI(target, this.currentSignatures[target] || '');
       return;
     }
 
@@ -586,12 +587,20 @@ const mobileApp = {
     if (matched) {
       if (emailInput) emailInput.value = matched.email || '';
 
-      // Se o usuário selecionado tiver uma assinatura gravada no perfil, carrega automaticamente!
+      // REGRA DE PERFIL: só carrega automaticamente se o usuário logado for o próprio selecionado
+      const session = StorageService.getSession();
+      const isMe = session && (
+        (session.name && session.name.trim().toLowerCase() === selectedName.trim().toLowerCase()) ||
+        (session.email && matched.email && session.email.trim().toLowerCase() === matched.email.trim().toLowerCase())
+      );
+
       const userSig = StorageService.getUserSignature ? StorageService.getUserSignature(matched.id) : null;
-      if (userSig && !this.currentSignatures[target]) {
+      if (isMe && userSig && !this.currentSignatures[target]) {
         this.currentSignatures[target] = userSig;
         this.updateSignatureBoxUI(target, userSig);
-        this.showToast(`Assinatura de ${matched.name} carregada automaticamente do perfil!`, 'info');
+        this.showToast(`Sua assinatura permanente (${matched.name}) foi carregada!`, 'info');
+      } else {
+        this.updateSignatureBoxUI(target, this.currentSignatures[target] || '');
       }
     }
   },
@@ -695,10 +704,16 @@ const mobileApp = {
   },
 
   openSignatureModal(target) {
-    this.currentSigTarget = target;
-    const modal = document.getElementById('modal-signature-mobile');
-    const titleEl = document.getElementById('sig-modal-title-mobile');
-    const subtitleEl = document.getElementById('sig-modal-subtitle-mobile');
+    const session = StorageService.getSession();
+    if (!session) {
+      this.showToast('Faça login no sistema para assinar.', 'warning');
+      return;
+    }
+
+    const select = document.getElementById(`m-rdo-sig-${target}`);
+    const selectedName = select ? select.value.trim() : '';
+    const emailInput = document.getElementById(`m-rdo-sig-email-${target}`);
+    const selectedEmail = emailInput ? emailInput.value.trim() : '';
 
     const titles = {
       planejamento: 'Planejamento Executante',
@@ -707,22 +722,40 @@ const mobileApp = {
     };
     const tName = titles[target] || 'Assinatura Técnica';
 
+    if (!selectedName) {
+      this.showToast(`Selecione primeiro o responsável para "${tName}".`, 'warning');
+      if (select) select.focus();
+      return;
+    }
+
+    // REGRA DE PERFIL:
+    const sessionName = (session.name || '').trim().toLowerCase();
+    const sessionEmail = (session.email || '').trim().toLowerCase();
+    const selName = selectedName.toLowerCase();
+    const selEmail = selectedEmail.toLowerCase();
+
+    const isMatch = (sessionName === selName) || (sessionEmail && selectedEmail && sessionEmail === selEmail);
+
+    if (!isMatch) {
+      this.showToast(`⛔ Apenas o usuário "${selectedName}" pode assinar este campo com seu perfil. Você está como "${session.name}".`, 'error');
+      return;
+    }
+
+    this.currentSigTarget = target;
+    const modal = document.getElementById('modal-signature-mobile');
+    const titleEl = document.getElementById('sig-modal-title-mobile');
+    const subtitleEl = document.getElementById('sig-modal-subtitle-mobile');
+
     if (titleEl) titleEl.textContent = `✍️ ${tName}`;
-    if (subtitleEl) subtitleEl.textContent = `Assine com o dedo ou caneta stylus para "${tName}"`;
+    if (subtitleEl) subtitleEl.textContent = `Assinando como "${selectedName}" (${session.role || 'Usuário'})`;
 
     this.clearSignatureCanvas();
     if (modal) modal.classList.remove('hidden');
 
-    // Se o usuário selecionado no card tiver assinatura gravada no perfil, desenha de fundo
-    const select = document.getElementById(`m-rdo-sig-${target}`);
-    const selectedName = select ? select.value : '';
-    const users = StorageService.getUsers() || [];
-    const matched = users.find(u => u.name === selectedName);
-    if (matched) {
-      const userSig = StorageService.getUserSignature ? StorageService.getUserSignature(matched.id) : null;
-      if (userSig) {
-        this.loadSignatureImageToCanvas(userSig);
-      }
+    // Se o próprio usuário tiver assinatura gravada no perfil, carrega
+    const userSig = StorageService.getUserSignature ? StorageService.getUserSignature(session.id) : (session.signature || null);
+    if (userSig) {
+      this.loadSignatureImageToCanvas(userSig);
     }
   },
 
