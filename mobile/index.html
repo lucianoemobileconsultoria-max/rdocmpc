@@ -131,19 +131,19 @@
         <div class="card-body-mobile">
           <div class="grid-2-col">
             <div class="form-field">
-              <label class="form-label" for="m-rdo-numero">Número RDO</label>
-              <input type="text" id="m-rdo-numero" class="form-input text-center font-bold" placeholder="0001/2026">
+              <label class="form-label" for="m-rdo-contrato">Nº do Contrato</label>
+              <input type="text" id="m-rdo-contrato" class="form-input font-bold" placeholder="Ex: CTR-2026/045">
             </div>
             <div class="form-field">
-              <label class="form-label" for="m-rdo-data">Data e Hora</label>
-              <input type="datetime-local" id="m-rdo-data" class="form-input text-center" onchange="mobileApp.handleDateChange(event)">
+              <label class="form-label" for="m-rdo-numero">Número RDO</label>
+              <input type="text" id="m-rdo-numero" class="form-input text-center font-bold" placeholder="0001/2026">
             </div>
           </div>
 
           <div class="grid-2-col">
             <div class="form-field">
-              <label class="form-label" for="m-rdo-dia-semana">Dia da Semana</label>
-              <input type="text" id="m-rdo-dia-semana" class="form-input text-center" readonly style="background: var(--slate-100); color: var(--slate-600);">
+              <label class="form-label" for="m-rdo-data">Data e Hora</label>
+              <input type="datetime-local" id="m-rdo-data" class="form-input text-center" onchange="mobileApp.handleDateChange(event)">
             </div>
             <div class="form-field">
               <label class="form-label" for="m-rdo-turno">Turno de Trabalho</label>
@@ -155,6 +155,11 @@
                 <option value="Integral (24h)">⚡ Integral (24h)</option>
               </select>
             </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="m-rdo-dia-semana">Dia da Semana</label>
+            <input type="text" id="m-rdo-dia-semana" class="form-input text-center" readonly style="background: var(--slate-100); color: var(--slate-600);">
           </div>
 
           <div class="form-field">
@@ -195,11 +200,6 @@
                 </select>
               </div>
             </div>
-          </div>
-
-          <div class="form-field">
-            <label class="form-label" for="m-rdo-contrato">Nº do Contrato</label>
-            <input type="text" id="m-rdo-contrato" class="form-input" placeholder="Ex: CTR-2026/045">
           </div>
 
           <div class="form-field">

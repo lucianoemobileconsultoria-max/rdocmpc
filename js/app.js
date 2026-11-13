@@ -2180,11 +2180,11 @@ const app = {
 
       return `
         <tr>
+          <td><span style="font-weight:700; color:var(--slate-800);">${this.escapeHtml(r.contrato || '-')}</span></td>
           <td><strong style="color: var(--primary-800);">${this.escapeHtml(r.numero || '-')}</strong></td>
           <td><span style="color: var(--slate-800); font-weight:600; white-space:nowrap;">${formattedDate}</span></td>
           <td>${statusBadge}</td>
           <td><span class="badge-turno ${turnoClass}">${this.escapeHtml(r.turno || 'Diurno')}</span></td>
-          <td><span style="font-weight:600; color:var(--slate-700);">${this.escapeHtml(r.contrato || '-')}</span></td>
           <td>
             <div style="font-weight:600; color:var(--slate-800); white-space:nowrap;">${this.escapeHtml(r.encarregado || '-')}</div>
             ${creatorBadge}
