@@ -610,10 +610,10 @@ input, select, textarea, button {
   vertical-align: middle;
   white-space: nowrap;
 }
+.data-table th:nth-child(9),
+.data-table td:nth-child(9),
 .data-table th:nth-child(10),
-.data-table td:nth-child(10),
-.data-table th:nth-child(11),
-.data-table td:nth-child(11) {
+.data-table td:nth-child(10) {
   width: 1%;
   white-space: nowrap;
   text-align: center;
@@ -1112,7 +1112,7 @@ input, select, textarea, button {
 /* Main title & Condição Climática */
 .rdo-main-title-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 285px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   border-bottom: 2px solid var(--sheet-border);
   background: #ffffff;
   color: #000000;
@@ -1195,13 +1195,19 @@ input, select, textarea, button {
   background: transparent;
   font-size: 0.73rem;
   font-weight: 700;
-  text-align: center;
+  text-align: center !important;
+  text-align-last: center !important;
+  -webkit-text-align-last: center !important;
   color: #0f172a;
   cursor: pointer;
   padding: 1px 0;
   outline: none;
   text-overflow: ellipsis;
   box-sizing: border-box;
+}
+
+.clima-select option {
+  text-align: center;
 }
 
 .clima-select:focus {
@@ -1211,7 +1217,7 @@ input, select, textarea, button {
 /* 3. Meta Grid: Contract & Team info */
 .rdo-meta-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.05fr) 285px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   border-bottom: 2px solid var(--sheet-border);
   box-sizing: border-box;
 }
@@ -1239,7 +1245,7 @@ input, select, textarea, button {
 }
 
 .rdo-meta-middle {
-  border-right: 2px solid var(--sheet-border);
+  border-right: none;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -3188,7 +3194,7 @@ input, select, textarea, button {
   /* Main Title & Condição Climática in Print */
   .rdo-main-title-row {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 265px !important;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) !important;
     padding: 0 !important;
     border-bottom: 2px solid #000000 !important;
   }
@@ -3233,12 +3239,15 @@ input, select, textarea, button {
     font-size: 6.5pt !important;
     font-weight: 700 !important;
     padding: 0 !important;
+    text-align: center !important;
+    text-align-last: center !important;
+    -webkit-text-align-last: center !important;
   }
 
-  /* 3. Contract & Team Metadata in Print (Desktop 3-Col Format) */
+  /* 3. Contract & Team Metadata in Print */
   .rdo-meta-grid {
     display: grid !important;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.05fr) 265px !important;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) !important;
     border-bottom: 2px solid #000000 !important;
   }
   .rdo-meta-left {
@@ -3266,7 +3275,7 @@ input, select, textarea, button {
   .rdo-meta-middle {
     display: flex !important;
     flex-direction: column !important;
-    border-right: 2px solid #000000 !important;
+    border-right: none !important;
   }
   .meta-middle-header-row {
     display: grid !important;

@@ -1270,7 +1270,8 @@ const app = {
     document.getElementById('rdo-numero').value = nextNum;
     document.getElementById('rdo-data').value = currentDT;
     document.getElementById('rdo-dia-semana').value = this.getDayOfWeekName(currentDT);
-    document.getElementById('rdo-turno').value = 'Diurno';
+    const turnoEl = document.getElementById('rdo-turno');
+    if (turnoEl) turnoEl.value = 'Diurno';
     const cManhaEl = document.getElementById('rdo-clima-manha');
     if (cManhaEl) cManhaEl.value = 'Sol';
     const cTardeEl = document.getElementById('rdo-clima-tarde');
@@ -1374,7 +1375,8 @@ const app = {
     document.getElementById('rdo-numero').value = nextNum;
     document.getElementById('rdo-data').value = currentDT;
     document.getElementById('rdo-dia-semana').value = this.getDayOfWeekName(currentDT);
-    document.getElementById('rdo-turno').value = rdo.turno || 'Diurno';
+    const turnoEl = document.getElementById('rdo-turno');
+    if (turnoEl) turnoEl.value = rdo.turno || 'Diurno';
 
     // Clima
     let cManha = rdo.climaManha;
@@ -1526,7 +1528,8 @@ const app = {
     document.getElementById('rdo-numero').value = rdo.numero || '';
     document.getElementById('rdo-data').value = dateVal;
     document.getElementById('rdo-dia-semana').value = rdo.diaSemana || this.getDayOfWeekName(dateVal);
-    document.getElementById('rdo-turno').value = rdo.turno || 'Diurno';
+    const turnoEl = document.getElementById('rdo-turno');
+    if (turnoEl) turnoEl.value = rdo.turno || 'Diurno';
 
     // Clima por períodos (com fallback para rdo.clima legado)
     let cManha = rdo.climaManha;
@@ -2289,7 +2292,6 @@ const app = {
           <td><strong style="color: var(--primary-800);">${this.escapeHtml(r.numero || '-')}</strong></td>
           <td><span style="color: var(--slate-800); font-weight:600; white-space:nowrap;">${formattedDate}</span></td>
           <td>${statusBadge}</td>
-          <td><span class="badge-turno ${turnoClass}">${this.escapeHtml(r.turno || 'Diurno')}</span></td>
           <td>
             <div style="font-weight:600; color:var(--slate-800); white-space:nowrap;">${this.escapeHtml(r.encarregado || '-')}</div>
             ${creatorBadge}

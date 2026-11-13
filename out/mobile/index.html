@@ -146,28 +146,17 @@
               <input type="datetime-local" id="m-rdo-data" class="form-input text-center" onchange="mobileApp.handleDateChange(event)">
             </div>
             <div class="form-field">
-              <label class="form-label" for="m-rdo-turno">Turno de Trabalho</label>
-              <select id="m-rdo-turno" class="form-select font-bold">
-                <option value="Diurno">☀️ Diurno (Manhã e Tarde)</option>
-                <option value="1º Turno (Manhã)">🌅 1º Turno (Manhã)</option>
-                <option value="2º Turno (Tarde)">🌇 2º Turno (Tarde)</option>
-                <option value="Noturno">🌙 Turno Noturno</option>
-                <option value="Integral (24h)">⚡ Integral (24h)</option>
-              </select>
+              <label class="form-label" for="m-rdo-dia-semana">Dia da Semana</label>
+              <input type="text" id="m-rdo-dia-semana" class="form-input text-center" readonly style="background: var(--slate-100); color: var(--slate-600);">
             </div>
           </div>
 
           <div class="form-field">
-            <label class="form-label" for="m-rdo-dia-semana">Dia da Semana</label>
-            <input type="text" id="m-rdo-dia-semana" class="form-input text-center" readonly style="background: var(--slate-100); color: var(--slate-600);">
-          </div>
-
-          <div class="form-field">
-            <label class="form-label">Condição Climática por Turno</label>
+            <label class="form-label text-center" style="display:block; text-align:center;">Condição Climática por Turno</label>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-              <div>
+              <div style="text-align: center;">
                 <span style="display: block; font-size: 0.72rem; font-weight: 800; color: #475569; margin-bottom: 3px; text-align: center;">MANHÃ</span>
-                <select id="m-rdo-clima-manha" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center;">
+                <select id="m-rdo-clima-manha" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center; text-align-last: center; -webkit-text-align-last: center;">
                   <option value="Sol">☀️ Sol</option>
                   <option value="Nublado">⛅ Nublado</option>
                   <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
@@ -176,9 +165,9 @@
                   <option value="Impraticável">🚫 Imprat.</option>
                 </select>
               </div>
-              <div>
+              <div style="text-align: center;">
                 <span style="display: block; font-size: 0.72rem; font-weight: 800; color: #475569; margin-bottom: 3px; text-align: center;">TARDE</span>
-                <select id="m-rdo-clima-tarde" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center;">
+                <select id="m-rdo-clima-tarde" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center; text-align-last: center; -webkit-text-align-last: center;">
                   <option value="Sol">☀️ Sol</option>
                   <option value="Nublado">⛅ Nublado</option>
                   <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
@@ -187,9 +176,9 @@
                   <option value="Impraticável">🚫 Imprat.</option>
                 </select>
               </div>
-              <div>
+              <div style="text-align: center;">
                 <span style="display: block; font-size: 0.72rem; font-weight: 800; color: #475569; margin-bottom: 3px; text-align: center;">NOITE</span>
-                <select id="m-rdo-clima-noite" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center;">
+                <select id="m-rdo-clima-noite" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center; text-align-last: center; -webkit-text-align-last: center;">
                   <option value="Sem Trabalho">— S/ Trab.</option>
                   <option value="Bom / Estável">🌙 Estável</option>
                   <option value="Nublado">⛅ Nublado</option>
