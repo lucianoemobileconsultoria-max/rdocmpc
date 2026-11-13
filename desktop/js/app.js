@@ -2080,6 +2080,8 @@ const app = {
         ? `<span class="badge-he-prevista">+${displayHE} HE</span>`
         : `<span class="badge-he-zero">0 HE</span>`;
 
+      const info = this.getRDOExpiryInfo(r);
+
       // Registros / Responsáveis (Planejamento Executante, Engenheiro de Produção Executante, Fiscalização CMPC)
       const planejaNome = (r.sigPlanejamento || '').trim();
       const planejaHasSig = !!(r.sigImgPlanejamento);
@@ -2098,8 +2100,6 @@ const app = {
       const fiscalCell = fiscalNome
         ? `<div style="font-weight:600; color:var(--slate-800); white-space:nowrap;" title="${this.escapeHtml(fiscalNome)}">${this.escapeHtml(fiscalNome)} ${fiscalHasSig ? '<span title="Assinatura / Visto anexado" style="font-size:0.75rem;">✍️</span>' : ''}</div>`
         : `<span style="color:var(--slate-400); font-size:0.8rem;">-</span>`;
-      
-      const info = this.getRDOExpiryInfo(r);
       let statusBadge = '';
       if (info.isApproved) {
         const approvedName = info.approvedBy || r.sigFiscalizacao || 'Fiscalização';
