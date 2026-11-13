@@ -15,6 +15,7 @@ const firebaseConfig = {
 
 const STORAGE_KEYS = {
   USERS: 'cmpc_rdo_users',
+  COMPANIES: 'cmpc_rdo_companies',
   SESSION: 'cmpc_rdo_session',
   RECORDS: 'cmpc_rdo_records',
   LOGO: 'cmpc_rdo_logo',
@@ -49,6 +50,29 @@ const StorageService = {
   },
 
   initLocalDefaults() {
+    // Seed default company if none exists
+    let companies = this.getCompanies();
+    if (companies.length === 0) {
+      const defaultCompany = {
+        id: 'comp-cmpc-001',
+        name: 'CMPC Celulose Riograndense',
+        tradeName: 'CMPC Engenharia',
+        cnpj: '92.684.053/0001-44',
+        contract: 'CTR-2026/045',
+        client: 'CMPC CELULOSE RIOGRANDENSE',
+        contractor: 'ENG CMPC SERVIÇOS',
+        responsible: 'Jorge Renato',
+        email: 'engelmobile2020@gmail.com',
+        phone: '(51) 3495-5000',
+        status: 'active',
+        maxUsers: 25,
+        notes: 'Empresa Principal do Sistema',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      this.saveCompaniesLocal([defaultCompany]);
+    }
+
     let users = this.getUsers();
     let masterAdmin = users.find(u => u.email.toLowerCase() === 'engelmobile2020@gmail.com');
 
@@ -60,6 +84,9 @@ const StorageService = {
           email: 'engelmobile2020@gmail.com',
           password: '789512',
           role: 'Admin',
+          isSuperAdmin: true,
+          companyId: 'comp-cmpc-001',
+          companyName: 'CMPC Celulose Riograndense',
           createdAt: new Date().toISOString()
         },
         ...users
@@ -68,16 +95,23 @@ const StorageService = {
     } else {
       masterAdmin.password = '789512';
       masterAdmin.role = 'Admin';
+      masterAdmin.isSuperAdmin = true;
+      if (!masterAdmin.companyId) {
+        masterAdmin.companyId = 'comp-cmpc-001';
+        masterAdmin.companyName = 'CMPC Celulose Riograndense';
+      }
       this.saveUsersLocal(users);
     }
 
-    if (!localStorage.getItem(STORAGE_KEYS.RECORDS)) {
+    if (!localStorage.getItem(STORAGE_KEYS.RECORDS) && !localStorage.getItem('cmpc_rdo_seeded')) {
+      localStorage.setItem('cmpc_rdo_seeded', 'true');
       const initialRDO = {
         id: 'rdo-default-001',
         numero: '0001/' + new Date().getFullYear(),
         data: new Date().toISOString().split('T')[0] + 'T07:30',
         diaSemana: 'Segunda-feira',
         turno: 'Diurno',
+        clima: 'Bom / Ensolarado',
         contrato: 'CTR-2026/045',
         contratante: 'CMPC CELULOSE RIOGRANDENSE',
         contratada: 'ENG CMPC SERVIÇOS',
@@ -114,6 +148,10 @@ const StorageService = {
           C: '', D: '', E: '', F: '', G: '', H: '', I: '', J: ''
         },
         comentarios: 'Condições climáticas favoráveis (Ensolarado, 24°C). Não houve acidentes de trabalho. DDS realizado no início do turno abordando segurança em trabalhos a quente.',
+        equipments: [
+          { nome: 'Máquina de Solda TIG', qt: 2 },
+          { nome: 'Esmerilhadeira Angular 7"', qt: 3 }
+        ],
         photos: [],
         sigPlanejamento: 'Eng. Planejamento',
         sigEngenheiro: 'Eng. Produção CREA 123456/RS',
@@ -168,24 +206,61 @@ const StorageService = {
           snapshot.forEach(doc => {
             cloudRDOs.push({ id: doc.id, ...doc.data() });
           });
-          if (cloudRDOs.length > 0) {
-            this.saveRecordsLocal(cloudRDOs);
-            if (typeof app !== 'undefined' && app.renderRDOList) {
-              app.renderRDOList();
-            }
+          this.saveRecordsLocal(cloudRDOs);
+          if (typeof app !== 'undefined' && app.renderRDOList) {
+            app.renderRDOList();
+          }
+          if (typeof mobileApp !== 'undefined' && mobileApp.renderHistory) {
+            mobileApp.renderHistory();
+          }
+          if (typeof superAdmin !== 'undefined' && superAdmin.renderRDOList) {
+            superAdmin.renderRDOList();
           }
         } else {
-          // Upload local RDOs to cloud
-          const localRDOs = this.getRecords();
-          localRDOs.forEach(r => {
-            db.collection('rdos').doc(r.id).set(r, { merge: true });
-          });
+          // Nuvem vazia: todos os RDOs foram excluídos
+          this.saveRecordsLocal([]);
+          if (typeof app !== 'undefined' && app.renderRDOList) {
+            app.renderRDOList();
+          }
+          if (typeof mobileApp !== 'undefined' && mobileApp.renderHistory) {
+            mobileApp.renderHistory();
+          }
+          if (typeof superAdmin !== 'undefined' && superAdmin.renderRDOList) {
+            superAdmin.renderRDOList();
+          }
         }
       }, (err) => {
         console.warn('Firestore RDOs Listener:', err);
       });
     } catch (e) {
       console.warn('Erro ao escutar RDOs do Firestore:', e);
+    }
+
+    // 3. Sync Companies from Firestore
+    try {
+      db.collection('companies').onSnapshot((snapshot) => {
+        if (!snapshot.empty) {
+          const cloudCompanies = [];
+          snapshot.forEach(doc => {
+            cloudCompanies.push({ id: doc.id, ...doc.data() });
+          });
+          if (cloudCompanies.length > 0) {
+            this.saveCompaniesLocal(cloudCompanies);
+            if (typeof superAdmin !== 'undefined' && superAdmin.renderCompanies) {
+              superAdmin.renderCompanies();
+            }
+          }
+        } else {
+          const localCompanies = this.getCompanies();
+          localCompanies.forEach(c => {
+            db.collection('companies').doc(c.id).set(c, { merge: true });
+          });
+        }
+      }, (err) => {
+        console.warn('Firestore Companies Listener:', err);
+      });
+    } catch (e) {
+      console.warn('Erro ao escutar empresas do Firestore:', e);
     }
 
     // 3. Sync Brevo Global Settings
@@ -298,6 +373,70 @@ const StorageService = {
     }
   },
 
+  // COMPANIES MANAGEMENT (MULTI-TENANT / MULTI-EMPRESA)
+  getCompanies() {
+    const data = localStorage.getItem(STORAGE_KEYS.COMPANIES);
+    return data ? JSON.parse(data) : [];
+  },
+  saveCompaniesLocal(companies) {
+    localStorage.setItem(STORAGE_KEYS.COMPANIES, JSON.stringify(companies));
+  },
+  saveCompanies(companies) {
+    this.saveCompaniesLocal(companies);
+    if (db) {
+      companies.forEach(c => {
+        db.collection('companies').doc(c.id).set(c, { merge: true }).catch(err => console.warn('Cloud company save:', err));
+      });
+    }
+  },
+  addCompany(company) {
+    const companies = this.getCompanies();
+    if (!company.id) company.id = 'comp-' + Date.now();
+    company.createdAt = new Date().toISOString();
+    company.updatedAt = new Date().toISOString();
+    if (!company.status) company.status = 'active';
+    companies.push(company);
+    this.saveCompanies(companies);
+
+    if (db) {
+      db.collection('companies').doc(company.id).set(company, { merge: true })
+        .catch(err => console.warn('Cloud addCompany error:', err));
+    }
+    return company;
+  },
+  updateCompany(id, updatedData) {
+    let companies = this.getCompanies();
+    let updatedCompany = null;
+    companies = companies.map(c => {
+      if (c.id === id) {
+        updatedCompany = { ...c, ...updatedData, updatedAt: new Date().toISOString() };
+        return updatedCompany;
+      }
+      return c;
+    });
+    this.saveCompaniesLocal(companies);
+
+    if (db && updatedCompany) {
+      db.collection('companies').doc(id).set(updatedCompany, { merge: true })
+        .catch(err => console.warn('Cloud updateCompany error:', err));
+    }
+    return updatedCompany;
+  },
+  deleteCompany(id) {
+    let companies = this.getCompanies();
+    companies = companies.filter(c => c.id !== id);
+    this.saveCompaniesLocal(companies);
+
+    if (db) {
+      db.collection('companies').doc(id).delete()
+        .catch(err => console.warn('Cloud deleteCompany error:', err));
+    }
+  },
+  getCompanyById(id) {
+    const companies = this.getCompanies();
+    return companies.find(c => c.id === id) || null;
+  },
+
   // USERS MANAGEMENT
   getUsers() {
     const data = localStorage.getItem(STORAGE_KEYS.USERS);
@@ -383,17 +522,35 @@ const StorageService = {
     }, 0);
   },
 
+  normalizeRecord(r) {
+    if (!r || typeof r !== 'object') return r;
+    r.clima = r.clima || 'Bom / Ensolarado';
+    r.workers = Array.isArray(r.workers) ? r.workers : [];
+    r.equipments = Array.isArray(r.equipments)
+      ? r.equipments.map(eq => ({
+          nome: String((eq && eq.nome) || '').trim(),
+          qt: (eq && eq.qt !== undefined && eq.qt !== null && eq.qt !== '') ? (parseFloat(eq.qt) || 0) : 1
+        })).filter(eq => eq.nome || eq.qt > 0)
+      : [];
+    r.photos = Array.isArray(r.photos) ? r.photos : [];
+    r.activitiesDescriptions = r.activitiesDescriptions || {};
+    r.activitiesSignatures = r.activitiesSignatures || {};
+    r.comentarios = r.comentarios || '';
+    if (r.workers.length > 0) {
+      r.totalHH = this.calculateRecordHH(r);
+    } else {
+      r.totalHH = parseFloat(r.totalHH) || 0;
+    }
+    return r;
+  },
+
   getRecords() {
     const data = localStorage.getItem(STORAGE_KEYS.RECORDS);
     if (!data) return [];
     try {
       const records = JSON.parse(data);
-      return records.map(r => {
-        if (r.workers && Array.isArray(r.workers) && r.workers.length > 0) {
-          r.totalHH = this.calculateRecordHH(r);
-        }
-        return r;
-      });
+      if (!Array.isArray(records)) return [];
+      return records.map(r => this.normalizeRecord(r));
     } catch (e) {
       return [];
     }
@@ -403,13 +560,17 @@ const StorageService = {
     return records.find(r => r.id === id) || null;
   },
   saveRecordsLocal(records) {
-    localStorage.setItem(STORAGE_KEYS.RECORDS, JSON.stringify(records));
+    const normalized = Array.isArray(records) ? records.map(r => this.normalizeRecord(r)) : [];
+    localStorage.setItem(STORAGE_KEYS.RECORDS, JSON.stringify(normalized));
   },
   saveRecords(records) {
-    this.saveRecordsLocal(records);
+    const normalized = Array.isArray(records) ? records.map(r => this.normalizeRecord(r)) : [];
+    this.saveRecordsLocal(normalized);
     if (db) {
-      records.forEach(r => {
-        db.collection('rdos').doc(r.id).set(r, { merge: true }).catch(err => console.warn('Cloud saveRecords:', err));
+      normalized.forEach(r => {
+        if (!r || !r.id) return;
+        const cleanDoc = JSON.parse(JSON.stringify(r));
+        db.collection('rdos').doc(r.id).set(cleanDoc, { merge: true }).catch(err => console.warn('Cloud saveRecords:', err));
       });
     }
   },
@@ -420,12 +581,12 @@ const StorageService = {
     if (rdoData.id) {
       const idx = records.findIndex(r => r.id === rdoData.id);
       const existing = idx >= 0 ? records[idx] : null;
-      recordToSave = {
+      recordToSave = this.normalizeRecord({
         ...existing,
         ...rdoData,
         createdAt: rdoData.createdAt || (existing && existing.createdAt) || new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      };
+      });
       if (idx >= 0) {
         records[idx] = recordToSave;
       } else {
@@ -437,15 +598,22 @@ const StorageService = {
       rdoData.updatedAt = new Date().toISOString();
       rdoData.sent = false;
       rdoData.status = 'pendente';
-      recordToSave = rdoData;
+      recordToSave = this.normalizeRecord(rdoData);
       records.unshift(recordToSave);
+    }
+
+    const session = this.getSession();
+    if (session && recordToSave) {
+      if (!recordToSave.companyId && session.companyId) recordToSave.companyId = session.companyId;
+      if (!recordToSave.companyName && session.companyName) recordToSave.companyName = session.companyName;
     }
 
     this.saveRecordsLocal(records);
 
-    // Sync to Firestore Cloud immediately
+    // Sync to Firestore Cloud immediately (sanitized from undefined values)
     if (db && recordToSave) {
-      db.collection('rdos').doc(recordToSave.id).set(recordToSave, { merge: true })
+      const cleanRecord = JSON.parse(JSON.stringify(recordToSave));
+      db.collection('rdos').doc(recordToSave.id).set(cleanRecord, { merge: true })
         .then(() => console.log('☁️ RDO salvo na nuvem Firebase com sucesso:', recordToSave.numero))
         .catch(err => console.warn('Cloud saveRecord error:', err));
     }
@@ -579,20 +747,35 @@ const StorageService = {
 
   // EXPORT / IMPORT
   exportBackup() {
+    const records = this.getRecords();
     return JSON.stringify({
-      version: '2.0',
+      version: '3.0.0',
       cloudProvider: 'Firebase Firestore',
       projectId: firebaseConfig.projectId,
       exportedAt: new Date().toISOString(),
+      companies: this.getCompanies(),
       users: this.getUsers(),
-      records: this.getRecords()
+      records: records,
+      rdos: records,
+      settings: {
+        brevoKey: localStorage.getItem('cmpc_brevo_key') || '',
+        brevoSender: localStorage.getItem('cmpc_brevo_sender') || '',
+        brevoSenderName: localStorage.getItem('cmpc_brevo_sender_name') || ''
+      }
     }, null, 2);
   },
   importBackup(jsonString) {
     try {
       const data = JSON.parse(jsonString);
+      if (data.companies && Array.isArray(data.companies)) this.saveCompanies(data.companies);
       if (data.users && Array.isArray(data.users)) this.saveUsers(data.users);
-      if (data.records && Array.isArray(data.records)) this.saveRecords(data.records);
+      const rdoList = Array.isArray(data.records) ? data.records : (Array.isArray(data.rdos) ? data.rdos : null);
+      if (rdoList) this.saveRecords(rdoList);
+      if (data.settings) {
+        if (data.settings.brevoKey) localStorage.setItem('cmpc_brevo_key', data.settings.brevoKey);
+        if (data.settings.brevoSender) localStorage.setItem('cmpc_brevo_sender', data.settings.brevoSender);
+        if (data.settings.brevoSenderName) localStorage.setItem('cmpc_brevo_sender_name', data.settings.brevoSenderName);
+      }
       return true;
     } catch (err) {
       console.error('Erro ao importar backup:', err);

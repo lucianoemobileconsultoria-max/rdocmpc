@@ -7,6 +7,22 @@ const ACTIVITIES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 const app = {
   currentRDOId: null,
   currentPhotos: ['', '', '', ''],
+  currentSignatures: {
+    planejamento: '',
+    engenheiro: '',
+    fiscalizacao: ''
+  },
+  currentSigTarget: null,
+  sigPad: {
+    canvas: null,
+    ctx: null,
+    isDrawing: false,
+    hasDrawn: false,
+    color: '#1d4ed8',
+    lineWidth: 3.0,
+    lastX: 0,
+    lastY: 0
+  },
 
   init() {
     this.bindEvents();
@@ -117,9 +133,11 @@ const app = {
   removePhoto(index) {
     this.currentPhotos[index] = '';
     const descInput = document.getElementById(`photo-desc-${index}`);
-    if (descInput) descInput.value = '';
-    this.updatePhotoSlotUI(index, '');
-    this.showToast(`Foto ${index + 1} removida.`, 'info');
+    if (descInput) {
+      descInput.value = index === 0 ? 'FOTO DA PT' : '';
+    }
+    this.updatePhotoSlotUI(index, '', index === 0 ? 'FOTO DA PT' : '');
+    this.showToast(index === 0 ? 'Foto da PT removida. Lembre-se: ela é obrigatória.' : `Foto ${index + 1} removida.`, 'info');
   },
 
   updatePhotoSlotUI(index, base64Url, caption = null) {
@@ -131,7 +149,9 @@ const app = {
     const descInput = document.getElementById(`photo-desc-${index}`);
 
     if (caption !== null && descInput) {
-      descInput.value = caption;
+      descInput.value = (index === 0 && !caption) ? 'FOTO DA PT' : caption;
+    } else if (index === 0 && descInput && !descInput.value.trim()) {
+      descInput.value = 'FOTO DA PT';
     }
 
     if (base64Url && img && placeholder) {
@@ -155,17 +175,545 @@ const app = {
     for (let i = 0; i < 4; i++) {
       const photoItem = photos[i];
       let url = '';
-      let cap = '';
+      let cap = i === 0 ? 'FOTO DA PT' : '';
       if (photoItem) {
         if (typeof photoItem === 'string') {
           url = photoItem;
         } else {
           url = photoItem.url || '';
-          cap = photoItem.caption || '';
+          cap = photoItem.caption || (i === 0 ? 'FOTO DA PT' : '');
         }
       }
       this.currentPhotos[i] = url;
       this.updatePhotoSlotUI(i, url, cap);
+    }
+  },
+
+  // ==========================================================================
+  // DIGITAL SIGNATURES CONTROLLER (DRAW, PASTE VIA CTRL+V, OR UPLOAD)
+  // ==========================================================================
+  openSignatureModal(target) {
+    this.currentSigTarget = target;
+    const modal = document.getElementById('modal-digital-signature');
+    const titleEl = document.getElementById('sig-modal-title');
+    const subtitleEl = document.getElementById('sig-modal-subtitle');
+    const statusEl = document.getElementById('sig-status-indicator');
+
+    const titles = {
+      planejamento: 'Planejamento Executante',
+      engenheiro: 'Engenheiro de Produção Executante',
+      fiscalizacao: 'Fiscalização CMPC'
+    };
+
+    const targetTitle = titles[target] || 'Responsável';
+
+    if (titleEl) {
+      titleEl.textContent = `✍️ Assinatura: ${targetTitle}`;
+    }
+    if (subtitleEl) {
+      subtitleEl.textContent = `Rubrica oficial para o campo "${targetTitle}"`;
+    }
+    if (statusEl) {
+      statusEl.innerHTML = 'Pronto para assinar na tela, colar com <strong>Ctrl+V</strong> ou carregar imagem.';
+    }
+
+    if (modal) modal.classList.remove('hidden');
+
+    // Popula select de usuários no modal da assinatura com os dados do target atual
+    this.populateSigModalUserDropdown(target);
+
+    // Initialize Canvas after modal display
+    setTimeout(() => {
+      this.initSignatureCanvas();
+      const existing = this.currentSignatures[target];
+      if (existing) {
+        this.loadSignatureImageToCanvas(existing);
+      }
+    }, 60);
+
+    this.bindSignaturePasteListener();
+  },
+
+  closeSignatureModal(event = null) {
+    if (event && event.target && event.target.id !== 'modal-digital-signature') return;
+    const modal = document.getElementById('modal-digital-signature');
+    if (modal) modal.classList.add('hidden');
+    this.unbindSignaturePasteListener();
+  },
+
+  initSignatureCanvas() {
+    const canvas = document.getElementById('sig-pad-canvas');
+    const container = document.getElementById('sig-canvas-container');
+    if (!canvas || !container) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    // Use actual pixel density for crisp retina strokes
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = this.sigPad.color;
+    ctx.lineWidth = this.sigPad.lineWidth;
+
+    this.sigPad.canvas = canvas;
+    this.sigPad.ctx = ctx;
+    this.sigPad.hasDrawn = false;
+
+    // Attach listeners once
+    if (!canvas._signatureListenersBound) {
+      canvas._signatureListenersBound = true;
+
+      const getNormalizedPos = (e) => {
+        const r = canvas.getBoundingClientRect();
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+        if (e.touches && e.touches.length > 0) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        }
+        const scaleX = (canvas.width / dpr) / r.width;
+        const scaleY = (canvas.height / dpr) / r.height;
+        return {
+          x: (clientX - r.left) * scaleX,
+          y: (clientY - r.top) * scaleY
+        };
+      };
+
+      const startDraw = (e) => {
+        e.preventDefault();
+        this.sigPad.isDrawing = true;
+        const pos = getNormalizedPos(e);
+        this.sigPad.lastX = pos.x;
+        this.sigPad.lastY = pos.y;
+        this.sigPad.hasDrawn = true;
+      };
+
+      const draw = (e) => {
+        if (!this.sigPad.isDrawing) return;
+        e.preventDefault();
+        const pos = getNormalizedPos(e);
+        const ctx = this.sigPad.ctx;
+        if (!ctx) return;
+
+        ctx.beginPath();
+        ctx.moveTo(this.sigPad.lastX, this.sigPad.lastY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.strokeStyle = this.sigPad.color;
+        ctx.lineWidth = this.sigPad.lineWidth;
+        ctx.stroke();
+
+        this.sigPad.lastX = pos.x;
+        this.sigPad.lastY = pos.y;
+      };
+
+      const stopDraw = () => {
+        this.sigPad.isDrawing = false;
+      };
+
+      // Mouse Listeners
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      window.addEventListener('mouseup', stopDraw);
+
+      // Touch Listeners
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', draw, { passive: false });
+      canvas.addEventListener('touchend', stopDraw);
+
+      // Drag & Drop File Listeners
+      container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        container.classList.add('dragover');
+      });
+      container.addEventListener('dragleave', () => {
+        container.classList.remove('dragover');
+      });
+      container.addEventListener('drop', (e) => {
+        e.preventDefault();
+        container.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          const file = e.dataTransfer.files[0];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (loadEvt) => {
+              this.loadSignatureImageToCanvas(loadEvt.target.result);
+              this.showToast('Imagem arrastada e carregada com sucesso!', 'success');
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+      });
+    }
+  },
+
+  setSignatureColor(color) {
+    this.sigPad.color = color;
+    document.querySelectorAll('.sig-color-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.color === color);
+    });
+    if (this.sigPad.ctx) {
+      this.sigPad.ctx.strokeStyle = color;
+    }
+  },
+
+  setSignatureWidth(width) {
+    this.sigPad.lineWidth = width;
+    const btnThin = document.getElementById('btn-size-thin');
+    const btnMed = document.getElementById('btn-size-med');
+    const btnThick = document.getElementById('btn-size-thick');
+    if (btnThin) btnThin.classList.toggle('active', width < 2.5);
+    if (btnMed) btnMed.classList.toggle('active', width >= 2.5 && width < 4.0);
+    if (btnThick) btnThick.classList.toggle('active', width >= 4.0);
+    if (this.sigPad.ctx) {
+      this.sigPad.ctx.lineWidth = width;
+    }
+  },
+
+  clearSignatureCanvas() {
+    const canvas = this.sigPad.canvas;
+    const ctx = this.sigPad.ctx;
+    if (!canvas || !ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+    this.sigPad.hasDrawn = false;
+
+    const statusEl = document.getElementById('sig-status-indicator');
+    if (statusEl) {
+      statusEl.innerHTML = '<span style="color:#64748b;">Quadro limpo. Desenhe sua rubrica, cole com <strong>Ctrl+V</strong> ou carregue uma imagem.</span>';
+    }
+  },
+
+  loadSignatureImageToCanvas(dataUrl) {
+    if (!dataUrl) return;
+    const img = new Image();
+    img.onload = () => {
+      const canvas = this.sigPad.canvas;
+      const ctx = this.sigPad.ctx;
+      if (!canvas || !ctx) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const canvasW = canvas.width / dpr;
+      const canvasH = canvas.height / dpr;
+
+      ctx.clearRect(0, 0, canvasW, canvasH);
+
+      // Fit image neatly inside canvas with padding
+      const maxW = canvasW * 0.90;
+      const maxH = canvasH * 0.85;
+      let drawW = img.width;
+      let drawH = img.height;
+
+      const scale = Math.min(maxW / drawW, maxH / drawH, 1.0);
+      drawW = drawW * scale;
+      drawH = drawH * scale;
+
+      const posX = (canvasW - drawW) / 2;
+      const posY = (canvasH - drawH) / 2;
+
+      ctx.drawImage(img, posX, posY, drawW, drawH);
+      this.sigPad.hasDrawn = true;
+    };
+    img.src = dataUrl;
+  },
+
+  // CLIPBOARD PASTE LISTENER (CTRL + V)
+  _sigPasteHandler: null,
+  bindSignaturePasteListener() {
+    this.unbindSignaturePasteListener();
+    this._sigPasteHandler = (e) => {
+      const modal = document.getElementById('modal-digital-signature');
+      if (!modal || modal.classList.contains('hidden')) return;
+
+      const clipboardData = e.clipboardData || window.clipboardData;
+      if (!clipboardData || !clipboardData.items) return;
+
+      for (let i = 0; i < clipboardData.items.length; i++) {
+        const item = clipboardData.items[i];
+        if (item.type.indexOf('image') !== -1) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          const reader = new FileReader();
+          reader.onload = (loadEvt) => {
+            this.loadSignatureImageToCanvas(loadEvt.target.result);
+            const statusEl = document.getElementById('sig-status-indicator');
+            if (statusEl) {
+              statusEl.innerHTML = '<span style="color:#059669; font-weight:700;">✅ Assinatura colada da Área de Transferência com sucesso!</span>';
+            }
+            this.showToast('Assinatura colada com sucesso da área de transferência!', 'success');
+          };
+          reader.readAsDataURL(file);
+          break;
+        }
+      }
+    };
+    window.addEventListener('paste', this._sigPasteHandler);
+  },
+
+  unbindSignaturePasteListener() {
+    if (this._sigPasteHandler) {
+      window.removeEventListener('paste', this._sigPasteHandler);
+      this._sigPasteHandler = null;
+    }
+  },
+
+  handleSignatureFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.showToast('Por favor, selecione um arquivo de imagem válido (PNG, JPG, etc).', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (loadEvt) => {
+      this.loadSignatureImageToCanvas(loadEvt.target.result);
+      const statusEl = document.getElementById('sig-status-indicator');
+      if (statusEl) {
+        statusEl.innerHTML = '<span style="color:#059669; font-weight:700;">✅ Imagem carregada do arquivo com sucesso!</span>';
+      }
+      this.showToast('Imagem carregada com sucesso!', 'success');
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  },
+
+  applySignatureFromModal() {
+    const target = this.currentSigTarget;
+    if (!target) return;
+
+    const canvas = this.sigPad.canvas;
+    if (!canvas || !this.sigPad.hasDrawn) {
+      this.showToast('Por favor, desenhe uma rubrica, cole com Ctrl+V ou carregue uma imagem antes de confirmar.', 'warning');
+      return;
+    }
+
+    // Export canvas as PNG Data URL
+    const dataUrl = canvas.toDataURL('image/png');
+    this.currentSignatures[target] = dataUrl;
+    this.updateSignatureBoxUI(target, dataUrl);
+    this.closeSignatureModal();
+    this.showToast('Assinatura digital aplicada com sucesso!', 'success');
+  },
+
+  clearDigitalSignature(target) {
+    this.currentSignatures[target] = '';
+    this.updateSignatureBoxUI(target, '');
+    this.showToast('Assinatura digital removida.', 'info');
+  },
+
+  // ==========================================================================
+  // USUÁRIOS NAS ASSINATURAS (AUTO PREENCHIMENTO DE NOME E EMAIL)
+  // ==========================================================================
+  populateSignatureUserDropdowns() {
+    const targets = ['planejamento', 'engenheiro', 'fiscalizacao'];
+    const users = StorageService.getUsers() || [];
+
+    targets.forEach(t => {
+      const select = document.getElementById(`rdo-sig-${t}`);
+      if (!select) return;
+
+      const currentVal = select.value || '';
+      select.innerHTML = '<option value="">-- Selecionar Nome --</option>';
+
+      users.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.name;
+        opt.textContent = `${u.name} (${u.role || 'Usuário'})`;
+        opt.dataset.email = u.email || '';
+        select.appendChild(opt);
+      });
+
+      // Se havia valor customizado que não está na lista de opções, adiciona
+      if (currentVal && !users.some(u => u.name === currentVal)) {
+        const customOpt = document.createElement('option');
+        customOpt.value = currentVal;
+        customOpt.textContent = currentVal;
+        select.appendChild(customOpt);
+      }
+      select.value = currentVal;
+    });
+  },
+
+  onSigUserSelectChange(target, selectedName) {
+    const select = document.getElementById(`rdo-sig-${target}`);
+    const emailInput = document.getElementById(`rdo-sig-email-${target}`);
+    if (!emailInput) return;
+
+    if (!selectedName) {
+      emailInput.value = '';
+      return;
+    }
+
+    const users = StorageService.getUsers() || [];
+    const matched = users.find(u => u.name === selectedName);
+    if (matched && matched.email) {
+      emailInput.value = matched.email;
+    } else {
+      const opt = select?.selectedOptions?.[0];
+      emailInput.value = opt?.dataset?.email || '';
+    }
+
+    // Auto-carrega assinatura salva no perfil do usuário, se houver
+    if (matched && matched.signature && !this.currentSignatures[target]) {
+      this.currentSignatures[target] = matched.signature;
+      this.updateSignatureBoxUI(target, matched.signature);
+      this.showToast(`Assinatura permanente de "${matched.name}" carregada automaticamente!`, 'info');
+    }
+  },
+
+  syncSigEmailField(target, name, existingEmail = '') {
+    const emailInput = document.getElementById(`rdo-sig-email-${target}`);
+    if (!emailInput) return;
+
+    if (existingEmail) {
+      emailInput.value = existingEmail;
+      return;
+    }
+
+    if (!name) {
+      emailInput.value = '';
+      return;
+    }
+
+    const users = StorageService.getUsers() || [];
+    const matched = users.find(u => u.name === name);
+    emailInput.value = matched ? (matched.email || '') : '';
+  },
+
+  populateSigModalUserDropdown(target) {
+    const modalSelect = document.getElementById('sig-modal-user-select');
+    const modalEmail = document.getElementById('sig-modal-user-email');
+    if (!modalSelect || !modalEmail) return;
+
+    const users = StorageService.getUsers() || [];
+    const mainSelect = document.getElementById(`rdo-sig-${target}`);
+    const mainVal = mainSelect ? mainSelect.value : '';
+
+    modalSelect.innerHTML = '<option value="">-- Selecionar Nome --</option>';
+    users.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.name;
+      opt.textContent = `${u.name} (${u.role || 'Usuário'})`;
+      opt.dataset.email = u.email || '';
+      modalSelect.appendChild(opt);
+    });
+
+    if (mainVal && !users.some(u => u.name === mainVal)) {
+      const customOpt = document.createElement('option');
+      customOpt.value = mainVal;
+      customOpt.textContent = mainVal;
+      modalSelect.appendChild(customOpt);
+    }
+
+    modalSelect.value = mainVal;
+    const matched = users.find(u => u.name === mainVal);
+    const mainEmailInput = document.getElementById(`rdo-sig-email-${target}`);
+    modalEmail.value = mainEmailInput?.value || (matched ? (matched.email || '') : '');
+  },
+
+  onSigModalUserChange(selectedName) {
+    const modalSelect = document.getElementById('sig-modal-user-select');
+    const modalEmail = document.getElementById('sig-modal-user-email');
+    if (!modalEmail) return;
+
+    if (!selectedName) {
+      modalEmail.value = '';
+    } else {
+      const users = StorageService.getUsers() || [];
+      const matched = users.find(u => u.name === selectedName);
+      if (matched && matched.email) {
+        modalEmail.value = matched.email;
+      } else {
+        const opt = modalSelect?.selectedOptions?.[0];
+        modalEmail.value = opt?.dataset?.email || '';
+      }
+    }
+
+    // Sincroniza imediatamente com o card principal da assinatura
+    const target = this.currentSigTarget;
+    if (target) {
+      const mainSelect = document.getElementById(`rdo-sig-${target}`);
+      const mainEmail = document.getElementById(`rdo-sig-email-${target}`);
+      if (mainSelect) mainSelect.value = selectedName;
+      if (mainEmail) mainEmail.value = modalEmail.value;
+
+      // Se o usuário selecionado no modal tem assinatura permanente salva e o canvas está em branco
+      const users = StorageService.getUsers() || [];
+      const matched = users.find(u => u.name === selectedName);
+      if (matched && matched.signature && (!this.sigPad.hasDrawn || !this.currentSignatures[target])) {
+        this.loadSignatureImageToCanvas(matched.signature);
+        const statusEl = document.getElementById('sig-status-indicator');
+        if (statusEl) {
+          statusEl.innerHTML = `<span style="color:#059669; font-weight:700;">✅ Assinatura padrão do perfil de "${matched.name}" carregada no quadro!</span>`;
+        }
+      }
+    }
+  },
+
+  saveSignatureToUserProfile() {
+    const canvas = this.sigPad.canvas;
+    if (!canvas || !this.sigPad.hasDrawn) {
+      this.showToast('Por favor, desenhe uma rubrica, cole com Ctrl+V ou carregue uma imagem antes de salvar no perfil.', 'warning');
+      return;
+    }
+
+    const modalSelect = document.getElementById('sig-modal-user-select');
+    const selectedName = modalSelect?.value || '';
+
+    if (!selectedName) {
+      this.showToast('Selecione primeiro qual usuário receberá esta assinatura permanente na lista abaixo do quadro.', 'warning');
+      return;
+    }
+
+    const users = StorageService.getUsers() || [];
+    const userIndex = users.findIndex(u => u.name === selectedName);
+    if (userIndex < 0) {
+      this.showToast(`Usuário "${selectedName}" não encontrado no cadastro do sistema.`, 'error');
+      return;
+    }
+
+    const dataUrl = canvas.toDataURL('image/png');
+    const targetUser = users[userIndex];
+    targetUser.signature = dataUrl;
+
+    StorageService.updateUser(targetUser.id, { signature: dataUrl });
+
+    // Aplica no target atual imediatamente
+    const target = this.currentSigTarget;
+    if (target) {
+      this.currentSignatures[target] = dataUrl;
+      this.updateSignatureBoxUI(target, dataUrl);
+    }
+
+    this.showToast(`Assinatura permanente de "${targetUser.name}" salva com sucesso no banco de dados!`, 'success');
+  },
+
+  updateSignatureBoxUI(target, base64Url) {
+    const img = document.getElementById(`sig-img-${target}`);
+    const prompt = document.getElementById(`sig-prompt-${target}`);
+    const clearBtn = document.getElementById(`sig-clear-${target}`);
+
+    if (base64Url) {
+      if (img) {
+        img.src = base64Url;
+        img.classList.remove('hidden');
+      }
+      if (prompt) prompt.classList.add('hidden');
+      if (clearBtn) clearBtn.classList.remove('hidden');
+    } else {
+      if (img) {
+        img.src = '';
+        img.classList.add('hidden');
+      }
+      if (prompt) prompt.classList.remove('hidden');
+      if (clearBtn) clearBtn.classList.add('hidden');
     }
   },
 
@@ -203,6 +751,7 @@ const app = {
         this.closeDeleteModal();
         this.closeSendModal();
         this.closeApproveModal();
+        this.closeSignatureModal();
         if (typeof admin !== 'undefined' && admin.closeUserModal) {
           admin.closeUserModal();
         }
@@ -239,12 +788,31 @@ const app = {
     }
   },
 
+  toggleLoginPassword() {
+    const input = document.getElementById('login-password');
+    if (!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+  },
+
   login() {
-    const email = document.getElementById('login-email').value.trim().toLowerCase();
-    const password = document.getElementById('login-password').value;
+    const email = (document.getElementById('login-email').value || '').trim().toLowerCase();
+    const password = (document.getElementById('login-password').value || '').trim();
 
     const users = StorageService.getUsers();
-    const matched = users.find(u => u.email === email && u.password === password);
+    let matched = users.find(u => (u.email || '').trim().toLowerCase() === email && String(u.password || '').trim() === password);
+
+    // Fallback garantido para o Administrador Master padrão
+    if (!matched && email === 'engelmobile2020@gmail.com' && password === '789512') {
+      matched = {
+        id: 'user-admin-master',
+        name: 'Administrador Master',
+        email: 'engelmobile2020@gmail.com',
+        role: 'Admin'
+      };
+      if (StorageService.initLocalDefaults) {
+        StorageService.initLocalDefaults();
+      }
+    }
 
     if (matched) {
       StorageService.setSession({
@@ -598,6 +1166,12 @@ const app = {
     document.getElementById('rdo-data').value = currentDT;
     document.getElementById('rdo-dia-semana').value = this.getDayOfWeekName(currentDT);
     document.getElementById('rdo-turno').value = 'Diurno';
+    const cManhaEl = document.getElementById('rdo-clima-manha');
+    if (cManhaEl) cManhaEl.value = 'Sol';
+    const cTardeEl = document.getElementById('rdo-clima-tarde');
+    if (cTardeEl) cTardeEl.value = 'Sol';
+    const cNoiteEl = document.getElementById('rdo-clima-noite');
+    if (cNoiteEl) cNoiteEl.value = 'Sem Trabalho';
     document.getElementById('rdo-contrato').value = '';
     document.getElementById('rdo-contratante').value = 'CMPC CELULOSE RIOGRANDENSE';
     document.getElementById('rdo-contratada').value = '';
@@ -622,15 +1196,191 @@ const app = {
     });
 
     document.getElementById('rdo-comentarios').value = '';
+    const obsAdicionalInit = document.getElementById('rdo-obs-adicional');
+    if (obsAdicionalInit) obsAdicionalInit.value = '';
+    const equipTbody = document.getElementById('equipments-tbody');
+    if (equipTbody) {
+      equipTbody.innerHTML = '';
+      for (let i = 0; i < 4; i++) {
+        this.addEquipmentRow();
+      }
+    }
     document.getElementById('rdo-sig-planejamento').value = '';
     document.getElementById('rdo-sig-engenheiro').value = '';
     document.getElementById('rdo-sig-fiscalizacao').value = '';
+    const emailPlan = document.getElementById('rdo-sig-email-planejamento');
+    const emailEng = document.getElementById('rdo-sig-email-engenheiro');
+    const emailFisc = document.getElementById('rdo-sig-email-fiscalizacao');
+    if (emailPlan) emailPlan.value = '';
+    if (emailEng) emailEng.value = '';
+    if (emailFisc) emailFisc.value = '';
+
+    // Popula dropdowns de usuários nas assinaturas
+    this.populateSignatureUserDropdowns();
+
+    // Reset Digital Signatures
+    this.currentSignatures = { planejamento: '', engenheiro: '', fiscalizacao: '' };
+    this.updateSignatureBoxUI('planejamento', '');
+    this.updateSignatureBoxUI('engenheiro', '');
+    this.updateSignatureBoxUI('fiscalizacao', '');
 
     // Reset and render 4 photos
     this.renderAllPhotosUI(['', '', '', '']);
 
     this.calculateTotalHH();
     this.showTab('form');
+  },
+
+  duplicateRDO(rdoId) {
+    const rdo = StorageService.getRecordById(rdoId);
+    if (!rdo) {
+      this.showToast('RDO original não encontrado para duplicação.', 'error');
+      return;
+    }
+
+    const session = StorageService.getSession();
+    const isOwner = session && (
+      rdo.userId === session.id ||
+      rdo.createdBy === session.email ||
+      (!rdo.userId && rdo.encarregado && rdo.encarregado.toLowerCase() === session.name.toLowerCase())
+    );
+
+    if (session && session.role !== 'Admin' && !isOwner) {
+      this.showToast('Acesso restrito: você só pode duplicar os RDOs criados por você.', 'error');
+      return;
+    }
+
+    this.currentRDOId = null;
+    document.getElementById('editor-page-heading').textContent = 'Novo Relatório Diário de Obra (RDO Duplicado)';
+
+    const watermark = document.getElementById('rdo-lock-watermark');
+    if (watermark) {
+      watermark.classList.add('hidden');
+    }
+
+    this.renderRDOFormStatusBanner(null);
+
+    // Gera novo número e nova data/hora local atual
+    const currentDT = this.getCurrentDateTimeLocal();
+    const year = new Date().getFullYear();
+    const records = StorageService.getRecords();
+    const nextNum = String(records.length + 1).padStart(4, '0') + '/' + year;
+
+    document.getElementById('rdo-numero').value = nextNum;
+    document.getElementById('rdo-data').value = currentDT;
+    document.getElementById('rdo-dia-semana').value = this.getDayOfWeekName(currentDT);
+    document.getElementById('rdo-turno').value = rdo.turno || 'Diurno';
+
+    // Clima
+    let cManha = rdo.climaManha;
+    let cTarde = rdo.climaTarde;
+    let cNoite = rdo.climaNoite;
+
+    if (!cManha && rdo.clima) {
+      if (rdo.clima.includes('Chuva Forte')) cManha = 'Chuva Forte';
+      else if (rdo.clima.includes('Chuva Fraca')) cManha = 'Chuva Fraca';
+      else if (rdo.clima.includes('Nublado')) cManha = 'Nublado';
+      else if (rdo.clima.includes('Vento')) cManha = 'Vento Forte';
+      else if (rdo.clima.includes('Impraticável') || rdo.clima.includes('Imprat.')) cManha = 'Impraticável';
+      else cManha = 'Sol';
+      cTarde = cManha;
+      cNoite = 'Sem Trabalho';
+    }
+
+    const cManhaEl = document.getElementById('rdo-clima-manha');
+    if (cManhaEl) cManhaEl.value = cManha || 'Sol';
+    const cTardeEl = document.getElementById('rdo-clima-tarde');
+    if (cTardeEl) cTardeEl.value = cTarde || 'Sol';
+    const cNoiteEl = document.getElementById('rdo-clima-noite');
+    if (cNoiteEl) cNoiteEl.value = cNoite || 'Sem Trabalho';
+
+    document.getElementById('rdo-contrato').value = rdo.contrato || '';
+    document.getElementById('rdo-contratante').value = rdo.contratante || 'CMPC CELULOSE RIOGRANDENSE';
+    document.getElementById('rdo-contratada').value = rdo.contratada || '';
+    document.getElementById('rdo-encarregado').value = session ? session.name : (rdo.encarregado || '');
+
+    // Equipe / Colaboradores (Mantém a equipe preenchida)
+    const tbody = document.getElementById('workers-tbody');
+    tbody.innerHTML = '';
+    if (rdo.workers && rdo.workers.length > 0) {
+      rdo.workers.forEach(w => this.addWorkerRow(w));
+    } else {
+      this.addWorkerRow();
+      this.addWorkerRow();
+      this.addWorkerRow();
+    }
+
+    // Atividades (Mantém descrições das atividades de A a J, e limpa vistos/rubricas)
+    ACTIVITIES.forEach(letter => {
+      const row = document.querySelector(`#activities-tbody tr[data-act="${letter}"]`);
+      if (row) {
+        row.querySelector('.act-desc-input').value = (rdo.activitiesDescriptions && rdo.activitiesDescriptions[letter]) || '';
+        row.querySelector('.act-ass-input').value = '';
+      }
+    });
+
+    // Equipamentos (Mantém lista de equipamentos)
+    const equipTbody = document.getElementById('equipments-tbody');
+    if (equipTbody) {
+      equipTbody.innerHTML = '';
+      const equipList = Array.isArray(rdo.equipments) ? rdo.equipments : [];
+      const minRows = Math.max(4, equipList.length);
+      for (let i = 0; i < minRows; i++) {
+        this.addEquipmentRow(equipList[i] || null);
+      }
+    }
+
+    // ================================================================
+    // CAMPOS LIMPOS CONFORME SOLICITADO:
+    // 1. Fotos (limpas)
+    // 2. Comentários (limpos)
+    // 3. Observações / Mensagem Adicional (limpas)
+    // 4. Assinaturas (limpas)
+    // ================================================================
+    
+    // 1. Fotos Limpas
+    this.currentPhotos = ['', '', '', ''];
+    this.renderAllPhotosUI(['', '', '', '']);
+
+    // 2. Comentários Limpos
+    document.getElementById('rdo-comentarios').value = '';
+
+    // 3. Observações / Mensagem Adicional Limpas
+    const obsAdicionalEl = document.getElementById('rdo-obs-adicional');
+    if (obsAdicionalEl) obsAdicionalEl.value = '';
+
+    // 4. Assinaturas Limpas
+    this.populateSignatureUserDropdowns();
+    document.getElementById('rdo-sig-planejamento').value = '';
+    document.getElementById('rdo-sig-engenheiro').value = '';
+    document.getElementById('rdo-sig-fiscalizacao').value = '';
+    this.syncSigEmailField('planejamento', '');
+    this.syncSigEmailField('engenheiro', '');
+    this.syncSigEmailField('fiscalizacao', '');
+
+    this.currentSignatures = {
+      planejamento: '',
+      engenheiro: '',
+      fiscalizacao: ''
+    };
+    this.updateSignatureBoxUI('planejamento', '');
+    this.updateSignatureBoxUI('engenheiro', '');
+    this.updateSignatureBoxUI('fiscalizacao', '');
+
+    // Logotipo
+    this.loadCompanyLogo(rdo.logo !== undefined ? rdo.logo : null);
+
+    this.calculateTotalHH();
+    this.showTab('form');
+    this.showToast(`RDO ${rdo.numero} duplicado com sucesso! Fotos, comentários, observações e assinaturas foram reiniciados.`, 'success');
+  },
+
+  duplicateCurrentRDO() {
+    if (this.currentRDOId) {
+      this.duplicateRDO(this.currentRDOId);
+    } else {
+      this.showToast('Salve ou abra um RDO já existente para duplicar.', 'info');
+    }
   },
 
   editRDO(rdoId) {
@@ -671,7 +1421,31 @@ const app = {
     document.getElementById('rdo-numero').value = rdo.numero || '';
     document.getElementById('rdo-data').value = dateVal;
     document.getElementById('rdo-dia-semana').value = rdo.diaSemana || this.getDayOfWeekName(dateVal);
-    document.getElementById('rdo-turno').value = rdo.turno || '';
+    document.getElementById('rdo-turno').value = rdo.turno || 'Diurno';
+
+    // Clima por períodos (com fallback para rdo.clima legado)
+    let cManha = rdo.climaManha;
+    let cTarde = rdo.climaTarde;
+    let cNoite = rdo.climaNoite;
+
+    if (!cManha && rdo.clima) {
+      if (rdo.clima.includes('Chuva Forte')) cManha = 'Chuva Forte';
+      else if (rdo.clima.includes('Chuva Fraca')) cManha = 'Chuva Fraca';
+      else if (rdo.clima.includes('Nublado')) cManha = 'Nublado';
+      else if (rdo.clima.includes('Vento')) cManha = 'Vento Forte';
+      else if (rdo.clima.includes('Impraticável') || rdo.clima.includes('Imprat.')) cManha = 'Impraticável';
+      else cManha = 'Sol';
+      cTarde = cManha;
+      cNoite = 'Sem Trabalho';
+    }
+
+    const cManhaEl = document.getElementById('rdo-clima-manha');
+    if (cManhaEl) cManhaEl.value = cManha || 'Sol';
+    const cTardeEl = document.getElementById('rdo-clima-tarde');
+    if (cTardeEl) cTardeEl.value = cTarde || 'Sol';
+    const cNoiteEl = document.getElementById('rdo-clima-noite');
+    if (cNoiteEl) cNoiteEl.value = cNoite || 'Sem Trabalho';
+
     document.getElementById('rdo-contrato').value = rdo.contrato || '';
     document.getElementById('rdo-contratante').value = rdo.contratante || '';
     document.getElementById('rdo-contratada').value = rdo.contratada || '';
@@ -696,9 +1470,36 @@ const app = {
     });
 
     document.getElementById('rdo-comentarios').value = rdo.comentarios || '';
+    const obsAdicionalLoad = document.getElementById('rdo-obs-adicional');
+    if (obsAdicionalLoad) obsAdicionalLoad.value = rdo.sendObs || rdo.obsAdicional || '';
+    const equipTbody = document.getElementById('equipments-tbody');
+    if (equipTbody) {
+      equipTbody.innerHTML = '';
+      const equipList = Array.isArray(rdo.equipments) ? rdo.equipments : [];
+      const minRows = Math.max(4, equipList.length);
+      for (let i = 0; i < minRows; i++) {
+        this.addEquipmentRow(equipList[i] || null);
+      }
+    }
+    // Popula dropdowns de usuários nas assinaturas antes de definir valores
+    this.populateSignatureUserDropdowns();
+
     document.getElementById('rdo-sig-planejamento').value = rdo.sigPlanejamento || '';
     document.getElementById('rdo-sig-engenheiro').value = rdo.sigEngenheiro || '';
     document.getElementById('rdo-sig-fiscalizacao').value = rdo.sigFiscalizacao || '';
+    this.syncSigEmailField('planejamento', rdo.sigPlanejamento || '', rdo.sigEmailPlanejamento || '');
+    this.syncSigEmailField('engenheiro', rdo.sigEngenheiro || '', rdo.sigEmailEngenheiro || '');
+    this.syncSigEmailField('fiscalizacao', rdo.sigFiscalizacao || '', rdo.sigEmailFiscalizacao || '');
+
+    // Load Digital Signatures
+    this.currentSignatures = {
+      planejamento: rdo.sigImgPlanejamento || '',
+      engenheiro: rdo.sigImgEngenheiro || '',
+      fiscalizacao: rdo.sigImgFiscalizacao || ''
+    };
+    this.updateSignatureBoxUI('planejamento', this.currentSignatures.planejamento);
+    this.updateSignatureBoxUI('engenheiro', this.currentSignatures.engenheiro);
+    this.updateSignatureBoxUI('fiscalizacao', this.currentSignatures.fiscalizacao);
 
     // Load 4 photos
     this.renderAllPhotosUI(rdo.photos || []);
@@ -731,14 +1532,17 @@ const app = {
     });
 
     tr.innerHTML = `
-      <td><input type="text" class="worker-cell-input worker-matricula text-center" value="${this.escapeHtml(matricula)}" placeholder="Matr."></td>
+      <td><input type="text" class="worker-cell-input worker-matricula text-center font-bold" value="${this.escapeHtml(matricula)}" placeholder="Matrícula"></td>
       <td><input type="text" class="worker-cell-input worker-funcao" value="${this.escapeHtml(funcao)}" placeholder="Função"></td>
       <td><input type="text" class="worker-cell-input worker-nome" value="${this.escapeHtml(nome)}" placeholder="Nome completo"></td>
       ${actCellsHtml}
-      <td class="no-print" style="text-align: center;">
-        <button type="button" class="btn-remove-row" onclick="app.removeWorkerRow(this)" title="Remover linha">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
+      <td class="worker-total-cell">
+        <div class="worker-total-wrap">
+          <span class="worker-row-total">0h</span>
+          <button type="button" class="btn-remove-row no-print" onclick="app.removeWorkerRow(this)" title="Remover linha">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
       </td>
     `;
 
@@ -757,17 +1561,95 @@ const app = {
     this.calculateTotalHH();
   },
 
+  addEquipmentRow(data = null) {
+    const tbody = document.getElementById('equipments-tbody');
+    if (!tbody) return;
+    const tr = document.createElement('tr');
+    tr.className = 'equip-row';
+
+    const nome = data ? (data.nome || '') : '';
+    const qt = (data && data.qt !== undefined && data.qt !== null && data.qt !== '') ? data.qt : '';
+
+    tr.innerHTML = `
+      <td>
+        <input type="text" class="equip-name-input" value="${this.escapeHtml(String(nome))}" placeholder="Equipamento utilizado...">
+      </td>
+      <td>
+        <div class="equip-qt-wrap">
+          <input type="number" min="0" step="1" class="equip-qt-input" value="${this.escapeHtml(String(qt))}" placeholder="0">
+          <button type="button" class="btn-remove-row no-print" onclick="app.removeEquipmentRow(this)" title="Remover equipamento">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  },
+
+  removeEquipmentRow(btn) {
+    const row = btn.closest('tr');
+    const tbody = document.getElementById('equipments-tbody');
+    if (!tbody || !row) return;
+    if (tbody.children.length <= 1) {
+      const nameInp = row.querySelector('.equip-name-input');
+      const qtInp = row.querySelector('.equip-qt-input');
+      if (nameInp) nameInp.value = '';
+      if (qtInp) qtInp.value = '';
+      return;
+    }
+    row.remove();
+  },
+
   calculateTotalHH() {
     let grandTotal = 0;
+    let exceededCount = 0;
     const workerRows = document.querySelectorAll('#workers-tbody tr');
 
     workerRows.forEach(row => {
+      let rowTotal = 0;
       const actInputs = row.querySelectorAll('.worker-act-input');
       actInputs.forEach(input => {
         const val = parseFloat(input.value) || 0;
-        grandTotal += val;
+        rowTotal += val;
       });
+
+      grandTotal += rowTotal;
+
+      const formattedRowTotal = rowTotal % 1 === 0 ? rowTotal : rowTotal.toFixed(1);
+      const rowTotalEl = row.querySelector('.worker-row-total');
+      if (rowTotalEl) {
+        rowTotalEl.textContent = `${formattedRowTotal}h`;
+        rowTotalEl.title = `${formattedRowTotal} horas`;
+      }
+
+      const isExceeded = rowTotal > 11;
+      const isExtra = rowTotal > 8 && rowTotal <= 11;
+      if (isExceeded) {
+        exceededCount++;
+      }
+
+      row.classList.toggle('worker-row-exceeded', isExceeded);
+      row.classList.toggle('worker-row-extra', isExtra);
+      const totalCell = row.querySelector('.worker-total-cell');
+      if (totalCell) {
+        totalCell.classList.toggle('worker-total-exceeded', isExceeded);
+        totalCell.classList.toggle('worker-total-extra', isExtra);
+        if (isExceeded) {
+          totalCell.title = `Limite excedido (${formattedRowTotal} horas)! Máximo permitido: 11 horas por colaborador na jornada.`;
+        } else if (isExtra) {
+          const he = rowTotal - 8;
+          const fmtHE = he % 1 === 0 ? he : he.toFixed(1);
+          totalCell.title = `Total do colaborador: ${formattedRowTotal} horas (+${fmtHE}h Hora Extra Prevista)`;
+        } else {
+          totalCell.title = `Total do colaborador: ${formattedRowTotal} horas (máx. 11h)`;
+        }
+      }
     });
+
+    const alertBox = document.getElementById('workers-limit-alert');
+    if (alertBox) {
+      alertBox.classList.toggle('hidden', exceededCount === 0);
+    }
 
     const sumElem = document.getElementById('total-hh-sum');
     if (sumElem) {
@@ -776,11 +1658,56 @@ const app = {
     return grandTotal;
   },
 
+  validateWorkerHoursLimit() {
+    const workerRows = document.querySelectorAll('#workers-tbody tr');
+    const exceededWorkers = [];
+    let firstExceededRow = null;
+
+    workerRows.forEach((row, index) => {
+      let rowTotal = 0;
+      row.querySelectorAll('.worker-act-input').forEach(inp => {
+        rowTotal += parseFloat(inp.value) || 0;
+      });
+
+      if (rowTotal > 11) {
+        if (!firstExceededRow) firstExceededRow = row;
+        const nome = row.querySelector('.worker-nome')?.value.trim() || '';
+        const matricula = row.querySelector('.worker-matricula')?.value.trim() || '';
+        const label = nome || (matricula ? `Matr. ${matricula}` : `Linha ${index + 1}`);
+        const fmtHours = rowTotal % 1 === 0 ? rowTotal : rowTotal.toFixed(1);
+        exceededWorkers.push(`${label} (${fmtHours} horas)`);
+      }
+    });
+
+    if (exceededWorkers.length > 0) {
+      this.calculateTotalHH();
+      if (firstExceededRow) {
+        firstExceededRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      this.showToast(
+        `Não é permitido salvar o RDO: colaborador(es) acima do limite máximo de 11 horas na jornada — ${exceededWorkers.join(', ')}. Corrija as linhas em vermelho.`,
+        'error'
+      );
+      return false;
+    }
+    return true;
+  },
+
   saveCurrentRDO() {
     const numero = document.getElementById('rdo-numero').value.trim();
     const data = document.getElementById('rdo-data').value;
     const diaSemana = document.getElementById('rdo-dia-semana').value;
-    const turno = document.getElementById('rdo-turno').value;
+    const turno = document.getElementById('rdo-turno')?.value || 'Diurno';
+    const climaManha = document.getElementById('rdo-clima-manha')?.value || 'Sol';
+    const climaTarde = document.getElementById('rdo-clima-tarde')?.value || 'Sol';
+    const climaNoite = document.getElementById('rdo-clima-noite')?.value || 'Sem Trabalho';
+
+    let climaResumo = `Manhã: ${climaManha} | Tarde: ${climaTarde}`;
+    if (climaNoite && climaNoite !== 'Sem Trabalho') {
+      climaResumo += ` | Noite: ${climaNoite}`;
+    }
+    const clima = climaResumo;
+
     const contrato = document.getElementById('rdo-contrato').value.trim();
     const contratante = document.getElementById('rdo-contratante').value.trim();
     const contratada = document.getElementById('rdo-contratada').value.trim();
@@ -793,6 +1720,34 @@ const app = {
     if (!data) {
       this.showToast('Informe a data do RDO.', 'error');
       return;
+    }
+
+    // Regra básica: cada colaborador não pode exceder 11 horas na jornada
+    if (!this.validateWorkerHoursLimit()) {
+      return;
+    }
+
+    // Validação Obrigatória: FOTO DA PT (Foto 1)
+    const fotoPT = this.currentPhotos[0];
+    const descPTInput = document.getElementById('photo-desc-0');
+    const descPT = descPTInput ? descPTInput.value.trim() : '';
+
+    if (!fotoPT) {
+      this.showToast('A FOTO DA PT (Foto 1) é obrigatória! Por favor, anexe a foto da PT.', 'error');
+      const slot0 = document.getElementById('photo-slot-0');
+      if (slot0) {
+        slot0.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        slot0.style.outline = '3px solid #ef4444';
+        slot0.style.boxShadow = '0 0 12px rgba(239, 68, 68, 0.4)';
+        setTimeout(() => {
+          slot0.style.outline = '';
+          slot0.style.boxShadow = '';
+        }, 4000);
+      }
+      return;
+    }
+    if (!descPT && descPTInput) {
+      descPTInput.value = 'FOTO DA PT';
     }
 
     if (this.currentRDOId) {
@@ -815,12 +1770,15 @@ const app = {
       const nome = row.querySelector('.worker-nome').value.trim();
 
       const activities = {};
+      let rowTotal = 0;
       row.querySelectorAll('.worker-act-input').forEach(inp => {
         const letter = inp.getAttribute('data-act');
-        activities[letter] = parseFloat(inp.value) || 0;
+        const val = parseFloat(inp.value) || 0;
+        activities[letter] = val;
+        rowTotal += val;
       });
 
-      if (matricula || funcao || nome) {
+      if (matricula || funcao || nome || rowTotal > 0) {
         workers.push({ matricula, funcao, nome, activities });
       }
     });
@@ -837,10 +1795,41 @@ const app = {
     });
 
     const comentarios = document.getElementById('rdo-comentarios').value.trim();
+    const sendObs = document.getElementById('rdo-obs-adicional')?.value.trim() || '';
+
+    // Collect Equipments & QT
+    const equipments = [];
+    const equipRows = document.querySelectorAll('#equipments-tbody tr');
+    equipRows.forEach(row => {
+      const nome = (row.querySelector('.equip-name-input')?.value || '').trim();
+      const qtRaw = (row.querySelector('.equip-qt-input')?.value || '').trim();
+      const qt = qtRaw !== '' ? (parseFloat(qtRaw) || 0) : '';
+      if (nome || qt !== '') {
+        equipments.push({ nome, qt: qt === '' ? 1 : qt });
+      }
+    });
+
     const sigPlanejamento = document.getElementById('rdo-sig-planejamento').value.trim();
     const sigEngenheiro = document.getElementById('rdo-sig-engenheiro').value.trim();
     const sigFiscalizacao = document.getElementById('rdo-sig-fiscalizacao').value.trim();
+    const sigEmailPlanejamento = document.getElementById('rdo-sig-email-planejamento')?.value.trim() || '';
+    const sigEmailEngenheiro = document.getElementById('rdo-sig-email-engenheiro')?.value.trim() || '';
+    const sigEmailFiscalizacao = document.getElementById('rdo-sig-email-fiscalizacao')?.value.trim() || '';
     const totalHH = this.calculateTotalHH();
+
+    // Calcular Total de Horas Extras Previstas do RDO (> 8h por colaborador)
+    let totalHE = 0;
+    workers.forEach(w => {
+      let wHours = 0;
+      if (w.activities) {
+        for (const act of ACTIVITIES) {
+          wHours += parseFloat(w.activities[act]) || 0;
+        }
+      }
+      if (wHours > 8) {
+        totalHE += (wHours - 8);
+      }
+    });
 
     // Collect Photos
     const photos = [];
@@ -859,19 +1848,33 @@ const app = {
       data,
       diaSemana,
       turno,
+      clima,
+      climaManha,
+      climaTarde,
+      climaNoite,
       contrato,
       contratante,
       contratada,
       encarregado,
       workers,
       totalHH,
+      totalHE,
       activitiesDescriptions,
       activitiesSignatures,
       comentarios,
+      sendObs: sendObs || (existingRDO ? (existingRDO.sendObs || '') : ''),
+      obsAdicional: sendObs || (existingRDO ? (existingRDO.obsAdicional || '') : ''),
+      equipments,
       photos,
       sigPlanejamento,
       sigEngenheiro,
       sigFiscalizacao,
+      sigEmailPlanejamento,
+      sigEmailEngenheiro,
+      sigEmailFiscalizacao,
+      sigImgPlanejamento: this.currentSignatures.planejamento || '',
+      sigImgEngenheiro: this.currentSignatures.engenheiro || '',
+      sigImgFiscalizacao: this.currentSignatures.fiscalizacao || '',
       logo: StorageService.getUserLogo(session ? session.id : null),
       userId: existingRDO ? (existingRDO.userId || (session ? session.id : null)) : (session ? session.id : null),
       createdBy: existingRDO ? (existingRDO.createdBy || (session ? session.email : '')) : (session ? session.email : ''),
@@ -924,19 +1927,21 @@ const app = {
     const errEl = document.getElementById('delete-pwd-error');
     const entered = pwdInput ? pwdInput.value.trim() : '';
 
-    const DELETE_PASSWORD = '123456';
+    const validPasswords = ['123456', '789512'];
+    const session = StorageService.getSession();
+    if (session && session.password) validPasswords.push(session.password.trim());
 
-    if (entered !== DELETE_PASSWORD) {
+    if (!validPasswords.includes(entered)) {
       if (errEl) {
         errEl.classList.remove('hidden');
-        errEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><span>Senha incorreta! Digite <strong>123456</strong> para confirmar.</span>`;
+        errEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><span>Senha incorreta! Digite <strong>123456</strong> ou <strong>789512</strong> para confirmar.</span>`;
       }
       if (pwdInput) {
         pwdInput.classList.add('is-invalid');
         pwdInput.focus();
         pwdInput.select();
       }
-      this.showToast('Senha de segurança incorreta! Digite 123456.', 'error');
+      this.showToast('Senha de confirmação incorreta! Digite 123456 ou sua senha de Admin.', 'error');
       return;
     }
 
@@ -1053,6 +2058,27 @@ const app = {
           }, 0)
         : (parseFloat(r.totalHH) || 0);
       const displayHH = Number.isInteger(realHH) ? realHH.toString() : realHH.toFixed(1);
+
+      let realHE = 0;
+      if (r.workers && Array.isArray(r.workers) && r.workers.length > 0) {
+        r.workers.forEach(w => {
+          let rowSum = 0;
+          if (w.activities) {
+            for (const act of ACTIVITIES) {
+              rowSum += parseFloat(w.activities[act]) || 0;
+            }
+          }
+          if (rowSum > 8) {
+            realHE += (rowSum - 8);
+          }
+        });
+      } else if (r.totalHE !== undefined && r.totalHE !== null) {
+        realHE = parseFloat(r.totalHE) || 0;
+      }
+      const displayHE = Number.isInteger(realHE) ? realHE.toString() : realHE.toFixed(1);
+      const heCellHtml = realHE > 0
+        ? `<span class="badge-he-prevista">+${displayHE} HE</span>`
+        : `<span class="badge-he-zero">0 HE</span>`;
       
       const info = this.getRDOExpiryInfo(r);
       let statusBadge = '';
@@ -1145,6 +2171,7 @@ const app = {
             ${creatorBadge}
           </td>
           <td><span class="badge-hours">${displayHH} HH</span></td>
+          <td>${heCellHtml}</td>
           <td>
             <div class="actions-cell">
               <div class="actions-row">
@@ -1155,6 +2182,10 @@ const app = {
                 <button class="btn btn-outline btn-xs" onclick="app.editRDO('${r.id}')" title="Editar RDO">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                   <span>Editar</span>
+                </button>
+                <button class="btn btn-outline btn-xs btn-duplicate" onclick="app.duplicateRDO('${r.id}')" title="Duplicar RDO (mantém equipe e dados base, limpando fotos, comentários e assinaturas)">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Duplicar</span>
                 </button>
                 <button class="btn btn-outline btn-xs" onclick="app.quickPrintRDO('${r.id}')" title="Imprimir / PDF">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
@@ -1315,6 +2346,9 @@ const app = {
 
   // SEND RDO MODAL HANDLERS
   openSendModalFromEditor() {
+    if (!this.validateWorkerHoursLimit()) {
+      return;
+    }
     if (!this.currentRDOId) {
       this.showToast('Por favor, clique em "Salvar RDO" antes de realizar o envio.', 'warning');
       return;
@@ -1337,7 +2371,8 @@ const app = {
 
     if (targetInput) targetInput.value = rdo.id;
     if (emailInput) emailInput.value = rdo.sentTo || '';
-    if (obsInput) obsInput.value = rdo.sendObs || '';
+    const currentScreenObs = document.getElementById('rdo-obs-adicional')?.value.trim();
+    if (obsInput) obsInput.value = currentScreenObs || rdo.sendObs || rdo.obsAdicional || '';
 
     let formattedDate = '-';
     if (rdo.data) {
@@ -1473,8 +2508,8 @@ const app = {
                   <div class="val">${formattedDate}</div>
                 </td>
                 <td style="width: 50%; border-bottom: 1px solid #e2e8f0;">
-                  <div class="label">Dia / Turno</div>
-                  <div class="val">${this.escapeHtml(rdo.diaSemana || '-')} • ${this.escapeHtml(rdo.turno || 'Diurno')}</div>
+                  <div class="label">Dia / Turno / Condição Climática</div>
+                  <div class="val">${this.escapeHtml(rdo.diaSemana || '-')} • ${this.escapeHtml(rdo.turno || 'Diurno')} • ${this.escapeHtml(rdo.clima || 'Bom / Ensolarado')}</div>
                 </td>
               </tr>
               <tr>
@@ -1531,6 +2566,26 @@ const app = {
             ${rdo.comentarios ? `
               <div class="section-title">Comentários e Ocorrências do Dia</div>
               <div class="comentarios-box">${this.escapeHtml(rdo.comentarios)}</div>
+            ` : ''}
+
+            ${(rdo.equipments && Array.isArray(rdo.equipments) && rdo.equipments.length > 0) ? `
+              <div class="section-title">Equipamentos Utilizados</div>
+              <table class="table-data">
+                <thead>
+                  <tr>
+                    <th>Equipamento</th>
+                    <th style="width: 80px; text-align: center;">QT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rdo.equipments.map(eq => `
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                      <td style="padding: 8px 12px; font-size: 13px; color: #334155;">${this.escapeHtml(eq.nome || '-')}</td>
+                      <td style="padding: 8px 12px; font-size: 13px; color: #047857; font-weight: 700; text-align: center;">${this.escapeHtml(String(eq.qt ?? '-'))}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
             ` : ''}
 
             <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 16px; text-align: center; margin: 24px 0 10px 0;">
@@ -1646,6 +2701,8 @@ const app = {
 
       // Update Form/Editor view if current
       if (this.currentRDOId === rdoId) {
+        const obsAdicionalEl = document.getElementById('rdo-obs-adicional');
+        if (obsAdicionalEl) obsAdicionalEl.value = obs;
         const isLocked = this.isRDOLocked(updated);
         const watermark = document.getElementById('rdo-lock-watermark');
         if (watermark) watermark.classList.toggle('hidden', !isLocked);

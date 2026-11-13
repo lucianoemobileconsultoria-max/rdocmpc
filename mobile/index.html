@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>RDO Mobile | Engenharia CMPC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/mobile.css?v=2.7.0">
+</head>
+
+<body>
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container-mobile" class="toast-container"></div>
+
+  <!-- ================================================================
+       1. TELA DE LOGIN MOBILE
+       ================================================================ -->
+  <div id="view-login-mobile" class="mobile-login-view">
+    <div class="mobile-login-card">
+      <div class="login-header">
+        <img src="logo cmpc.png" alt="Logo CMPC" class="login-logo">
+        <div>
+          <span class="login-sgq-tag">Sistema de Gestão da Qualidade</span>
+        </div>
+        <h1 class="login-title">ENGENHARIA CMPC</h1>
+        <p class="login-subtitle">Lançamento de RDO - Versão Celular</p>
+      </div>
+
+      <form id="form-login-mobile" class="login-form">
+        <div class="form-field">
+          <label class="form-label" for="login-email-mobile">E-mail</label>
+          <input type="email" id="login-email-mobile" class="form-input" placeholder="seu-email@cmpc.com" required autocomplete="username">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="login-password-mobile">Senha</label>
+          <div style="position: relative;">
+            <input type="password" id="login-password-mobile" class="form-input" placeholder="••••••••" required autocomplete="current-password" style="padding-right: 40px;">
+            <button type="button" onclick="mobileApp.toggleLoginPassword()" title="Mostrar ou ocultar senha"
+              style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748b; padding: 6px; display: flex; align-items: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary-mobile">
+          <span>Entrar no Sistema</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <div class="login-switch-footer">
+          <a href="../desktop/" class="login-switch-link">
+            <span>🖥️ Acessar Versão Desktop Completa</span>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       2. TELA PRINCIPAL (NOVO RDO MOBILE - SOMENTE LANÇAMENTOS)
+       ================================================================ -->
+  <div id="view-app-mobile" class="view hidden">
+    <!-- APP BAR SUPERIOR -->
+    <header class="mobile-appbar">
+      <div class="appbar-brand">
+        <img src="logo cmpc.png" alt="CMPC" class="appbar-logo">
+        <div class="appbar-title-wrap">
+          <div class="appbar-title">
+            ENGENHARIA CMPC
+            <span class="appbar-badge-mobile">MOBILE</span>
+          </div>
+          <span class="appbar-subtitle">SGQ - Lançamento de RDO</span>
+        </div>
+      </div>
+
+      <div class="appbar-actions">
+        <a href="../desktop/" class="btn-desktop-switch" title="Ir para versão Desktop">
+          <span>🖥️ Desktop</span>
+        </a>
+        <button type="button" class="btn-logout" onclick="mobileApp.logout()" title="Sair da conta">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- FAIXA DE PERFIL DO USUÁRIO & NUVEM -->
+    <div class="user-info-strip">
+      <div class="user-info-left">
+        <span>👤</span>
+        <span id="user-name-mobile">Usuário</span>
+        <span id="user-role-mobile" class="user-badge-role">Encarregado</span>
+      </div>
+      <div class="cloud-pill" title="Sincronizado com a Nuvem Firebase">
+        <span class="cloud-dot"></span>
+        <span>Nuvem Ativa</span>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL (FORMULÁRIO NOVO RDO) -->
+    <main class="mobile-container">
+      
+      <!-- BANNER DE BOAS-VINDAS -->
+      <div class="banner-welcome-mobile">
+        <div class="welcome-text">
+          <h2>Novo Relatório Diário de Obra</h2>
+          <p>Campos otimizados para lançamento rápido no canteiro</p>
+        </div>
+        <div class="welcome-badge">CAMPO</div>
+      </div>
+
+      <!-- CARD 1: DADOS GERAIS -->
+      <section class="mobile-card">
+        <div class="card-header-mobile">
+          <div class="card-title-group">
+            <span class="card-icon">📋</span>
+            <h3 class="card-title">1. Dados do Relatório</h3>
+          </div>
+        </div>
+        <div class="card-body-mobile">
+          <div class="grid-2-col">
+            <div class="form-field">
+              <label class="form-label" for="m-rdo-numero">Número RDO</label>
+              <input type="text" id="m-rdo-numero" class="form-input text-center font-bold" placeholder="0001/2026">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="m-rdo-data">Data e Hora</label>
+              <input type="datetime-local" id="m-rdo-data" class="form-input text-center" onchange="mobileApp.handleDateChange(event)">
+            </div>
+          </div>
+
+          <div class="grid-2-col">
+            <div class="form-field">
+              <label class="form-label" for="m-rdo-dia-semana">Dia da Semana</label>
+              <input type="text" id="m-rdo-dia-semana" class="form-input text-center" readonly style="background: var(--slate-100); color: var(--slate-600);">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="m-rdo-turno">Turno de Trabalho</label>
+              <select id="m-rdo-turno" class="form-select font-bold">
+                <option value="Diurno">☀️ Diurno (Manhã e Tarde)</option>
+                <option value="1º Turno (Manhã)">🌅 1º Turno (Manhã)</option>
+                <option value="2º Turno (Tarde)">🌇 2º Turno (Tarde)</option>
+                <option value="Noturno">🌙 Turno Noturno</option>
+                <option value="Integral (24h)">⚡ Integral (24h)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Condição Climática por Turno</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+              <div>
+                <span style="display: block; font-size: 0.72rem; font-weight: 800; color: #475569; margin-bottom: 3px; text-align: center;">MANHÃ</span>
+                <select id="m-rdo-clima-manha" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center;">
+                  <option value="Sol">☀️ Sol</option>
+                  <option value="Nublado">⛅ Nublado</option>
+                  <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
+                  <option value="Chuva Forte">⛈️ Ch. Forte</option>
+                  <option value="Vento Forte">🌬️ Vento</option>
+                  <option value="Impraticável">🚫 Imprat.</option>
+                </select>
+              </div>
+              <div>
+                <span style="display: block; font-size: 0.72rem; font-weight: 800; color: #475569; margin-bottom: 3px; text-align: center;">TARDE</span>
+                <select id="m-rdo-clima-tarde" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center;">
+                  <option value="Sol">☀️ Sol</option>
+                  <option value="Nublado">⛅ Nublado</option>
+                  <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
+                  <option value="Chuva Forte">⛈️ Ch. Forte</option>
+                  <option value="Vento Forte">🌬️ Vento</option>
+                  <option value="Impraticável">🚫 Imprat.</option>
+                </select>
+              </div>
+              <div>
+                <span style="display: block; font-size: 0.72rem; font-weight: 800; color: #475569; margin-bottom: 3px; text-align: center;">NOITE</span>
+                <select id="m-rdo-clima-noite" class="form-select font-bold" style="padding: 7px 2px; font-size: 0.78rem; text-align: center;">
+                  <option value="Sem Trabalho">— S/ Trab.</option>
+                  <option value="Bom / Estável">🌙 Estável</option>
+                  <option value="Nublado">⛅ Nublado</option>
+                  <option value="Chuva Fraca">🌦️ Ch. Fraca</option>
+                  <option value="Chuva Forte">⛈️ Ch. Forte</option>
+                  <option value="Vento Forte">🌬️ Vento</option>
+                  <option value="Impraticável">🚫 Imprat.</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="m-rdo-contrato">Nº do Contrato</label>
+            <input type="text" id="m-rdo-contrato" class="form-input" placeholder="Ex: CTR-2026/045">
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="m-rdo-contratante">Contratante</label>
+            <input type="text" id="m-rdo-contratante" class="form-input" value="CMPC CELULOSE RIOGRANDENSE">
+          </div>
+
+          <div class="grid-2-col">
+            <div class="form-field">
+              <label class="form-label" for="m-rdo-contratada">Contratada</label>
+              <input type="text" id="m-rdo-contratada" class="form-input" placeholder="Nome da contratada">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="m-rdo-encarregado">Encarregado</label>
+              <input type="text" id="m-rdo-encarregado" class="form-input font-bold" placeholder="Nome do encarregado">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARD 2: EFETIVO DE OBRA (COLABORADORES) -->
+      <section class="mobile-card">
+        <div class="card-header-mobile">
+          <div class="card-title-group">
+            <span class="card-icon">👷</span>
+            <h3 class="card-title">2. Efetivo de Obra (Colaboradores)</h3>
+          </div>
+        </div>
+        <div class="card-body-mobile">
+          <!-- LISTA DINÂMICA DE COLABORADORES -->
+          <div class="workers-list-mobile" id="workers-container-mobile">
+            <!-- Inserido dinamicamente pelo JS -->
+          </div>
+
+          <!-- BOTÃO ADICIONAR COLABORADOR -->
+          <button type="button" class="btn-add-worker-mobile" onclick="mobileApp.addWorker()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>+ Adicionar Colaborador</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- CARD 3: DESCRIÇÃO DAS ATIVIDADES & HORAS (A A J) -->
+      <section class="mobile-card">
+        <div class="card-header-mobile">
+          <div class="card-title-group">
+            <span class="card-icon">📌</span>
+            <h3 class="card-title">3. Atividades & Horas (A a J)</h3>
+          </div>
+          <div class="worker-subtotal-badge" id="total-hh-act-display" style="font-size: 12px; padding: 3px 10px; background: #dcfce7; color: #166534;">0 Horas</div>
+        </div>
+        <div class="card-body-mobile">
+          <!-- TOTAL HH GERAL BANNER -->
+          <div class="total-hh-mobile-banner" style="margin-bottom: 6px;">
+            <div class="total-hh-label">
+              <span>⚡</span>
+              <span>TOTAL HH GERAL</span>
+            </div>
+            <div class="total-hh-value" id="total-hh-display">0 Horas</div>
+          </div>
+
+          <div class="activities-list-mobile" id="activities-container-mobile">
+            <!-- Inserido dinamicamente pelo JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- CARD 4: COMENTÁRIOS / EQUIPAMENTOS / DDS -->
+      <section class="mobile-card">
+        <div class="card-header-mobile">
+          <div class="card-title-group">
+            <span class="card-icon">💬</span>
+            <h3 class="card-title">4. Comentários & Equipamentos</h3>
+          </div>
+        </div>
+        <div class="card-body-mobile">
+          <div class="form-field">
+            <label class="form-label" for="m-rdo-comentarios">Observações Gerais, Clima, DDS e Atrasos:</label>
+            <textarea id="m-rdo-comentarios" class="form-textarea" placeholder="Descreva as condições climáticas, temas de DDS, eventuais paralisações ou ocorrências relevantes da obra..."></textarea>
+          </div>
+
+          <div class="form-field" style="margin-top: 10px;">
+            <label class="form-label" for="m-rdo-obs-adicional">Observações / Mensagem Adicional:</label>
+            <textarea id="m-rdo-obs-adicional" class="form-textarea" rows="2" placeholder="Observações complementares ou mensagem adicional registrada no envio..."></textarea>
+          </div>
+
+          <div class="form-field" style="margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <label class="form-label" style="margin-bottom: 0;">🔧 Equipamentos & QT</label>
+              <button type="button" class="btn-add-worker" style="width: auto; padding: 6px 12px; margin: 0; font-size: 0.78rem;" onclick="mobileApp.addEquipment()">
+                + Adicionar Equipamento
+              </button>
+            </div>
+            <div id="equipments-container-mobile" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Inserido via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARD 5: REGISTRO FOTOGRÁFICO (4 FOTOS) -->
+      <section class="mobile-card">
+        <div class="card-header-mobile">
+          <div class="card-title-group">
+            <span class="card-icon">📷</span>
+            <h3 class="card-title">5. Registro Fotográfico (4 Fotos)</h3>
+          </div>
+        </div>
+        <div class="card-body-mobile">
+          <div class="photos-grid-mobile">
+            <!-- Foto 1 (Obrigatória: FOTO DA PT) -->
+            <div class="photo-slot-mobile" style="position: relative;">
+              <span style="position: absolute; top: 6px; right: 6px; background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 4px; z-index: 2;">PT Obrigatória</span>
+              <input type="file" id="photo-file-0" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, 0)">
+              <div class="photo-preview-mobile" id="photo-preview-0" onclick="mobileApp.handlePhotoSlotClick(0)" style="border: 1.5px dashed #f59e0b; background: #fffdf5;">
+                <div class="photo-empty-state" id="photo-empty-0">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" style="stroke: #d97706;">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span style="color: #b45309; font-weight: 800;">FOTO DA PT *</span>
+                  <small style="font-size: 10px; color: #b45309; font-weight: 600;">Obrigatório (PT)</small>
+                </div>
+              </div>
+              <input type="text" id="photo-caption-0" class="photo-caption-mobile font-bold" placeholder="FOTO DA PT" value="FOTO DA PT" title="Legenda obrigatória: FOTO DA PT">
+              <div class="photo-actions-mobile hidden" id="photo-actions-0">
+                <button type="button" class="btn-photo-action" onclick="document.getElementById('photo-file-0').click()">Trocar PT</button>
+                <button type="button" class="btn-photo-action btn-del" onclick="mobileApp.removePhoto(0)">Excluir</button>
+              </div>
+            </div>
+
+            <!-- Foto 2 -->
+            <div class="photo-slot-mobile">
+              <input type="file" id="photo-file-1" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, 1)">
+              <div class="photo-preview-mobile" id="photo-preview-1" onclick="mobileApp.handlePhotoSlotClick(1)">
+                <div class="photo-empty-state" id="photo-empty-1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span>Foto 2</span>
+                  <small style="font-size: 10px; color: var(--slate-400);">Toque p/ foto</small>
+                </div>
+              </div>
+              <input type="text" id="photo-caption-1" class="photo-caption-mobile" placeholder="Legenda da foto 2">
+              <div class="photo-actions-mobile hidden" id="photo-actions-1">
+                <button type="button" class="btn-photo-action" onclick="document.getElementById('photo-file-1').click()">Trocar</button>
+                <button type="button" class="btn-photo-action btn-del" onclick="mobileApp.removePhoto(1)">Excluir</button>
+              </div>
+            </div>
+
+            <!-- Foto 3 -->
+            <div class="photo-slot-mobile">
+              <input type="file" id="photo-file-2" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, 2)">
+              <div class="photo-preview-mobile" id="photo-preview-2" onclick="mobileApp.handlePhotoSlotClick(2)">
+                <div class="photo-empty-state" id="photo-empty-2">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span>Foto 3</span>
+                  <small style="font-size: 10px; color: var(--slate-400);">Toque p/ foto</small>
+                </div>
+              </div>
+              <input type="text" id="photo-caption-2" class="photo-caption-mobile" placeholder="Legenda da foto 3">
+              <div class="photo-actions-mobile hidden" id="photo-actions-2">
+                <button type="button" class="btn-photo-action" onclick="document.getElementById('photo-file-2').click()">Trocar</button>
+                <button type="button" class="btn-photo-action btn-del" onclick="mobileApp.removePhoto(2)">Excluir</button>
+              </div>
+            </div>
+
+            <!-- Foto 4 -->
+            <div class="photo-slot-mobile">
+              <input type="file" id="photo-file-3" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, 3)">
+              <div class="photo-preview-mobile" id="photo-preview-3" onclick="mobileApp.handlePhotoSlotClick(3)">
+                <div class="photo-empty-state" id="photo-empty-3">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span>Foto 4</span>
+                  <small style="font-size: 10px; color: var(--slate-400);">Toque p/ foto</small>
+                </div>
+              </div>
+              <input type="text" id="photo-caption-3" class="photo-caption-mobile" placeholder="Legenda da foto 4">
+              <div class="photo-actions-mobile hidden" id="photo-actions-3">
+                <button type="button" class="btn-photo-action" onclick="document.getElementById('photo-file-3').click()">Trocar</button>
+                <button type="button" class="btn-photo-action btn-del" onclick="mobileApp.removePhoto(3)">Excluir</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARD 6: ASSINATURAS E VISTOS -->
+      <section class="mobile-card">
+        <div class="card-header-mobile">
+          <div class="card-title-group">
+            <span class="card-icon">✍️</span>
+            <h3 class="card-title">6. Assinaturas Técnicas</h3>
+          </div>
+        </div>
+        <div class="card-body-mobile">
+          <!-- Planejamento Executante -->
+          <div class="sig-block-mobile">
+            <label class="form-label">Planejamento Executante</label>
+            <div class="sig-user-grid-mobile">
+              <select id="m-rdo-sig-planejamento" class="form-input" onchange="mobileApp.onSigUserChange('planejamento', this.value)">
+                <option value="">-- Selecionar Nome --</option>
+              </select>
+              <input type="text" id="m-rdo-sig-email-planejamento" class="form-input sig-email-input" readonly placeholder="E-mail automático">
+            </div>
+            <div class="sig-touch-zone-mobile" id="sig-touch-zone-planejamento">
+              <div class="sig-preview-wrap-mobile hidden" id="sig-preview-planejamento">
+                <img id="sig-img-planejamento" src="" alt="Assinatura Planejamento">
+                <div class="sig-preview-actions">
+                  <button type="button" class="btn-sig-small" onclick="mobileApp.openSignatureModal('planejamento')">Trocar</button>
+                  <button type="button" class="btn-sig-small btn-del" onclick="mobileApp.clearSignature('planejamento')">Remover</button>
+                </div>
+              </div>
+              <button type="button" class="btn-open-sig-modal" id="btn-sig-trigger-planejamento" onclick="mobileApp.openSignatureModal('planejamento')">
+                <span>✍️ Assinar com o Dedo na Tela / Colar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Engenheiro de Produção -->
+          <div class="sig-block-mobile">
+            <label class="form-label">Engenheiro de Produção Executante</label>
+            <div class="sig-user-grid-mobile">
+              <select id="m-rdo-sig-engenheiro" class="form-input" onchange="mobileApp.onSigUserChange('engenheiro', this.value)">
+                <option value="">-- Selecionar Nome --</option>
+              </select>
+              <input type="text" id="m-rdo-sig-email-engenheiro" class="form-input sig-email-input" readonly placeholder="E-mail automático">
+            </div>
+            <div class="sig-touch-zone-mobile" id="sig-touch-zone-engenheiro">
+              <div class="sig-preview-wrap-mobile hidden" id="sig-preview-engenheiro">
+                <img id="sig-img-engenheiro" src="" alt="Assinatura Engenheiro">
+                <div class="sig-preview-actions">
+                  <button type="button" class="btn-sig-small" onclick="mobileApp.openSignatureModal('engenheiro')">Trocar</button>
+                  <button type="button" class="btn-sig-small btn-del" onclick="mobileApp.clearSignature('engenheiro')">Remover</button>
+                </div>
+              </div>
+              <button type="button" class="btn-open-sig-modal" id="btn-sig-trigger-engenheiro" onclick="mobileApp.openSignatureModal('engenheiro')">
+                <span>✍️ Assinar com o Dedo na Tela / Colar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Fiscalização CMPC -->
+          <div class="sig-block-mobile">
+            <label class="form-label">Fiscalização CMPC</label>
+            <div class="sig-user-grid-mobile">
+              <select id="m-rdo-sig-fiscalizacao" class="form-input" onchange="mobileApp.onSigUserChange('fiscalizacao', this.value)">
+                <option value="">-- Selecionar Nome --</option>
+              </select>
+              <input type="text" id="m-rdo-sig-email-fiscalizacao" class="form-input sig-email-input" readonly placeholder="E-mail automático">
+            </div>
+            <div class="sig-touch-zone-mobile" id="sig-touch-zone-fiscalizacao">
+              <div class="sig-preview-wrap-mobile hidden" id="sig-preview-fiscalizacao">
+                <img id="sig-img-fiscalizacao" src="" alt="Assinatura Fiscalização">
+                <div class="sig-preview-actions">
+                  <button type="button" class="btn-sig-small" onclick="mobileApp.openSignatureModal('fiscalizacao')">Trocar</button>
+                  <button type="button" class="btn-sig-small btn-del" onclick="mobileApp.clearSignature('fiscalizacao')">Remover</button>
+                </div>
+              </div>
+              <button type="button" class="btn-open-sig-modal" id="btn-sig-trigger-fiscalizacao" onclick="mobileApp.openSignatureModal('fiscalizacao')">
+                <span>✍️ Assinar com o Dedo na Tela / Colar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BARRA FIXA INFERIOR (SALVAR RDO) -->
+    <div class="mobile-bottom-bar">
+      <button type="button" class="btn-reset-mobile" onclick="mobileApp.initNewRDO()" title="Limpar formulário">
+        <span>🔄 Limpar</span>
+      </button>
+      <button type="button" class="btn-save-mobile" onclick="mobileApp.saveRDO()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+          <polyline points="7 3 7 8 15 8"></polyline>
+        </svg>
+        <span>Salvar RDO</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       MODAL DE SUCESSO PÓS-SALVAMENTO
+       ================================================================ -->
+  <div id="modal-success-mobile" class="modal-overlay hidden">
+    <div class="modal-content-mobile">
+      <div class="modal-success-icon">✓</div>
+      <h3 class="modal-title">RDO Gravado com Sucesso!</h3>
+      <p class="modal-desc">O relatório foi gravado localmente e sincronizado com o banco na nuvem Firebase.</p>
+
+      <div class="modal-meta-box">
+        <div><strong>Número:</strong> <span id="success-rdo-num">0000/2026</span></div>
+        <div><strong>Total HH:</strong> <span id="success-rdo-hh">0 Horas</span></div>
+        <div><strong>Data:</strong> <span id="success-rdo-date">-</span></div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-primary-mobile" onclick="mobileApp.startAnotherRDO()">
+          <span>📝 Emitir Outro RDO</span>
+        </button>
+        <a href="../desktop/" class="btn-desktop-switch" style="justify-content: center; height: 46px;">
+          <span>🖥️ Ir para a Versão Desktop</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       MODAL LIGHTBOX FULLSCREEN (ZOOM DE FOTOS)
+       ================================================================ -->
+  <div id="modal-lightbox-mobile" class="lightbox-modal hidden">
+    <div class="lightbox-topbar">
+      <span id="lightbox-tag-mobile" style="font-weight: 700;">Foto</span>
+      <button type="button" style="background: none; border: none; color: #fff; font-size: 28px; cursor: pointer;" onclick="mobileApp.closeLightbox()">&times;</button>
+    </div>
+    <div class="lightbox-img-wrap">
+      <img id="lightbox-img-mobile" src="" alt="Foto Ampliada">
+    </div>
+    <div id="lightbox-caption-mobile" class="lightbox-caption-text">Legenda da foto</div>
+  </div>
+
+  <!-- ================================================================
+       MODAL DE ASSINATURA DIGITAL TOUCH (MOBILE)
+       ================================================================ -->
+  <div id="modal-signature-mobile" class="modal-overlay hidden">
+    <div class="modal-content-mobile modal-sig-mobile">
+      <div class="sig-modal-header">
+        <div>
+          <h3 class="modal-title" id="sig-modal-title-mobile">✍️ Assinatura Digital</h3>
+          <p class="modal-desc" id="sig-modal-subtitle-mobile">Assine diretamente com o dedo ou caneta stylus na tela</p>
+        </div>
+        <button type="button" class="btn-close-sig" onclick="mobileApp.closeSignatureModal()">&times;</button>
+      </div>
+
+      <!-- Toolbar de Caneta & Ações -->
+      <div class="sig-tools-bar">
+        <div class="sig-colors-group">
+          <button type="button" class="btn-color-pick active" data-color="#1d4ed8" onclick="mobileApp.setPenColor('#1d4ed8', this)">
+            <span class="color-dot" style="background: #1d4ed8;"></span>
+            <span>Azul</span>
+          </button>
+          <button type="button" class="btn-color-pick" data-color="#000000" onclick="mobileApp.setPenColor('#000000', this)">
+            <span class="color-dot" style="background: #000000;"></span>
+            <span>Preto</span>
+          </button>
+        </div>
+        <div class="sig-actions-group">
+          <button type="button" class="btn-tool-sub" onclick="document.getElementById('sig-file-upload-mobile').click()">
+            📁 Imagem
+          </button>
+          <input type="file" id="sig-file-upload-mobile" accept="image/*" class="hidden" onchange="mobileApp.handleSignatureImageUpload(event)">
+          <button type="button" class="btn-tool-sub btn-del" onclick="mobileApp.clearSignatureCanvas()">
+            🗑️ Limpar
+          </button>
+        </div>
+      </div>
+
+      <!-- Área de Desenho Canvas Touch -->
+      <div class="sig-canvas-container" id="sig-canvas-container-mobile">
+        <canvas id="sig-canvas-mobile" width="340" height="170"></canvas>
+        <div class="sig-canvas-guideline">Linha de base da assinatura</div>
+      </div>
+
+      <!-- Barra de Perfil e Confirmação -->
+      <div class="sig-profile-save-check">
+        <label>
+          <input type="checkbox" id="check-save-profile-mobile" checked>
+          <span>Salvar esta assinatura no meu perfil para usar sempre</span>
+        </label>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 10px;">
+        <button type="button" class="btn-outline-mobile" onclick="mobileApp.closeSignatureModal()">
+          Cancelar
+        </button>
+        <button type="button" class="btn-primary-mobile" style="flex: 2; margin-top: 0;" onclick="mobileApp.confirmSignature()">
+          <span>✓ Confirmar Assinatura</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIREBASE CLOUD SDKs (Compatíveis) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <!-- APP SCRIPTS -->
+  <script src="js/storage.js?v=2.7.0"></script>
+  <script src="js/mobile.js?v=2.7.0"></script>
+</body>
+
+</html>

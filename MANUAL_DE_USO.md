@@ -159,12 +159,75 @@ O sistema conta com **segurança e isolamento completo por usuário**:
 
 ---
 
+## 📱 8. Divisão das Versões: Desktop & Mobile
+
+O sistema foi estruturado com duas versões especializadas compartilhando o mesmo banco de dados (Firebase Firestore e cache local):
+
+1. **🖥️ Versão Desktop (`/desktop/`)**:
+   - Voltada para computadores e notebooks.
+   - Contém a visualização integral no formato da folha física oficial A4 CMPC.
+   - Recursos completos: Histórico de RDOs, Filtros avançados, Fluxo de Aprovação e Parecer da Fiscalização, Gerenciamento de Equipe, Logotipo da Empresa e Impressão/PDF.
+
+2. **📱 Versão Mobile (`/mobile/`)**:
+   - Projetada exclusivamente para **smartphones e uso no canteiro de obras**.
+   - Fluxo simplificado e veloz: **Login seguro** e **Tela de Lançamento de Novo RDO**.
+   - Elimina tabelas largas e quebras visuais horizontais:
+     - **Efetivo em Cards Verticais:** Cada colaborador possui seu cartão com mini-grade tátil para lançar horas nas atividades (A a J).
+     - **Cálculo em Tempo Real:** Subtotais por colaborador e Total HH Geral somados instantaneamente.
+     - **Fotos de Campo:** 4 slots para tirar fotos com a câmera do celular ou galeria, com zoom ampliado e legenda.
+     - **Sincronização Imediata:** Ao salvar no celular, o RDO fica imediatamente disponível no Desktop para conferência, aprovação e impressão oficial.
+
+3. **🌐 Redirecionamento Inteligente (Raiz `index.html`)**:
+   - Ao acessar o endereço principal, o sistema detecta automaticamente se o usuário está em um celular (redirecionando para `/mobile/`) ou em um computador (redirecionando para `/desktop/`).
+   - Botões de alternância manual estão sempre disponíveis em ambas as versões.
+
+---
+
+## 👑 9. Painel Admin Master (`/admin/`) - Gestão Central Multi-Empresas
+
+Para atender a administração global da plataforma, foi criado o **Painel Admin Master**, localizado na pasta **`/admin/`** (`http://localhost:8080/admin/`).
+
+Este painel é o **núcleo de controle geral** e opera em nível superior ao painel interno das empresas:
+
+1. **🏢 CRUD Completo de Empresas & Clientes:**
+   - Cadastramento de empresas contratadas e clientes (Razão Social, Nome Fantasia, CNPJ, Contrato Padrão, Responsável, Contato, E-mail, Limite de Logins e Logotipo).
+   - O logotipo cadastrado para a empresa é atribuído automaticamente a todos os RDOs e usuários pertencentes a ela.
+   - Ativação / Inativação e exclusão de empresas.
+
+2. **👥 CRUD Global de Usuários & Logins:**
+   - Criação e liberação de acessos vinculados a cada empresa cadastrada.
+   - Definição de permissões por perfil:
+     - **SuperAdmin:** Acesso total à plataforma e ao painel master `/admin/`.
+     - **Admin da Empresa:** Acesso ao painel da sua respectiva empresa no `/desktop/`.
+     - **Encarregado:** Acesso para emitir RDOs em campo no `/mobile/` e no `/desktop/`.
+     - **Engenheiro / Fiscal:** Acesso para conferência, visto e aprovação técnica.
+   - Troca direta de senhas e bloqueio de usuários.
+
+3. **📋 Auditoria e Visão Global de RDOs:**
+   - Monitoramento em tempo real de todos os relatórios emitidos por todas as empresas com filtros avançados.
+
+4. **⚙️ Configurações Globais & Nuvem:**
+   - Configuração centralizada da chave de API da Brevo para disparo de e-mails.
+   - Monitoramento da integridade da conexão Firebase Firestore em tempo real.
+   - **Backup Global:** Exportação e restauração completa em JSON de todas as empresas, logins e relatórios.
+
+> **Credenciais de Acesso ao Painel Master (`/admin/`):**
+> - **E-mail:** `engelmobile2020@gmail.com`
+> - **Senha:** `789512`
+
+---
+
 ## 💡 Dicas e Boas Práticas
 - **Senha de Exclusão (Todos os Perfis):** `123456`
 - **Banco na Nuvem (Google Firebase Firestore):** Os dados e relatórios são salvos e sincronizados automaticamente na nuvem Firebase do projeto `rdocmpc`, permitindo acesso instantâneo de qualquer dispositivo conectado.
 - **Funcionamento Offline & Cache:** Caso a obra fique temporariamente sem internet, o sistema continua funcionando normalmente gravando no cache local (`localStorage`) e sincroniza com a nuvem assim que a conexão retornar.
-- **Uso no Celular:** O sistema é 100% responsivo. No canteiro de obras, você pode tirar fotos diretamente da câmera do celular nos slots de imagem.
-- **Backups:** Você também pode exportar cópias manuais de segurança pelo botão **Exportar Backup (JSON)**.
+- **Uso no Celular:** Acesse a pasta `/mobile/` para uma experiência 100% tátil e veloz para preenchimento de campo.
+- **Backups:** Você também pode exportar cópias manuais de segurança pelo botão **Exportar Backup (JSON)** na versão Desktop.
+- **Assinaturas Digitais no Rodapé:** Nos 3 campos do rodapé (*Planejamento Executante*, *Engenheiro de Produção Executante* e *Fiscalização CMPC*), clique em **"✍️ Assinar / Colar"** para:
+  1. **Desenhar sua rubrica na tela** usando o mouse, caneta touch ou dedo;
+  2. **Colar uma imagem diretamente da área de transferência com `Ctrl + V`** (print do WhatsApp, foto recortada com Win+Shift+S ou do Word/PDF);
+  3. **Carregar arquivo de imagem (PNG/JPG)** do seu computador.
+  A assinatura fica posicionada perfeitamente acima da linha pontilhada e é impressa com alta definição na folha A4.
 - **Teclado:** Pressione **`ESC`** a qualquer momento para fechar o visualizador de fotos em tela cheia ou qualquer janela modal.
 
 ---

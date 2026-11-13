@@ -507,10 +507,11 @@ input, select, textarea, button {
    MAIN CONTAINER & PAGES
    ========================================================================== */
 .main-container {
-  max-width: 98%;
-  width: 100%;
+  max-width: 1360px;
+  width: 98%;
   margin: 0 auto;
-  padding: 20px 24px 60px;
+  padding: 14px 12px 50px;
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -636,6 +637,29 @@ input, select, textarea, button {
   white-space: nowrap;
 }
 
+.badge-he-prevista {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-weight: 800;
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.badge-he-zero {
+  display: inline-block;
+  color: var(--slate-400);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
 .actions-cell {
   display: flex;
   flex-direction: column;
@@ -649,6 +673,17 @@ input, select, textarea, button {
   align-items: center;
   justify-content: flex-start;
   gap: 4px;
+}
+
+.btn-duplicate {
+  color: #4338ca !important;
+  border-color: #c7d2fe !important;
+  background: #eef2ff !important;
+}
+.btn-duplicate:hover {
+  background: #e0e7ff !important;
+  border-color: #a5b4fc !important;
+  color: #3730a3 !important;
 }
 
 .empty-state {
@@ -707,10 +742,12 @@ input, select, textarea, button {
 /* Sheet Card Wrapper & Watermark */
 .rdo-sheet-wrapper {
   position: relative;
-  max-width: 1100px;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto 24px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
   box-shadow: var(--shadow-md);
   border-radius: 4px;
   box-sizing: border-box;
@@ -719,12 +756,24 @@ input, select, textarea, button {
 .cmpc-sheet {
   display: table;
   width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   background: #ffffff;
   border: 2px solid var(--sheet-border);
   padding: 0;
   margin: 0;
-  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.cmpc-sheet .table-responsive {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-bottom: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .rdo-watermark-lock {
@@ -929,14 +978,20 @@ input, select, textarea, button {
   border: none !important;
   margin: 0 !important;
   vertical-align: top;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 
 /* 1. Header Grid */
 .rdo-grid-header {
   display: grid;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: 130px minmax(0, 1fr);
   border-bottom: 2px solid var(--sheet-border);
-  min-height: 52px;
+  min-height: 48px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .rdo-box {
@@ -948,7 +1003,7 @@ input, select, textarea, button {
 
 .logo-box {
   border-right: 2px solid var(--sheet-border);
-  padding: 6px;
+  padding: 5px;
   cursor: pointer;
   background: #ffffff;
   overflow: hidden;
@@ -962,12 +1017,12 @@ input, select, textarea, button {
   text-align: center;
 }
 .logo-preview img {
-  max-height: 48px;
-  max-width: 150px;
+  max-height: 44px;
+  max-width: 120px;
   object-fit: contain;
 }
 .logo-text {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: #333333;
   text-align: center;
@@ -980,10 +1035,10 @@ input, select, textarea, button {
 }
 
 .title-box {
-  padding: 8px 14px;
+  padding: 6px 10px;
 }
 .sgq-header-title {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: #000000;
   text-align: center;
@@ -993,59 +1048,153 @@ input, select, textarea, button {
 /* 2. Number and Date row */
 .rdo-num-date-row {
   display: grid;
-  grid-template-columns: 160px 1fr 150px 1.25fr;
+  grid-template-columns: 110px minmax(0, 1fr) 110px minmax(0, 1.25fr);
   border-bottom: 2px solid var(--sheet-border);
-  min-height: 32px;
+  min-height: 30px;
   background: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
 }
 .rdo-num-label {
   font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
   border-right: 2px solid var(--sheet-border);
   background: #eef2ee;
-  padding: 4px 8px;
+  padding: 3px 6px;
   text-align: center;
 }
 .rdo-num-val {
   border-right: 2px solid var(--sheet-border);
   padding: 0 4px;
+  min-width: 0;
 }
 .rdo-date-label {
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   letter-spacing: 0.03em;
   border-right: 2px solid var(--sheet-border);
   background: #eef2ee;
-  padding: 4px 8px;
+  padding: 3px 6px;
   text-align: center;
 }
 .rdo-date-val {
   padding: 0 4px;
+  min-width: 0;
 }
 .rdo-date-val input[type="datetime-local"] {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--slate-800);
+  max-width: 100%;
+  width: 100%;
 }
 
-/* Main title */
+/* Main title & Condição Climática */
 .rdo-main-title-row {
-  font-size: 1.35rem;
-  font-weight: 800;
-  text-align: center;
-  padding: 10px 0;
-  letter-spacing: 0.06em;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 285px;
   border-bottom: 2px solid var(--sheet-border);
   background: #ffffff;
   color: #000000;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rdo-main-title-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.18rem;
+  font-weight: 800;
+  text-align: center;
+  padding: 8px 6px;
+  letter-spacing: 0.05em;
+  border-right: 2px solid var(--sheet-border);
+  min-width: 0;
+}
+
+.rdo-clima-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  background: #ffffff;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.clima-header-label {
+  background: #eef2ee;
+  font-size: 0.70rem;
+  font-weight: 800;
+  text-align: center;
+  padding: 3px 2px;
+  border-bottom: 1px solid var(--sheet-border);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.clima-turnos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  flex: 1;
+  min-height: 38px;
+  background: #ffffff;
+}
+
+.clima-turno-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--sheet-border);
+  padding: 3px 2px;
+  box-sizing: border-box;
+  min-width: 0;
+  background: #ffffff;
+}
+
+.clima-turno-col:last-child {
+  border-right: none;
+}
+
+.clima-turno-tag {
+  font-size: 0.63rem;
+  font-weight: 800;
+  color: #475569;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.clima-select {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.73rem;
+  font-weight: 700;
+  text-align: center;
+  color: #0f172a;
+  cursor: pointer;
+  padding: 1px 0;
+  outline: none;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+.clima-select:focus {
+  background: rgba(34, 197, 94, 0.08);
 }
 
 /* 3. Meta Grid: Contract & Team info */
 .rdo-meta-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.05fr) 285px;
   border-bottom: 2px solid var(--sheet-border);
+  box-sizing: border-box;
 }
 
 .rdo-meta-left {
@@ -1064,17 +1213,37 @@ input, select, textarea, button {
 }
 .meta-label {
   font-weight: 800;
-  font-size: 0.8rem;
-  min-width: 130px;
-  padding-left: 8px;
+  font-size: 0.76rem;
+  min-width: 105px;
+  padding-left: 6px;
   color: #000000;
 }
 
-.rdo-meta-right {
-  display: grid;
-  grid-template-columns: 1.2fr 1.1fr 1.3fr;
-  grid-template-rows: auto 1fr;
+.rdo-meta-middle {
+  border-right: 2px solid var(--sheet-border);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
+
+.meta-middle-header-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+}
+
+.meta-middle-val-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  flex: 1;
+}
+
+.rdo-meta-turno-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .meta-header-box {
   background: #eef2ee;
   font-size: 0.78rem;
@@ -1084,7 +1253,8 @@ input, select, textarea, button {
   border-bottom: 1px solid var(--sheet-border);
   border-right: 1px solid var(--sheet-border);
 }
-.meta-header-box:last-of-type {
+.meta-header-box:last-of-type,
+.rdo-meta-turno-col .meta-header-box {
   border-right: none;
 }
 
@@ -1094,9 +1264,21 @@ input, select, textarea, button {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+  box-sizing: border-box;
 }
-.meta-val-box:last-child {
+.meta-val-box select {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
+}
+.meta-val-box:last-child,
+.rdo-meta-turno-col .meta-val-box {
   border-right: none;
+}
+.rdo-meta-turno-col .val-turno {
+  flex: 1;
 }
 .sub-label {
   font-size: 0.75rem;
@@ -1130,12 +1312,15 @@ input, select, textarea, button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 10px;
+  padding: 5px 8px;
   background: var(--primary-50);
   border-bottom: 1px solid var(--primary-200);
+  flex-wrap: wrap;
+  gap: 6px;
+  box-sizing: border-box;
 }
 .strip-label {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--primary-900);
 }
@@ -1157,12 +1342,18 @@ input, select, textarea, button {
   font-weight: 800;
   text-align: center;
   vertical-align: middle;
+  font-size: 0.76rem;
+  letter-spacing: 0.01em;
+  padding: 4px 2px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.col-matricula { width: 90px; }
-.col-funcao { width: 150px; }
-.col-nome { width: 220px; }
-.col-act { width: 38px; font-weight: 800; text-align: center; }
+.col-matricula { width: 92px; min-width: 92px; }
+.col-funcao { width: 120px; min-width: 110px; }
+.col-nome { width: auto; min-width: 160px; }
+.col-act { width: 28px; font-weight: 800; text-align: center; }
+.col-worker-total { width: 90px; min-width: 90px; font-weight: 800; text-align: center; background: #eef2ee !important; }
 
 .sub-header-activities th {
   background: #fdfdfd;
@@ -1176,12 +1367,120 @@ input, select, textarea, button {
   font-size: 0.82rem;
   padding: 2px 4px;
   outline: none;
+  box-sizing: border-box;
 }
 .worker-cell-input:focus {
   background: #eefbee;
 }
 .worker-act-input {
   text-align: center;
+  font-weight: 700;
+  padding: 2px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.worker-total-cell {
+  background: #f8faf8;
+  font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
+  padding: 2px 4px !important;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  overflow: visible;
+}
+
+.worker-total-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.worker-row-total {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #14532d;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+/* Destaque em AZUL quando colaborador passa de 8 horas na jornada (Hora Extra Prevista) */
+.worker-row.worker-row-extra:not(.worker-row-exceeded) td {
+  background-color: #f0f7ff;
+}
+
+.worker-row.worker-row-extra:not(.worker-row-exceeded) .worker-cell-input {
+  color: #1e40af;
+}
+
+.worker-row.worker-row-extra:not(.worker-row-exceeded) .worker-cell-input:focus {
+  background-color: #dbeafe;
+}
+
+.worker-row.worker-row-extra:not(.worker-row-exceeded) td.worker-total-cell.worker-total-extra {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.worker-total-cell.worker-total-extra:not(.worker-total-exceeded) .worker-row-total {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+.worker-total-cell.worker-total-extra:not(.worker-total-exceeded) .btn-remove-row {
+  color: #ffffff !important;
+}
+
+.worker-total-cell.worker-total-extra:not(.worker-total-exceeded) .btn-remove-row:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Destaque em vermelho quando colaborador excede 11 horas na jornada */
+.worker-row.worker-row-exceeded td {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+}
+
+.worker-row.worker-row-exceeded .worker-cell-input {
+  color: #b91c1c !important;
+  font-weight: 700 !important;
+}
+
+.worker-row.worker-row-exceeded .worker-cell-input:focus {
+  background-color: #fecaca !important;
+}
+
+.worker-row.worker-row-exceeded td.worker-total-cell.worker-total-exceeded {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+.worker-total-cell.worker-total-exceeded .worker-row-total {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+.worker-total-cell.worker-total-exceeded .btn-remove-row {
+  color: #ffffff !important;
+}
+
+.worker-total-cell.worker-total-exceeded .btn-remove-row:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+.workers-limit-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fef2f2;
+  border-bottom: 1px solid #fca5a5;
+  color: #b91c1c;
+  padding: 8px 12px;
+  font-size: 0.82rem;
   font-weight: 600;
 }
 
@@ -1190,11 +1489,17 @@ input, select, textarea, button {
   border: none;
   color: #ef4444;
   cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
-  display: flex;
+  padding: 1px 2px;
+  border-radius: 3px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.btn-remove-row svg {
+  width: 12px;
+  height: 12px;
 }
 .btn-remove-row:hover {
   background: #fee2e2;
@@ -1233,9 +1538,9 @@ input, select, textarea, button {
   font-weight: 800;
   text-align: center;
 }
-.col-ativ-id { width: 50px; text-align: center; }
-.col-ativ-desc { text-align: left; padding-left: 10px !important; }
-.col-ativ-ass { width: 140px; text-align: center; }
+.col-ativ-id { width: 35px; text-align: center; }
+.col-ativ-desc { text-align: left; padding-left: 6px !important; }
+.col-ativ-ass { width: 120px; text-align: center; }
 
 .act-letter {
   font-weight: 800;
@@ -1249,27 +1554,48 @@ input, select, textarea, button {
   font-size: 0.8rem;
 }
 
-/* 6. Comments Section */
+/* 6. Comments & Equipments Section */
 .rdo-comments-section {
   border-top: 2px solid var(--sheet-border);
   border-bottom: 2px solid var(--sheet-border);
   background: #ffffff;
+}
+.rdo-comments-equip-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: stretch;
+}
+.rdo-comments-pane {
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid var(--sheet-border);
+  min-width: 0;
 }
 .comments-header {
   font-weight: 800;
   font-size: 0.82rem;
   background: #eef2ee;
   padding: 4px 10px;
+  min-height: 29px;
+  display: flex;
+  align-items: center;
   border-bottom: 1px solid var(--sheet-border);
   letter-spacing: 0.04em;
+  box-sizing: border-box;
+}
+.comments-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 .rdo-textarea {
   width: 100%;
+  flex: 1;
   border: none;
   padding: 8px 10px;
   font-size: 0.85rem;
   resize: vertical;
-  min-height: 100px;
+  min-height: 112px;
   outline: none;
   background: transparent;
   color: #000000;
@@ -1277,6 +1603,134 @@ input, select, textarea, button {
 }
 .rdo-textarea:focus {
   background: rgba(34, 197, 94, 0.04);
+}
+
+/* Equipments & QT Pane */
+.rdo-equipments-pane {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  min-width: 0;
+}
+.equipments-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.equipments-table thead th {
+  background: #eef2ee;
+  font-weight: 800;
+  font-size: 0.82rem;
+  padding: 4px 8px;
+  min-height: 29px;
+  height: 29px;
+  border-top: none;
+  border-left: none;
+  border-bottom: 1px solid var(--sheet-border);
+  letter-spacing: 0.04em;
+  box-sizing: border-box;
+}
+.equipments-table th.col-equip-name {
+  text-align: left;
+  border-right: 2px solid var(--sheet-border);
+}
+.equipments-table th.col-equip-qt {
+  width: 55px;
+  text-align: center;
+  border-right: none;
+}
+.equip-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.btn-add-equip {
+  background: #ffffff;
+  color: var(--primary-700);
+  border: 1px solid var(--primary-300);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.3;
+  transition: all 0.15s ease;
+}
+.btn-add-equip:hover {
+  background: var(--primary-600);
+  color: #ffffff;
+  border-color: var(--primary-600);
+}
+.equipments-table tbody td {
+  padding: 0;
+  height: 28px;
+  border-top: none;
+  border-left: none;
+  border-bottom: 1px solid #cbd5e1;
+}
+.equipments-table tbody td:first-child {
+  border-right: 2px solid var(--sheet-border);
+}
+.equipments-table tbody td:last-child {
+  border-right: none;
+}
+.equipments-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.equip-qt-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding-right: 2px;
+}
+.equip-name-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.82rem;
+  background: transparent;
+  outline: none;
+  color: #000000;
+}
+.equip-qt-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 4px 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  background: transparent;
+  outline: none;
+  color: #000000;
+}
+.equip-name-input:focus,
+.equip-qt-input:focus {
+  background: rgba(34, 197, 94, 0.06);
+}
+
+/* 6.01 Observações / Mensagem Adicional */
+.rdo-obs-section {
+  border-bottom: 2px solid var(--sheet-border);
+  background: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
+}
+.obs-header {
+  font-weight: 800;
+  font-size: 0.82rem;
+  background: #eef2ee;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--sheet-border);
+  letter-spacing: 0.04em;
+  color: #000000;
+}
+.obs-body {
+  padding: 4px 6px;
+  background: #ffffff;
 }
 
 /* 6.1 Photos / Registro Fotográfico (4 Imagens Pequenas) */
@@ -1308,6 +1762,29 @@ input, select, textarea, button {
 }
 .photo-slot:last-child {
   border-right: none;
+}
+.photo-slot-pt-required .photo-preview-wrap {
+  border: 1.5px dashed #f59e0b;
+  background: #fffdf5;
+}
+.photo-slot-pt-required .photo-preview-wrap:hover {
+  background: #fef3c7;
+  border-color: #d97706;
+}
+.badge-pt-tag {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  z-index: 2;
 }
 .photo-preview-wrap {
   width: 100%;
@@ -1557,29 +2034,143 @@ input, select, textarea, button {
 /* 7. Signatures Grid (Planejamento / Engenheiro / Fiscalização) */
 .rdo-signatures-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1.5fr 1.4fr;
-  min-height: 80px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.1fr);
+  min-height: 105px;
   background: #ffffff;
 }
 .sig-box {
+  position: relative;
   border-right: 2px solid var(--sheet-border);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 6px 10px 8px;
+  padding: 6px 8px 8px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 .sig-box:last-child {
   border-right: none;
 }
+
+.sig-digital-zone {
+  position: relative;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
+.sig-image-container {
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.sig-image-container:hover {
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.sig-digital-img {
+  max-height: 52px;
+  max-width: 95%;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.12));
+}
+
+.sig-placeholder-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.73rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.sig-placeholder-prompt:hover {
+  border-color: #2563eb;
+  color: #1d4ed8;
+  background: #eff6ff;
+  transform: translateY(-1px);
+}
+.sig-prompt-icon {
+  font-size: 0.9rem;
+}
+
+.sig-actions-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.btn-sig-action {
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #1e40af;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s;
+}
+.btn-sig-action:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+.btn-sig-clear {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  font-size: 13px;
+  line-height: 1;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s;
+}
+.btn-sig-clear:hover {
+  background: #ef4444;
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.sig-line-divider {
+  width: 100%;
+  border-bottom: 1.5px dashed #888888;
+  margin: 6px 0 6px;
+}
 .sig-field-wrapper {
-  margin-bottom: 8px;
-  border-bottom: 1px dashed #999999;
-  padding-bottom: 2px;
+  display: none;
 }
 .sig-input {
-  text-align: center;
-  font-size: 0.85rem;
-  font-weight: 600;
+  display: none;
 }
 .sig-label {
   font-size: 0.74rem;
@@ -1587,6 +2178,245 @@ input, select, textarea, button {
   text-align: center;
   letter-spacing: 0.02em;
   color: #000000;
+}
+
+/* Modal Digital Signature Elements */
+#modal-digital-signature {
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 9999 !important;
+}
+
+.modal-signature-dialog,
+.modal-card {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #cbd5e1 !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+}
+
+.modal-signature-dialog .modal-body,
+.modal-card .modal-body {
+  background: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.modal-signature-dialog .modal-footer,
+.modal-card .modal-footer {
+  background: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+  opacity: 1 !important;
+}
+
+.sig-paste-banner {
+  background: #eff6ff !important;
+  border: 1px dashed #3b82f6 !important;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 0.82rem;
+  color: #1e40af;
+  line-height: 1.4;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.08);
+}
+
+.sig-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.sig-tool-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sig-tool-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+}
+.sig-color-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sig-color-btn.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+.sig-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.sig-size-btn {
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sig-size-btn.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.sig-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 210px;
+  background: #ffffff !important;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+  cursor: crosshair;
+  user-select: none;
+  touch-action: none;
+}
+.sig-canvas-container.dragover {
+  border-color: #2563eb;
+  background: #eff6ff !important;
+}
+#sig-pad-canvas {
+  width: 100%;
+  height: 100%;
+  background: #ffffff !important;
+  display: block;
+}
+.sig-canvas-guide {
+  position: absolute;
+  bottom: 34px;
+  left: 20px;
+  right: 20px;
+  pointer-events: none;
+}
+.sig-guide-line {
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.4);
+  height: 1px;
+  width: 100%;
+}
+.sig-guide-text {
+  display: block;
+  text-align: right;
+  font-size: 0.67rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin-top: 2px;
+}
+.sig-status-indicator {
+  font-size: 0.77rem;
+  color: #64748b;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.sig-user-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 3px;
+  width: 100%;
+}
+.sig-user-select {
+  flex: 1.1;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1e293b;
+  background: #ffffff;
+  outline: none;
+  height: 24px;
+}
+.sig-user-select:focus {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+.sig-user-email {
+  flex: 1.2;
+  min-width: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.68rem;
+  color: #475569;
+  background: #f8fafc;
+  outline: none;
+  height: 24px;
+}
+
+/* Modal User Selection Bar below guide line */
+.sig-modal-user-bar {
+  position: absolute;
+  bottom: 4px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+.sig-modal-select {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #1e293b;
+  background: #ffffff;
+  outline: none;
+  height: 26px;
+}
+.sig-modal-select:focus {
+  border-color: #2563eb;
+}
+.sig-modal-email {
+  flex: 1.2;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 0.74rem;
+  color: #475569;
+  background: #f8fafc;
+  outline: none;
+  height: 26px;
 }
 
 .bottom-action-bar {
@@ -2076,7 +2906,13 @@ input, select, textarea, button {
     font-size: 0.92rem;
   }
   .rdo-main-title-row {
+    grid-template-columns: 1fr;
+  }
+  .rdo-main-title-text {
     font-size: 1.05rem;
+    border-right: none;
+    border-bottom: 1px solid var(--sheet-border);
+    padding: 8px;
   }
 
   .rdo-num-date-row {
@@ -2095,8 +2931,19 @@ input, select, textarea, button {
     font-size: 0.75rem;
   }
 
-  .rdo-meta-right {
-    grid-template-columns: 1fr;
+  .rdo-meta-middle {
+    border-right: none;
+    border-bottom: 2px solid var(--sheet-border);
+  }
+  .meta-middle-header-row {
+    display: none;
+  }
+  .meta-middle-val-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .rdo-meta-turno-col .meta-header-box {
+    display: none;
   }
   .meta-header-box {
     display: none;
@@ -2108,6 +2955,14 @@ input, select, textarea, button {
   }
   .meta-val-box:last-child {
     border-bottom: none;
+  }
+
+  .rdo-comments-equip-grid {
+    grid-template-columns: 1fr;
+  }
+  .rdo-comments-pane {
+    border-right: none;
+    border-bottom: 2px solid var(--sheet-border);
   }
 
   .rdo-signatures-grid {
@@ -2311,17 +3166,60 @@ input, select, textarea, button {
     padding: 0 4px !important;
   }
 
-  /* Main Title in Print */
+  /* Main Title & Condição Climática in Print */
   .rdo-main-title-row {
-    padding: 3px 0 !important;
-    font-size: 1.1rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 265px !important;
+    padding: 0 !important;
     border-bottom: 2px solid #000000 !important;
   }
+  .rdo-main-title-text {
+    padding: 3px 6px !important;
+    font-size: 1.1rem !important;
+    border-right: 2px solid #000000 !important;
+    border-bottom: none !important;
+  }
+  .clima-header-label {
+    background: #eef2ee !important;
+    font-size: 6.5pt !important;
+    font-weight: 800 !important;
+    padding: 1px 2px !important;
+    border-bottom: 1px solid #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .clima-turnos-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    min-height: 28px !important;
+  }
+  .clima-turno-col {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-right: 1px solid #000000 !important;
+    padding: 1px 2px !important;
+  }
+  .clima-turno-col:last-child {
+    border-right: none !important;
+  }
+  .clima-turno-tag {
+    font-size: 5.2pt !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+    margin-bottom: 1px !important;
+  }
+  .clima-select {
+    font-size: 6.5pt !important;
+    font-weight: 700 !important;
+    padding: 0 !important;
+  }
 
-  /* 3. Contract & Team Metadata in Print (Desktop 2-Col Format) */
+  /* 3. Contract & Team Metadata in Print (Desktop 3-Col Format) */
   .rdo-meta-grid {
     display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.05fr) 265px !important;
     border-bottom: 2px solid #000000 !important;
   }
   .rdo-meta-left {
@@ -2346,11 +3244,29 @@ input, select, textarea, button {
     padding-left: 6px !important;
   }
 
-  .rdo-meta-right {
-    display: grid !important;
-    grid-template-columns: 1.2fr 1.1fr 1.3fr !important;
-    grid-template-rows: auto 1fr !important;
+  .rdo-meta-middle {
+    display: flex !important;
+    flex-direction: column !important;
+    border-right: 2px solid #000000 !important;
   }
+  .meta-middle-header-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) !important;
+  }
+  .meta-middle-val-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) !important;
+    flex: 1 !important;
+  }
+
+  .rdo-meta-turno-col {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .rdo-meta-turno-col .val-turno {
+    flex: 1 !important;
+  }
+
   .meta-header-box {
     display: block !important;
     background: #eef2ee !important;
@@ -2360,8 +3276,11 @@ input, select, textarea, button {
     padding: 2px !important;
     border-bottom: 1px solid #000000 !important;
     border-right: 1px solid #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
-  .meta-header-box:last-of-type {
+  .meta-header-box:last-of-type,
+  .rdo-meta-turno-col .meta-header-box {
     border-right: none !important;
   }
   .meta-val-box {
@@ -2372,7 +3291,8 @@ input, select, textarea, button {
     flex-direction: column !important;
     justify-content: center !important;
   }
-  .meta-val-box:last-child {
+  .meta-val-box:last-child,
+  .rdo-meta-turno-col .meta-val-box {
     border-right: none !important;
   }
   .sub-label {
@@ -2419,12 +3339,54 @@ input, select, textarea, button {
   .worker-cell-input,
   .act-desc-input,
   .act-ass-input,
+  .equip-name-input,
+  .equip-qt-input,
   .sig-input {
     border: none !important;
     background: transparent !important;
     font-size: 7.5pt !important;
     padding: 1px 2px !important;
     color: #000000 !important;
+  }
+
+  .rdo-comments-equip-grid {
+    display: grid !important;
+    grid-template-columns: 1.05fr 0.95fr !important;
+    align-items: stretch !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  .rdo-comments-pane {
+    border-right: 2px solid #000000 !important;
+    border-bottom: none !important;
+  }
+  .comments-header,
+  .equipments-table thead th {
+    background-color: #eef2ee !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    font-size: 7.2pt !important;
+    font-weight: 800 !important;
+    min-height: 18px !important;
+    height: 18px !important;
+    padding: 2px 4px !important;
+    border-bottom: 1px solid #000000 !important;
+  }
+  .equipments-table th.col-equip-name {
+    border-right: 1.5px solid #000000 !important;
+  }
+  .equipments-table th.col-equip-qt {
+    width: 60px !important;
+  }
+  .equipments-table tbody td {
+    height: 18px !important;
+    border-bottom: 1px solid #94a3b8 !important;
+  }
+  .equipments-table tbody td:first-child {
+    border-right: 1.5px solid #000000 !important;
+  }
+  .equipments-table tbody tr:last-child td {
+    border-bottom: none !important;
   }
 
   .rdo-textarea {
@@ -2447,6 +3409,24 @@ input, select, textarea, button {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     font-weight: 800 !important;
+  }
+
+  /* Observações / Mensagem Adicional in Print */
+  .rdo-obs-section {
+    border-bottom: 2px solid #000000 !important;
+    background: #ffffff !important;
+  }
+  .obs-header {
+    background: #eef2ee !important;
+    font-size: 6.8pt !important;
+    font-weight: 800 !important;
+    padding: 2px 6px !important;
+    border-bottom: 1px solid #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .obs-body {
+    padding: 2px 4px !important;
   }
 
   /* Compact Photo Grid (4 columns side-by-side) */
@@ -2490,20 +3470,84 @@ input, select, textarea, button {
     display: grid !important;
     grid-template-columns: 1.1fr 1.5fr 1.4fr !important;
     border-top: 2px solid #000000 !important;
-    min-height: 54px !important;
+    min-height: 64px !important;
     break-inside: avoid !important;
     page-break-inside: avoid !important;
   }
   .sig-box {
     border-right: 2px solid #000000 !important;
-    padding: 3px 5px 5px !important;
+    padding: 2px 4px 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
   }
   .sig-box:last-child {
     border-right: none !important;
   }
-  .sig-field-wrapper {
-    margin-bottom: 3px !important;
-    border-bottom: 1px dashed #555555 !important;
+  .sig-actions-bar,
+  .sig-placeholder-prompt {
+    display: none !important;
+  }
+  .sig-digital-zone {
+    min-height: 44px !important;
+    max-height: 48px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    margin-bottom: 2px !important;
+  }
+  .sig-image-container {
+    min-height: 44px !important;
+    cursor: default !important;
+    background: transparent !important;
+  }
+  .sig-digital-img {
+    max-height: 44px !important;
+    max-width: 90% !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .sig-digital-img.hidden {
+    display: none !important;
+  }
+  .sig-line-divider {
+    width: 100% !important;
+    border-bottom: 1px dashed #444444 !important;
+    margin: 4px 0 4px !important;
+  }
+  .sig-user-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    margin-bottom: 2px !important;
+  }
+  .sig-user-select {
+    border: none !important;
+    background: transparent !important;
+    font-size: 6.5pt !important;
+    font-weight: 700 !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    height: auto !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+  }
+  .sig-user-email {
+    border: none !important;
+    background: transparent !important;
+    font-size: 6.2pt !important;
+    color: #334155 !important;
+    padding: 0 !important;
+    height: auto !important;
+  }
+  .sig-field-wrapper,
+  .sig-input {
+    display: none !important;
   }
   .sig-label {
     font-size: 6.5pt !important;

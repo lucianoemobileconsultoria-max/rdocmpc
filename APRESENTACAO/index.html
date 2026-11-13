@@ -1,0 +1,2851 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Apresentação Comercial & Técnica | Sistema & App RDO Engenharia CMPC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/slides.css">
+</head>
+<body>
+
+  <!-- APRESENTAÇÃO CONTAINER -->
+  <div class="presentation-container">
+    <div class="slide-stage">
+
+      <!-- BARRA DE PROGRESSO SUPERIOR -->
+      <div class="top-progress-bar">
+        <div id="top-progress-fill" class="top-progress-fill"></div>
+      </div>
+
+      <!-- SLIDES WRAPPER -->
+      <div class="slides-wrapper">
+
+        <!-- ================================================================
+             SLIDE 1: CAPA PRINCIPAL
+             ================================================================ -->
+        <div class="slide active cover-slide">
+          <div class="cover-logo-box">
+            <img src="assets/logo cmpc.png" alt="Logo CMPC">
+          </div>
+          <div class="slide-module-badge badge-desktop">SISTEMA DE GESTÃO DA QUALIDADE</div>
+          <h1 class="cover-title">Relatório Diário de Obra <span>(RDO)</span></h1>
+          <p class="cover-subtitle">
+            A solução definitiva para digitalização de apontamentos de campo, apuração automática de HH e controle rigoroso de qualidade para obras e paradas de manutenção da Engenharia CMPC.
+          </p>
+
+          <div class="cover-tags">
+            <div class="cover-tag-pill">📱 <strong>App Mobile</strong> Otimizado p/ Campo</div>
+            <div class="cover-tag-pill">🖥️ <strong>Web Desktop</strong> Padrão Oficial A4</div>
+            <div class="cover-tag-pill">⚡ <strong>Cálculo Automático</strong> Total HH</div>
+            <div class="cover-tag-pill">☁️ <strong>Firebase Nuvem</strong> + 100% Offline</div>
+            <div class="cover-tag-pill">✍️ <strong>Assinaturas Digitais</strong> e Rubricas</div>
+            <div class="cover-tag-pill">👑 <strong>Admin Master</strong> Multi-Empresas</div>
+          </div>
+
+          <div style="display: flex; gap: 14px; justify-content: center; margin-top: 10px;">
+            <button class="btn-dock btn-primary-dock" onclick="presentation.nextSlide()" style="padding: 10px 24px; font-size: 1rem;">
+              <span>Iniciar Apresentação</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="btn-dock" onclick="presentation.toggleDrawer()" style="padding: 10px 20px;">
+              <span>📑 Índice de Slides</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 2: O CENÁRIO ATUAL VS. A NOVA SOLUÇÃO
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge">PANORAMA OPERACIONAL</div>
+              <h2 class="slide-title">Do Papel Físico à Gestão Digital em Tempo Real</h2>
+              <p class="slide-subtitle">Eliminando os gargalos crônicos do preenchimento manual em pranchetas de obra</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card" style="border-left: 4px solid #ef4444;">
+                <div class="feature-icon-circle" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #f87171;">⚠️</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #fca5a5;">Como era antes: O RDO em Papel</h4>
+                  <p>Pranchetas molhadas pela chuva, letras ilegíveis, erros constantes na soma manual de HH, fotos soltas em grupos de WhatsApp sem amarração técnica e relatórios entregues com 3 a 5 dias de atraso.</p>
+                </div>
+              </div>
+
+              <div class="feature-card" style="border-left: 4px solid #10b981;">
+                <div class="feature-icon-circle">✅</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #6ee7b7;">Como é agora: RDO Digital Engenharia</h4>
+                  <p>Lançamento em menos de 3 minutos no celular pelo encarregado, cálculo matemático automático de homem-hora, 4 fotos registradas na hora com legenda e visto imediato disponível para a fiscalização CMPC.</p>
+                </div>
+              </div>
+
+              <div class="highlight-box">
+                <strong>💡 Impacto Direto:</strong> 100% dos relatórios entregues no mesmo dia, zero perda documental em auditorias SGQ e rastreabilidade jurídica com assinaturas digitais registradas.
+              </div>
+            </div>
+
+            <!-- MOCKUP COMPARATIVO -->
+            <div class="mockup-container">
+              <div class="desktop-mockup" style="max-height: 380px;">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Comparativo: Papel vs. Sistema RDO Digital</div>
+                </div>
+                <div class="desktop-screen" style="padding: 16px; background: #0f172a; color: #fff;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                    <thead>
+                      <tr style="border-bottom: 2px solid #334155; text-align: left;">
+                        <th style="padding: 8px; color: #94a3b8;">Critério</th>
+                        <th style="padding: 8px; color: #f87171;">Prancheta / Papel</th>
+                        <th style="padding: 8px; color: #34d399;">Sistema RDO CMPC</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 8px; font-weight: 600;">Tempo de Emissão</td>
+                        <td style="padding: 8px; color: #fca5a5;">25 a 40 minutos</td>
+                        <td style="padding: 8px; color: #6ee7b7; font-weight: 700;">Menos de 3 minutos</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 8px; font-weight: 600;">Cálculo de HH</td>
+                        <td style="padding: 8px; color: #fca5a5;">Manual (sujeito a erros)</td>
+                        <td style="padding: 8px; color: #6ee7b7; font-weight: 700;">100% Automático</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 8px; font-weight: 600;">Evidências Fotográficas</td>
+                        <td style="padding: 8px; color: #fca5a5;">WhatsApp / Desordenadas</td>
+                        <td style="padding: 8px; color: #6ee7b7; font-weight: 700;">4 Fotos com Legenda no PDF</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 8px; font-weight: 600;">Disponibilidade</td>
+                        <td style="padding: 8px; color: #fca5a5;">Após dias (ao recolher)</td>
+                        <td style="padding: 8px; color: #6ee7b7; font-weight: 700;">Instantânea na Nuvem</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px; font-weight: 600;">Conformidade SGQ</td>
+                        <td style="padding: 8px; color: #fca5a5;">Vulnerável a auditorias</td>
+                        <td style="padding: 8px; color: #6ee7b7; font-weight: 700;">Certificada & Padronizada</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 3: VISÃO GERAL DA ARQUITETURA
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-tech">ARQUITETURA DO ECOSSISTEMA</div>
+              <h2 class="slide-title">Conexão Contínua entre Canteiro, Escritório e Fiscalização</h2>
+              <p class="slide-subtitle">Três ambientes especializados alimentando uma única base de dados corporativa</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">📱</div>
+                <div class="feature-card-text">
+                  <h4>1. App Mobile no Canteiro de Obras</h4>
+                  <p>Utilizado pelos encarregados em campo. Rápido, cards verticais, fotos com a câmera e funcionamento perfeito mesmo quando a obra fica sem sinal de internet.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🖥️</div>
+                <div class="feature-card-text">
+                  <h4>2. Plataforma Desktop de Engenharia</h4>
+                  <p>Utilizada no escritório por engenheiros e fiscais CMPC. Histórico geral, filtros avançados, visualização formal A4, fluxo de parecer técnico e impressão oficial.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">👑</div>
+                <div class="feature-card-text">
+                  <h4>3. Painel Admin Master Multi-Empresas</h4>
+                  <p>Central de governança corporativa. Gerencia empresas terceirizadas, logotipos automáticos, controle de usuários e auditoria consolidada de toda a planta.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup" style="max-height: 380px;">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Fluxo de Dados: Canteiro ➔ Nuvem ➔ Fiscalização</div>
+                </div>
+                <div class="desktop-screen" style="padding: 20px; background: #0b1120; display: flex; flex-direction: column; justify-content: space-around; align-items: center;">
+                  
+                  <div style="display: flex; gap: 20px; width: 100%; justify-content: space-around;">
+                    <div style="background: rgba(37,99,235,0.2); border: 1px solid #3b82f6; border-radius: 10px; padding: 12px; width: 42%; text-align: center;">
+                      <div style="font-size: 24px;">📱</div>
+                      <div style="font-weight: 700; color: #93c5fd; font-size: 11px;">CANTEIRO DE OBRA</div>
+                      <div style="font-size: 9px; color: #cbd5e1; margin-top: 4px;">Encarregado lança efetivo, horas e fotos no celular</div>
+                    </div>
+
+                    <div style="background: rgba(0,104,55,0.25); border: 1px solid #10b981; border-radius: 10px; padding: 12px; width: 42%; text-align: center;">
+                      <div style="font-size: 24px;">🖥️</div>
+                      <div style="font-weight: 700; color: #6ee7b7; font-size: 11px;">ESCRITÓRIO & FISCAL</div>
+                      <div style="font-size: 9px; color: #cbd5e1; margin-top: 4px;">Fiscalização confere, emite parecer e assina no Desktop</div>
+                    </div>
+                  </div>
+
+                  <div style="background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.2); border-radius: 10px; padding: 10px 20px; width: 85%; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 18px;">☁️</span>
+                      <div>
+                        <div style="font-weight: 700; color: #fff; font-size: 10px;">BANCO DE DADOS EM NUVEM (FIREBASE)</div>
+                        <div style="font-size: 8px; color: #94a3b8;">Sincronização em tempo real + Armazenamento Offline Local</div>
+                      </div>
+                    </div>
+                    <span style="background: #006837; color: #34d399; font-size: 8px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">ATIVO</span>
+                  </div>
+
+                  <div style="background: rgba(245,158,11,0.15); border: 1px solid #f59e0b; border-radius: 8px; padding: 8px 16px; width: 85%; text-align: center;">
+                    <div style="font-weight: 700; color: #fbbf24; font-size: 10px;">👑 PAINEL ADMIN MASTER (MULTI-EMPRESAS)</div>
+                    <div style="font-size: 8px; color: #cbd5e1;">Controle geral de acessos, contratos, logotipos e auditoria total</div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 4: PERFIS DE ACESSO & SEGURANÇA
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-tech">SEGURANÇA & ISOLAMENTO</div>
+              <h2 class="slide-title">4 Níveis de Acesso com Isolamento por Empresa</h2>
+              <p class="slide-subtitle">Cada contratada e colaborador visualiza estritamente os dados pertinentes ao seu escopo</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #fbbf24;">👑</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #fbbf24;">1. SuperAdmin Master</h4>
+                  <p>Acesso irrestrito a todas as empresas contratadas, relatórios globais da planta, cadastro de novos clientes e configurações de API.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🏢</div>
+                <div class="feature-card-text">
+                  <h4>2. Administrador da Empresa</h4>
+                  <p>Gerencia a sua respectiva equipe, configura o logotipo padrão da empresa e acessa todos os relatórios da sua contratada.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(16,185,129,0.2); border-color: #10b981; color: #34d399;">📐</div>
+                <div class="feature-card-text">
+                  <h4>3. Engenheiro / Fiscal CMPC</h4>
+                  <p>Acesso para revisão técnica, conferência de HH, apontamento de ressalvas, emissão de parecer e assinatura técnica digital.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(37,99,235,0.2); border-color: #3b82f6; color: #93c5fd;">👷</div>
+                <div class="feature-card-text">
+                  <h4>4. Encarregado de Campo</h4>
+                  <p>Focado na emissão rápida de novos RDOs pelo celular ou desktop, com acesso restrito aos seus próprios relatórios.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup" style="max-height: 380px;">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Matriz de Permissões e Segurança de Dados</div>
+                </div>
+                <div class="desktop-screen" style="padding: 14px; background: #0f172a; color: #fff;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                    <thead>
+                      <tr style="border-bottom: 2px solid #334155; text-align: left;">
+                        <th style="padding: 6px; color: #94a3b8;">Módulo</th>
+                        <th style="padding: 6px; text-align: center;">SuperAdmin</th>
+                        <th style="padding: 6px; text-align: center;">Admin Empresa</th>
+                        <th style="padding: 6px; text-align: center;">Fiscal CMPC</th>
+                        <th style="padding: 6px; text-align: center;">Encarregado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 6px;">Emitir RDO em Campo</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399;">Sim</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399;">Sim</td>
+                        <td style="padding: 6px; text-align: center; color: #94a3b8;">Leitura</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399; font-weight: 700;">Sim (Mobile)</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 6px;">Parecer da Fiscalização</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399;">Sim</td>
+                        <td style="padding: 6px; text-align: center; color: #ef4444;">Não</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399; font-weight: 700;">Sim (Exclusivo)</td>
+                        <td style="padding: 6px; text-align: center; color: #ef4444;">Não</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 6px;">Configurar Logotipo</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399;">Todas</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399; font-weight: 700;">Sua Empresa</td>
+                        <td style="padding: 6px; text-align: center; color: #ef4444;">Não</td>
+                        <td style="padding: 6px; text-align: center; color: #ef4444;">Não</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 6px;">Gerenciar Usuários</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399;">Global</td>
+                        <td style="padding: 6px; text-align: center; color: #34d399;">Sua Equipe</td>
+                        <td style="padding: 6px; text-align: center; color: #ef4444;">Não</td>
+                        <td style="padding: 6px; text-align: center; color: #ef4444;">Não</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 6px;">Exclusão Protegida</td>
+                        <td style="padding: 6px; text-align: center; color: #fbbf24;">Senha 123456</td>
+                        <td style="padding: 6px; text-align: center; color: #fbbf24;">Senha 123456</td>
+                        <td style="padding: 6px; text-align: center; color: #ef4444;">Não Perm.</td>
+                        <td style="padding: 6px; text-align: center; color: #fbbf24;">Senha 123456</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 5: APRESENTAÇÃO DA VERSÃO MOBILE
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • CANTEIRO</div>
+              <h2 class="slide-title">O Aplicativo de Bolso do Encarregado</h2>
+              <p class="slide-subtitle">Engenharia de usabilidade projetada sob medida para canteiros de obras industriais</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(37,99,235,0.2); border-color: #3b82f6; color: #60a5fa;">📐</div>
+                <div class="feature-card-text">
+                  <h4>Adeus às Tabelas Largas e Quebradas</h4>
+                  <p>Diferente de sistemas comuns que tentam espremer tabelas de computador na tela do celular, o RDO Mobile organiza o efetivo em <strong>cards verticais táteis</strong>.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(37,99,235,0.2); border-color: #3b82f6; color: #60a5fa;">🧤</div>
+                <div class="feature-card-text">
+                  <h4>Botões e Alvos de Toque Dimensionados</h4>
+                  <p>Campos de seleção grandes, seletores de turno tipo pílula e botões pensados para encarregados usando luvas de segurança ou em ambientes com pouca luz.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(37,99,235,0.2); border-color: #3b82f6; color: #60a5fa;">⚡</div>
+                <div class="feature-card-text">
+                  <h4>Cálculo de HH em Tempo Real</h4>
+                  <p>Ao tocar nas horas das atividades (A a J), o subtotal do colaborador e o Total HH Geral são calculados instantaneamente na tela.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- SMARTPHONE MOCKUP -->
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                  <div class="phone-status-bar">
+                    <span>09:41</span>
+                    <span>5G ● 100%</span>
+                  </div>
+
+                  <div class="phone-app-content">
+                    <div class="mock-app-header">
+                      <div class="mock-app-header-left">
+                        <img src="assets/logo cmpc.png" alt="CMPC">
+                        <span style="font-weight: 800; font-size: 10px;">ENGENHARIA CMPC</span>
+                      </div>
+                      <span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 700;">MOBILE</span>
+                    </div>
+
+                    <div style="background: #e2e8f0; border-radius: 6px; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                      <span style="font-size: 9px; font-weight: 700;">👤 João Silva (Encarregado)</span>
+                      <span style="background: #dcfce7; color: #166534; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 10px;">● Nuvem Ativa</span>
+                    </div>
+
+                    <div class="mock-card">
+                      <div class="mock-card-title">📋 1. Dados do RDO</div>
+                      <div class="mock-grid-2">
+                        <div class="mock-field">
+                          <span class="mock-label">Nº RDO</span>
+                          <span class="mock-input highlight text-center">0042/2026</span>
+                        </div>
+                        <div class="mock-field">
+                          <span class="mock-label">Turno</span>
+                          <div class="mock-turno-pill">
+                            <span class="mock-pill active">☀️ Diurno</span>
+                            <span class="mock-pill">🌙 Not</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mock-card">
+                      <div class="mock-card-title">👷 2. Efetivo (Colaboradores)</div>
+                      <div class="mock-worker-item">
+                        <div class="mock-worker-top">
+                          <span>Carlos Eduardo</span>
+                          <span class="mock-worker-role">Soldador TIG</span>
+                        </div>
+                        <div class="mock-hours-grid">
+                          <div class="mock-hour-box has-hours"><span>A</span><b>8h</b></div>
+                          <div class="mock-hour-box has-hours"><span>B</span><b>2h</b></div>
+                          <div class="mock-hour-box"><span>C</span><b>-</b></div>
+                          <div class="mock-hour-box"><span>D</span><b>-</b></div>
+                          <div class="mock-hour-box"><span>E</span><b>-</b></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mock-total-banner">
+                      <span>⚡ TOTAL HH GERAL</span>
+                      <span style="font-size: 11px;">10 Horas</span>
+                    </div>
+                  </div>
+
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 6: PASSO 1 MOBILE - LOGIN & NUVEM
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • PASSO 1</div>
+              <h2 class="slide-title">Acesso Seguro & Indicação Visual de Nuvem</h2>
+              <p class="slide-subtitle">Identificação do encarregado em segundos com alternador inteligente de visibilidade de senha</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔑</div>
+                <div class="feature-card-text">
+                  <h4>Login Rápido com E-mail Corporativo</h4>
+                  <p>O encarregado acessa com seu e-mail e senha cadastrados pela administração. O sistema memoriza a sessão para evitar logins repetidos.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">👁️</div>
+                <div class="feature-card-text">
+                  <h4>Botão de Revelar Senha no Toque</h4>
+                  <p>Facilita a digitação correta em canteiros de obra sob forte luz solar ou em telas com película protetora.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">☁️</div>
+                <div class="feature-card-text">
+                  <h4>Pílula Indicadora de Sincronização em Tempo Real</h4>
+                  <p>Ao logar, uma pílula verde <strong>"Nuvem Ativa"</strong> confirma que o dispositivo está conectado diretamente ao banco Firebase Firestore.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- SMARTPHONE MOCKUP LOGIN -->
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen" style="background: #ffffff;">
+                  <div class="phone-status-bar" style="background: #ffffff;">
+                    <span>09:41</span>
+                    <span>5G ● 100%</span>
+                  </div>
+
+                  <div class="phone-app-content" style="display: flex; flex-direction: column; justify-content: center; padding: 20px 16px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                      <img src="assets/logo cmpc.png" alt="CMPC" style="height: 38px; margin-bottom: 8px;">
+                      <div style="font-size: 8px; color: #006837; font-weight: 700; text-transform: uppercase;">Sistema de Gestão da Qualidade</div>
+                      <div style="font-size: 14px; font-weight: 900; color: #0f172a;">ENGENHARIA CMPC</div>
+                      <div style="font-size: 9px; color: #64748b;">Lançamento de RDO - Versão Celular</div>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
+                      <div class="mock-field" style="margin-bottom: 10px;">
+                        <span class="mock-label">E-mail</span>
+                        <input type="text" class="mock-input" value="encarregado@contratada.com" readonly>
+                      </div>
+
+                      <div class="mock-field" style="margin-bottom: 14px;">
+                        <span class="mock-label">Senha</span>
+                        <div style="position: relative;">
+                          <input type="text" class="mock-input" value="••••••••" readonly style="width: 100%;">
+                          <span style="position: absolute; right: 8px; top: 4px; font-size: 10px; color: #64748b;">👁️</span>
+                        </div>
+                      </div>
+
+                      <button style="width: 100%; background: #006837; color: #fff; border: none; border-radius: 8px; padding: 8px; font-size: 11px; font-weight: 700;">
+                        Entrar no Sistema ➔
+                      </button>
+
+                      <div style="text-align: center; margin-top: 10px;">
+                        <span style="font-size: 9px; color: #006837; font-weight: 600;">🖥️ Acessar Versão Desktop Completa</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 7: PASSO 2 MOBILE - CABEÇALHO & TURNOS
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • PASSO 2</div>
+              <h2 class="slide-title">Cabeçalho Inteligente & Seleção de Turno</h2>
+              <p class="slide-subtitle">Preenchimento automático do dia da semana, número sugerido e alternador tátil de turno</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔢</div>
+                <div class="feature-card-text">
+                  <h4>Numeração Sequencial Automática</h4>
+                  <p>O sistema gera o próximo número do relatório anual (ex: <code>0042/2026</code>) reduzindo digitação e eliminando duplicidades.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">📅</div>
+                <div class="feature-card-text">
+                  <h4>Data/Hora e Dia da Semana Dinâmico</h4>
+                  <p>Ao selecionar a data da obra, o campo <strong>Dia da Semana</strong> (ex: "Quinta-feira") é calculado e travado automaticamente.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">☀️</div>
+                <div class="feature-card-text">
+                  <h4>Seletor Tátil Diurno / Noturno</h4>
+                  <p>Botões grandes com ícones de sol e lua permitem alternar o turno de trabalho com um único toque na tela.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                  <div class="phone-status-bar"><span>09:41</span><span>5G ● 100%</span></div>
+                  <div class="phone-app-content">
+                    
+                    <div class="mock-card">
+                      <div class="mock-card-title">📋 1. Dados do Relatório</div>
+                      
+                      <div class="mock-grid-2" style="margin-bottom: 6px;">
+                        <div class="mock-field">
+                          <span class="mock-label">Número RDO</span>
+                          <span class="mock-input highlight text-center">0042/2026</span>
+                        </div>
+                        <div class="mock-field">
+                          <span class="mock-label">Data e Hora</span>
+                          <span class="mock-input text-center">15/10/2026 08:00</span>
+                        </div>
+                      </div>
+
+                      <div class="mock-grid-2" style="margin-bottom: 6px;">
+                        <div class="mock-field">
+                          <span class="mock-label">Dia da Semana</span>
+                          <span class="mock-input text-center" style="background: #e2e8f0;">Quinta-feira</span>
+                        </div>
+                        <div class="mock-field">
+                          <span class="mock-label">Turno de Trabalho</span>
+                          <div class="mock-turno-pill">
+                            <span class="mock-pill active">☀️ Diurno</span>
+                            <span class="mock-pill">🌙 Noturno</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mock-field" style="margin-bottom: 6px;">
+                        <span class="mock-label">Nº do Contrato</span>
+                        <span class="mock-input">CTR-CMPC-2026/045</span>
+                      </div>
+
+                      <div class="mock-field" style="margin-bottom: 6px;">
+                        <span class="mock-label">Contratante</span>
+                        <span class="mock-input" style="font-weight: 700;">CMPC CELULOSE RIOGRANDENSE</span>
+                      </div>
+
+                      <div class="mock-grid-2">
+                        <div class="mock-field">
+                          <span class="mock-label">Contratada</span>
+                          <span class="mock-input">MANUTENÇÃO INDUSTRIAL LTDA</span>
+                        </div>
+                        <div class="mock-field">
+                          <span class="mock-label">Encarregado</span>
+                          <span class="mock-input highlight">Vitor Schneider</span>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 8: PASSO 3 MOBILE - EFETIVO EM CARDS VERTICAIS
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • PASSO 3</div>
+              <h2 class="slide-title">Efetivo de Obra em Cards Verticais</h2>
+              <p class="slide-subtitle">Adição ágil de colaboradores com matrícula, função e identificação clara</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">👷</div>
+                <div class="feature-card-text">
+                  <h4>Cartões Individuais de Colaboradores</h4>
+                  <p>Cada profissional possui seu card exclusivo contendo Matrícula, Função (Soldador, Mecânico, Caldeireiro, Eletricista) e Nome Completo.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">➕</div>
+                <div class="feature-card-text">
+                  <h4>Botão "+ Adicionar Colaborador" com 1 Toque</h4>
+                  <p>Adicione quantos colaboradores forem necessários para a jornada sem limites e sem comprometer a visualização na tela.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🗑️</div>
+                <div class="feature-card-text">
+                  <h4>Remoção Rápida de Colaborador</h4>
+                  <p>Caso alguém seja alocado em outra frente ou digitado erroneamente, basta tocar no ícone de lixeira para recalcular o relatório instantaneamente.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                  <div class="phone-status-bar"><span>09:41</span><span>5G ● 100%</span></div>
+                  <div class="phone-app-content">
+                    
+                    <div class="mock-card">
+                      <div class="mock-card-title">
+                        <span>👷 2. Efetivo de Obra</span>
+                        <span style="font-size: 9px; color: #006837; margin-left: auto; font-weight: 700;">3 Operários</span>
+                      </div>
+
+                      <!-- Card Colaborador 1 -->
+                      <div class="mock-worker-item">
+                        <div class="mock-worker-top">
+                          <span>1. João da Silva</span>
+                          <span style="color: #ef4444; font-size: 11px;">✕</span>
+                        </div>
+                        <div style="display: flex; gap: 4px; font-size: 8px; color: #64748b; margin-top: 2px;">
+                          <span>Mat: <b>10452</b></span> • <span class="mock-worker-role">Soldador TIG Master</span>
+                        </div>
+                      </div>
+
+                      <!-- Card Colaborador 2 -->
+                      <div class="mock-worker-item">
+                        <div class="mock-worker-top">
+                          <span>2. Carlos Oliveira</span>
+                          <span style="color: #ef4444; font-size: 11px;">✕</span>
+                        </div>
+                        <div style="display: flex; gap: 4px; font-size: 8px; color: #64748b; margin-top: 2px;">
+                          <span>Mat: <b>10889</b></span> • <span class="mock-worker-role">Caldeireiro Montador</span>
+                        </div>
+                      </div>
+
+                      <!-- Card Colaborador 3 -->
+                      <div class="mock-worker-item">
+                        <div class="mock-worker-top">
+                          <span>3. Marcos Santos</span>
+                          <span style="color: #ef4444; font-size: 11px;">✕</span>
+                        </div>
+                        <div style="display: flex; gap: 4px; font-size: 8px; color: #64748b; margin-top: 2px;">
+                          <span>Mat: <b>11203</b></span> • <span class="mock-worker-role">Ajudante Especializado</span>
+                        </div>
+                      </div>
+
+                      <button style="width: 100%; background: #f0fdf4; border: 1px dashed #006837; color: #006837; border-radius: 8px; padding: 6px; font-size: 10px; font-weight: 700; margin-top: 4px;">
+                        + Adicionar Colaborador
+                      </button>
+
+                    </div>
+
+                  </div>
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 9: PASSO 4 MOBILE - HORAS & CÁLCULO TOTAL HH
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • PASSO 4</div>
+              <h2 class="slide-title">Lançamento de Horas & Total HH em Tempo Real</h2>
+              <p class="slide-subtitle">Distribuição por atividade (A até J) com cálculo matemático instantâneo e sem erros</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">⚡</div>
+                <div class="feature-card-text">
+                  <h4>Matriz Tátil de Atividades (A a J)</h4>
+                  <p>Em cada colaborador, o encarregado lança as horas sob as letras dos serviços executados (ex: 8 horas na atividade A, 2 horas na atividade B).</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🧮</div>
+                <div class="feature-card-text">
+                  <h4>Subtotais Individuais Imediatos</h4>
+                  <p>O subtotal de horas de cada colaborador é somado na hora em um badge destacado, garantindo que não haja horas faltando ou excedentes.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🏆</div>
+                <div class="feature-card-text">
+                  <h4>Banner Destaque "TOTAL HH GERAL"</h4>
+                  <p>Uma barra verde pulsante consolida a soma de todo o efetivo em tempo real. Essencial para controle de produtividade e medições contratuais.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                  <div class="phone-status-bar"><span>09:41</span><span>5G ● 100%</span></div>
+                  <div class="phone-app-content">
+                    
+                    <!-- Banner Total HH Geral -->
+                    <div class="mock-total-banner" style="margin-bottom: 8px;">
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                        <span>⚡</span>
+                        <span>TOTAL HH GERAL</span>
+                      </div>
+                      <span style="font-size: 13px; font-weight: 900; background: rgba(255,255,255,0.25); padding: 2px 8px; border-radius: 4px;">26 Horas</span>
+                    </div>
+
+                    <div class="mock-card">
+                      <div class="mock-card-title">
+                        <span>João da Silva (Soldador)</span>
+                        <span style="background: #dcfce7; color: #166534; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Subtotal: 10h</span>
+                      </div>
+                      <div class="mock-hours-grid">
+                        <div class="mock-hour-box has-hours"><span>A</span><b>8.0</b></div>
+                        <div class="mock-hour-box has-hours"><span>B</span><b>2.0</b></div>
+                        <div class="mock-hour-box"><span>C</span><b>-</b></div>
+                        <div class="mock-hour-box"><span>D</span><b>-</b></div>
+                        <div class="mock-hour-box"><span>E</span><b>-</b></div>
+                      </div>
+                    </div>
+
+                    <div class="mock-card">
+                      <div class="mock-card-title">
+                        <span>Carlos Oliveira (Caldeireiro)</span>
+                        <span style="background: #dcfce7; color: #166534; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Subtotal: 8h</span>
+                      </div>
+                      <div class="mock-hours-grid">
+                        <div class="mock-hour-box has-hours"><span>A</span><b>8.0</b></div>
+                        <div class="mock-hour-box"><span>B</span><b>-</b></div>
+                        <div class="mock-hour-box"><span>C</span><b>-</b></div>
+                        <div class="mock-hour-box"><span>D</span><b>-</b></div>
+                        <div class="mock-hour-box"><span>E</span><b>-</b></div>
+                      </div>
+                    </div>
+
+                    <div class="mock-card">
+                      <div class="mock-card-title">
+                        <span>Marcos Santos (Ajudante)</span>
+                        <span style="background: #dcfce7; color: #166534; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Subtotal: 8h</span>
+                      </div>
+                      <div class="mock-hours-grid">
+                        <div class="mock-hour-box has-hours"><span>A</span><b>4.0</b></div>
+                        <div class="mock-hour-box has-hours"><span>B</span><b>4.0</b></div>
+                        <div class="mock-hour-box"><span>C</span><b>-</b></div>
+                        <div class="mock-hour-box"><span>D</span><b>-</b></div>
+                        <div class="mock-hour-box"><span>E</span><b>-</b></div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 10: PASSO 5 MOBILE - DESCRIÇÃO DAS ATIVIDADES
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • PASSO 5</div>
+              <h2 class="slide-title">Descrição das Atividades & Visto do Encarregado</h2>
+              <p class="slide-subtitle">Amarração do escopo de serviços de A até J com rubrica de responsabilidade técnica</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">📌</div>
+                <div class="feature-card-text">
+                  <h4>Vínculo Perfeito de Horas e Escopo</h4>
+                  <p>Cada letra utilizada no lançamento de horas (A até J) é descrita com precisão técnica (área, linha, tag de equipamento e tipo de serviço).</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">✍️</div>
+                <div class="feature-card-text">
+                  <h4>Visto Individual por Atividade</h4>
+                  <p>Campo para rubrica ou nome do encarregado responsável pela liberação e conferência daquela frente de serviço específica.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔍</div>
+                <div class="feature-card-text">
+                  <h4>Transparência para a Fiscalização</h4>
+                  <p>O fiscal CMPC sabe exatamente quantos colaboradores e quantas horas foram gastas em cada linha de montagem ou solda.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                  <div class="phone-status-bar"><span>09:41</span><span>5G ● 100%</span></div>
+                  <div class="phone-app-content">
+                    
+                    <div class="mock-card">
+                      <div class="mock-card-title">📌 3. Atividades Realizadas</div>
+
+                      <!-- Atividade A -->
+                      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; margin-bottom: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                          <span style="background: #006837; color: #fff; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">Atividade A</span>
+                          <span style="font-size: 8px; color: #006837; font-weight: 700;">20 Horas Gastas</span>
+                        </div>
+                        <div style="font-size: 9px; color: #1e293b; font-weight: 500;">
+                          Montagem e alinhamento de spool na tubulação de vapor de alta pressão (Linha Celulose 2).
+                        </div>
+                        <div style="margin-top: 4px; font-size: 8px; color: #64748b;">
+                          Visto: <b style="color: #0f172a;">V. Schneider</b>
+                        </div>
+                      </div>
+
+                      <!-- Atividade B -->
+                      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; margin-bottom: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                          <span style="background: #006837; color: #fff; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">Atividade B</span>
+                          <span style="font-size: 8px; color: #006837; font-weight: 700;">6 Horas Gastas</span>
+                        </div>
+                        <div style="font-size: 9px; color: #1e293b; font-weight: 500;">
+                          Soldagem TIG no bocal da válvula BV-402 e teste por líquido penetrante (LP).
+                        </div>
+                        <div style="margin-top: 4px; font-size: 8px; color: #64748b;">
+                          Visto: <b style="color: #0f172a;">V. Schneider</b>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 11: PASSO 6 MOBILE - COMENTÁRIOS, CLIMA & DDS
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • PASSO 6</div>
+              <h2 class="slide-title">Comentários Gerais, Clima & Diálogo de Segurança (DDS)</h2>
+              <p class="slide-subtitle">Registro das condições ambientais, temas de prevenção de acidentes e ocorrências da jornada</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🌦️</div>
+                <div class="feature-card-text">
+                  <h4>Condições Climáticas & Paralisações</h4>
+                  <p>Documenta se o tempo estava bom, nublado ou chuvoso, justificando eventuais paralisações técnicas ou interrupções por intempérie.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🦺</div>
+                <div class="feature-card-text">
+                  <h4>Registro Oficial do DDS Ministrado</h4>
+                  <p>Comprovação técnica de que o Diálogo Diário de Segurança foi realizado antes do início dos trabalhos, atendendo normas do SESMT.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">💬</div>
+                <div class="feature-card-text">
+                  <h4>Ocorrências & Observações Gerais</h4>
+                  <p>Espaço para registro de interferências de outras contratadas, liberação de PT (Permissão de Trabalho) e alertas de campo.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                  <div class="phone-status-bar"><span>09:41</span><span>5G ● 100%</span></div>
+                  <div class="phone-app-content">
+                    
+                    <div class="mock-card">
+                      <div class="mock-card-title">💬 4. Comentários & Ocorrências</div>
+                      
+                      <div class="mock-field" style="margin-bottom: 8px;">
+                        <span class="mock-label">Observações Gerais, Clima e DDS:</span>
+                        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; font-size: 9px; color: #0f172a; line-height: 1.4;">
+                          <strong>• Clima:</strong> Tempo bom e ensolarado durante todo o turno.<br>
+                          <strong>• DDS:</strong> Tema "Trabalho a Quente e Prevenção de Faíscas em Área Classificada".<br>
+                          <strong>• Ocorrências:</strong> Aguardo de 30min para liberação do isolamento da linha pelo operador da área. Serviços concluídos conforme cronograma sem incidentes.
+                        </div>
+                      </div>
+
+                      <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 6px; padding: 6px; display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 14px;">🛡️</span>
+                        <span style="font-size: 8px; color: #065f46; font-weight: 700;">Segurança do Trabalho: Zero Acidentes</span>
+                      </div>
+
+                    </div>
+
+                  </div>
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 12: PASSO 7 MOBILE - REGISTRO FOTOGRÁFICO
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • PASSO 7</div>
+              <h2 class="slide-title">Registro Fotográfico com 4 Slots & Zoom Lightbox</h2>
+              <p class="slide-subtitle">Fotos tiradas direto da câmera do celular com legendas técnicas e ampliação em tela cheia</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">📷</div>
+                <div class="feature-card-text">
+                  <h4>Captura Rápida pela Câmera ou Galeria</h4>
+                  <p>O encarregado clica no slot e tira a foto na hora do serviço ou seleciona imagens registradas anteriormente.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🏷️</div>
+                <div class="feature-card-text">
+                  <h4>Legendas Técnicas em Cada Imagem</h4>
+                  <p>Cada foto possui campo dedicado para identificação do equipamento, junta soldada, teste de qualidade ou liberação.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔍</div>
+                <div class="feature-card-text">
+                  <h4>Visualização Ampliada (Lightbox)</h4>
+                  <p>Ao tocar sobre qualquer foto, ela é aberta em tela cheia com alta definição para inspeção visual minuciosa.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- SMARTPHONE MOCKUP COM FOTOS REAIS GERADAS -->
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen">
+                  <div class="phone-status-bar"><span>09:41</span><span>5G ● 100%</span></div>
+                  <div class="phone-app-content">
+                    
+                    <div class="mock-card">
+                      <div class="mock-card-title">📷 5. Fotos da Obra (4 Slots)</div>
+                      
+                      <div class="mock-photo-grid">
+                        <div class="mock-photo-slot">
+                          <img src="assets/foto1.jpg" alt="Foto 1" class="mock-photo-img" title="Clique para ampliar">
+                          <div class="mock-photo-caption">1. Solda TIG Linha 2</div>
+                        </div>
+
+                        <div class="mock-photo-slot">
+                          <img src="assets/foto2.jpg" alt="Foto 2" class="mock-photo-img" title="Clique para ampliar">
+                          <div class="mock-photo-caption">2. DDS de Segurança</div>
+                        </div>
+
+                        <div class="mock-photo-slot">
+                          <img src="assets/foto3.jpg" alt="Foto 3" class="mock-photo-img" title="Clique para ampliar">
+                          <div class="mock-photo-caption">3. Inspeção Válvula</div>
+                        </div>
+
+                        <div class="mock-photo-slot">
+                          <img src="assets/foto4.jpg" alt="Foto 4" class="mock-photo-img" title="Clique para ampliar">
+                          <div class="mock-photo-caption">4. Rack Concluído</div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 13: PASSO 8 MOBILE - VISTOS & GRAVAÇÃO NA NUVEM
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-mobile">MÓDULO MOBILE • PASSO 8</div>
+              <h2 class="slide-title">Vistos Técnicos & Sincronização em 1 Toque</h2>
+              <p class="slide-subtitle">Gravação local imediata no canteiro e sincronização automática com a nuvem Firebase</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">✍️</div>
+                <div class="feature-card-text">
+                  <h4>Vistos de Planejamento & Produção</h4>
+                  <p>Campos para registro nominal dos responsáveis pela execução antes do envio formal para a fiscalização da CMPC.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">💾</div>
+                <div class="feature-card-text">
+                  <h4>Botão Flutuante Inferior "Salvar RDO"</h4>
+                  <p>Sempre visível na base da tela, permitindo salvar o relatório a qualquer momento sem precisar rolar até o fim.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">☁️</div>
+                <div class="feature-card-text">
+                  <h4>Modal de Sucesso & Nuvem Instantânea</h4>
+                  <p>Ao salvar, o encarregado recebe a confirmação na tela com o número oficial do RDO e o Total HH gravado com segurança.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="phone-mockup">
+                <div class="phone-island"></div>
+                <div class="phone-screen" style="background: rgba(0,0,0,0.5);">
+                  <div class="phone-status-bar" style="background: transparent; color: #fff;">
+                    <span>09:41</span><span>5G ● 100%</span>
+                  </div>
+
+                  <!-- Modal Sucesso Simulado -->
+                  <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 16px;">
+                    <div style="background: #ffffff; border-radius: 14px; padding: 18px 14px; text-align: center; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
+                      <div style="width: 44px; height: 44px; border-radius: 50%; background: #dcfce7; color: #166534; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; margin: 0 auto 10px;">✓</div>
+                      <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">RDO Gravado com Sucesso!</div>
+                      <div style="font-size: 9px; color: #64748b; margin-bottom: 12px;">Sincronizado com a Nuvem Firebase e disponível no Desktop.</div>
+
+                      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; text-align: left; font-size: 9px; margin-bottom: 12px;">
+                        <div><strong>Número:</strong> <span style="color: #006837; font-weight: 700;">0042/2026</span></div>
+                        <div><strong>Total HH:</strong> <span style="color: #006837; font-weight: 700;">26 Horas</span></div>
+                        <div><strong>Status:</strong> <span style="color: #2563eb; font-weight: 700;">Aguardando Fiscal</span></div>
+                      </div>
+
+                      <button style="width: 100%; background: #006837; color: #fff; border: none; border-radius: 8px; padding: 8px; font-size: 10px; font-weight: 700;">
+                        OK, Concluir
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="phone-home-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 14: APRESENTAÇÃO DA VERSÃO DESKTOP
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-desktop">MÓDULO DESKTOP • ENGENHARIA</div>
+              <h2 class="slide-title">Plataforma Web Completa para Gestão & Fiscalização</h2>
+              <p class="slide-subtitle">Ambiente robusto em tela panorâmica para engenheiros, fiscais e diretores de obra</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🖥️</div>
+                <div class="feature-card-text">
+                  <h4>Visão Holística da Operação</h4>
+                  <p>Todos os relatórios gerados pelos encarregados no canteiro aparecem instantaneamente na tela do computador para análise técnica.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">📋</div>
+                <div class="feature-card-text">
+                  <h4>Fidelidade Estrita ao Modelo A4 CMPC</h4>
+                  <p>A folha digital na tela é idêntica ao padrão oficial do Sistema de Gestão da Qualidade, pronta para impressão e auditoria externa.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">⚖️</div>
+                <div class="feature-card-text">
+                  <h4>Módulo Exclusivo de Fiscalização</h4>
+                  <p>Fiscais CMPC possuem painel com carimbos de parecer (Aprovado / Com Ressalvas / Rejeitado) e assinaturas digitais validadas.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- DESKTOP MOCKUP -->
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">http://sistema.eng.cmpc/desktop/ (SGQ CMPC)</div>
+                </div>
+                <div class="desktop-screen">
+                  <!-- Navbar Desktop -->
+                  <div style="background: #006837; color: #fff; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <img src="assets/logo cmpc.png" alt="CMPC" style="height: 20px; background: #fff; border-radius: 4px; padding: 2px;">
+                      <span style="font-weight: 800; font-size: 11px;">ENGENHARIA CMPC</span>
+                      <span style="font-size: 9px; opacity: 0.8;">| SGQ</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; font-size: 9px; font-weight: 600;">
+                      <span style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;">Histórico de RDOs</span>
+                      <span style="padding: 4px 8px;">Novo RDO</span>
+                      <span style="padding: 4px 8px;">Meu Painel</span>
+                    </div>
+                  </div>
+
+                  <!-- Conteúdo Painel -->
+                  <div style="padding: 12px; flex: 1; overflow-y: auto;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+                      <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                        <div style="font-size: 9px; color: #64748b;">RDOs EMITIDOS</div>
+                        <div style="font-size: 18px; font-weight: 800; color: #006837;">142</div>
+                      </div>
+                      <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                        <div style="font-size: 9px; color: #64748b;">TOTAL HH APROPRIADO</div>
+                        <div style="font-size: 18px; font-weight: 800; color: #2563eb;">3.840 h</div>
+                      </div>
+                      <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                        <div style="font-size: 9px; color: #64748b;">TAXA DE APROVAÇÃO</div>
+                        <div style="font-size: 18px; font-weight: 800; color: #10b981;">98.6%</div>
+                      </div>
+                    </div>
+
+                    <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px;">
+                      <div style="font-weight: 700; font-size: 10px; margin-bottom: 6px;">Últimos Relatórios Recebidos do Canteiro:</div>
+                      <div style="font-size: 8px; color: #64748b;">RDO 0042/2026 • Manutenção Caldeira • 26h • <strong>Aprovado</strong></div>
+                      <div style="font-size: 8px; color: #64748b; margin-top: 4px;">RDO 0041/2026 • Tubulação Vapor • 32h • <strong>Aprovado</strong></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 15: PASSO 1 DESKTOP - HISTÓRICO & FILTROS
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-desktop">MÓDULO DESKTOP • PASSO 1</div>
+              <h2 class="slide-title">Histórico de RDOs & Filtros Inteligentes</h2>
+              <p class="slide-subtitle">Localização instantânea de qualquer relatório por data, turno, status ou termo de busca</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔍</div>
+                <div class="feature-card-text">
+                  <h4>Busca em Tempo Real (Filtro Dinâmico)</h4>
+                  <p>Digite qualquer parte do número do RDO, nome de colaborador, encarregado ou contrato para filtrar a listagem na hora.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🏷️</div>
+                <div class="feature-card-text">
+                  <h4>Badges Coloridos de Status de Aprovação</h4>
+                  <p>Identificação visual imediata: <strong>Aprovado (Verde)</strong>, <strong>Aguardando Fiscal (Azul)</strong> e <strong>Com Ressalvas (Amarelo)</strong>.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">⚡</div>
+                <div class="feature-card-text">
+                  <h4>Ações em 1 Clique (Ver, Imprimir, Editar)</h4>
+                  <p>Botões de ação direta na linha do relatório para visualização completa, exportação de PDF ou edição supervisionada.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Histórico Geral de RDOs - Filtros Avançados</div>
+                </div>
+                <div class="desktop-screen" style="padding: 12px; background: #f8fafc;">
+                  
+                  <!-- Barra de Filtros -->
+                  <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; display: flex; gap: 8px; margin-bottom: 10px; align-items: center;">
+                    <input type="text" placeholder="🔍 Buscar por número, contrato..." style="flex: 1; font-size: 9px; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                    <select style="font-size: 9px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;"><option>Todos os Turnos</option><option>Diurno</option><option>Noturno</option></select>
+                    <select style="font-size: 9px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;"><option>Status: Todos</option><option>Aprovados</option><option>Pendentes</option></select>
+                  </div>
+
+                  <!-- Tabela de RDOs -->
+                  <div style="background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 9px;">
+                      <thead>
+                        <tr style="background: #e2e8f0; text-align: left; border-bottom: 1px solid #cbd5e1;">
+                          <th style="padding: 6px;">Nº RDO</th>
+                          <th style="padding: 6px;">Data</th>
+                          <th style="padding: 6px;">Turno</th>
+                          <th style="padding: 6px;">Contratada</th>
+                          <th style="padding: 6px;">Total HH</th>
+                          <th style="padding: 6px;">Status</th>
+                          <th style="padding: 6px; text-align: center;">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                          <td style="padding: 6px; font-weight: 700; color: #006837;">0042/2026</td>
+                          <td style="padding: 6px;">15/10/2026</td>
+                          <td style="padding: 6px;">☀️ Diurno</td>
+                          <td style="padding: 6px;">Manutenção Alpha</td>
+                          <td style="padding: 6px; font-weight: 700;">26h</td>
+                          <td style="padding: 6px;"><span style="background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Aprovado</span></td>
+                          <td style="padding: 6px; text-align: center;">👁️ ✏️ 🖨️</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                          <td style="padding: 6px; font-weight: 700; color: #006837;">0041/2026</td>
+                          <td style="padding: 6px;">14/10/2026</td>
+                          <td style="padding: 6px;">🌙 Noturno</td>
+                          <td style="padding: 6px;">Manutenção Alpha</td>
+                          <td style="padding: 6px; font-weight: 700;">32h</td>
+                          <td style="padding: 6px;"><span style="background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Aguardando</span></td>
+                          <td style="padding: 6px; text-align: center;">👁️ ✏️ 🖨️</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 6px; font-weight: 700; color: #006837;">0040/2026</td>
+                          <td style="padding: 6px;">14/10/2026</td>
+                          <td style="padding: 6px;">☀️ Diurno</td>
+                          <td style="padding: 6px;">Manutenção Alpha</td>
+                          <td style="padding: 6px; font-weight: 700;">28h</td>
+                          <td style="padding: 6px;"><span style="background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Ressalvas</span></td>
+                          <td style="padding: 6px; text-align: center;">👁️ ✏️ 🖨️</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 16: PASSO 2 DESKTOP - FOLHA OFICIAL DIGITAL A4
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-desktop">MÓDULO DESKTOP • PASSO 2</div>
+              <h2 class="slide-title">A Folha Oficial Digital do RDO CMPC</h2>
+              <p class="slide-subtitle">Layout estritamente alinhado aos padrões e formulários do SGQ de Engenharia</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🏛️</div>
+                <div class="feature-card-text">
+                  <h4>Cabeçalho Formal CMPC</h4>
+                  <p>Logotipo da empresa contratada à esquerda, título oficial SGQ ao centro e número/data sequencial à direita, no exato padrão exigido em auditorias.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">📑</div>
+                <div class="feature-card-text">
+                  <h4>Estrutura Completa em Seções</h4>
+                  <p>1. Dados Gerais; 2. Efetivo e Horas A-J; 3. Total HH; 4. Atividades; 5. Ocorrências/Clima/DDS; 6. Fotos com legendas; 7. Bloco de Assinaturas.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🖨️</div>
+                <div class="feature-card-text">
+                  <h4>Pronto para Arquivo Digital ou Físico</h4>
+                  <p>Visualização 100% responsiva que se transforma na folha A4 perfeita quando enviada para impressão ou salva em PDF.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Visualização da Folha Oficial A4 CMPC</div>
+                </div>
+                <div class="desktop-screen" style="background: #475569; overflow-y: auto;">
+                  
+                  <div class="mock-sheet">
+                    <!-- Cabeçalho Folha -->
+                    <div class="mock-sheet-header">
+                      <div class="mock-sheet-logo">
+                        <img src="assets/logo cmpc.png" alt="CMPC">
+                      </div>
+                      <div class="mock-sheet-title">
+                        <span>SISTEMA DE GESTÃO DA QUALIDADE</span>
+                        <span style="font-size: 11px; color: #006837;">ENGENHARIA CMPC</span>
+                        <span style="font-size: 8px; font-weight: normal;">RELATÓRIO DIÁRIO DE OBRA (RDO)</span>
+                      </div>
+                      <div style="width: 25%; border-left: 1px solid #000; padding: 4px; text-align: center; display: flex; flex-direction: column; justify-content: center; background: #f8fafc;">
+                        <span style="font-size: 7px; color: #64748b;">NÚMERO / DATA</span>
+                        <strong style="font-size: 10px; color: #006837;">0042/2026</strong>
+                        <span style="font-size: 8px;">15/10/2026</span>
+                      </div>
+                    </div>
+
+                    <!-- Linha Meta -->
+                    <table class="mock-sheet-table">
+                      <tr>
+                        <td style="width: 20%;"><strong>Contrato:</strong> CTR-2026/045</td>
+                        <td style="width: 30%;"><strong>Contratante:</strong> CMPC Celulose Riograndense</td>
+                        <td style="width: 30%;"><strong>Contratada:</strong> Manutenção Industrial</td>
+                        <td style="width: 20%;"><strong>Turno:</strong> ☀️ Diurno</td>
+                      </tr>
+                    </table>
+
+                    <!-- Tabela Resumo Efetivo -->
+                    <table class="mock-sheet-table">
+                      <thead>
+                        <tr>
+                          <th>Matrícula</th>
+                          <th>Função</th>
+                          <th>Nome</th>
+                          <th>A</th><th>B</th><th>C</th><th>D</th>
+                          <th>Total HH</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>10452</td><td>Soldador TIG</td><td>João da Silva</td><td>8</td><td>2</td><td>-</td><td>-</td><td><strong>10.0</strong></td></tr>
+                        <tr><td>10889</td><td>Caldeireiro</td><td>Carlos Oliveira</td><td>8</td><td>-</td><td>-</td><td>-</td><td><strong>8.0</strong></td></tr>
+                        <tr><td>11203</td><td>Ajudante</td><td>Marcos Santos</td><td>4</td><td>4</td><td>-</td><td>-</td><td><strong>8.0</strong></td></tr>
+                        <tr style="background: #e2e8f0; font-weight: bold;">
+                          <td colspan="7" style="text-align: right;">TOTAL HH DO DIA:</td>
+                          <td>26.0 h</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <div style="font-size: 7px; color: #64748b; margin-top: auto; text-align: center;">
+                      Folha 01/01 • Documento Gerado pelo Sistema RDO Engenharia CMPC
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 17: PASSO 3 DESKTOP - TABELA MATRICIAL DE EFETIVO & HH
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-desktop">MÓDULO DESKTOP • PASSO 3</div>
+              <h2 class="slide-title">Tabela Matricial de Efetivo & Apuração de HH</h2>
+              <p class="slide-subtitle">Soma cruzada de horas por homem, por atividade e totalização geral em tempo real</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">📊</div>
+                <div class="feature-card-text">
+                  <h4>Visão Matricial de Linhas e Colunas</h4>
+                  <p>O engenheiro visualiza todos os operários dispostos em linhas, com colunas dedicadas para cada atividade de A até J.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">⚡</div>
+                <div class="feature-card-text">
+                  <h4>Soma Bidirecional Automática</h4>
+                  <p>Subtotais horizontais calculam a jornada de cada trabalhador; subtotais verticais calculam as horas gastas em cada tipo de serviço.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🛡️</div>
+                <div class="feature-card-text">
+                  <h4>Bloqueio contra Erros de Fechamento</h4>
+                  <p>Elimina divergências entre o total faturado na medição e o efetivo realmente presente em campo durante a parada.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Apuração e Matriz de Homem-Hora (HH)</div>
+                </div>
+                <div class="desktop-screen" style="padding: 12px; background: #ffffff;">
+                  
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 700; font-size: 10px; color: #006837;">👷 Lançamento e Apropriação de Horas</span>
+                    <span style="background: #dcfce7; color: #166534; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 4px;">SOMA GERAL: 26.0 HH</span>
+                  </div>
+
+                  <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+                    <thead>
+                      <tr style="background: #006837; color: #fff;">
+                        <th style="padding: 4px; border: 1px solid #004d28;">Matrícula</th>
+                        <th style="padding: 4px; border: 1px solid #004d28;">Função</th>
+                        <th style="padding: 4px; border: 1px solid #004d28;">Nome</th>
+                        <th style="padding: 4px; border: 1px solid #004d28; width: 25px;">A</th>
+                        <th style="padding: 4px; border: 1px solid #004d28; width: 25px;">B</th>
+                        <th style="padding: 4px; border: 1px solid #004d28; width: 25px;">C</th>
+                        <th style="padding: 4px; border: 1px solid #004d28; width: 25px;">D</th>
+                        <th style="padding: 4px; border: 1px solid #004d28; width: 25px;">E</th>
+                        <th style="padding: 4px; border: 1px solid #004d28; width: 45px;">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style="background: #f8fafc;">
+                        <td style="padding: 4px; border: 1px solid #cbd5e1;">10452</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1;">Soldador TIG</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; font-weight: 600;">João da Silva</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center; background: #ecfdf5; font-weight: 700;">8.0</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center; background: #ecfdf5; font-weight: 700;">2.0</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #006837;">10.0 h</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1;">10889</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1;">Caldeireiro</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; font-weight: 600;">Carlos Oliveira</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center; background: #ecfdf5; font-weight: 700;">8.0</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #006837;">8.0 h</td>
+                      </tr>
+                      <tr style="background: #f8fafc;">
+                        <td style="padding: 4px; border: 1px solid #cbd5e1;">11203</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1;">Ajudante</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; font-weight: 600;">Marcos Santos</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center; background: #ecfdf5; font-weight: 700;">4.0</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center; background: #ecfdf5; font-weight: 700;">4.0</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center;">-</td>
+                        <td style="padding: 4px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #006837;">8.0 h</td>
+                      </tr>
+                      <tr style="background: #e2e8f0; font-weight: 800;">
+                        <td colspan="3" style="padding: 4px; border: 1px solid #94a3b8; text-align: right;">TOTAL POR ATIVIDADE:</td>
+                        <td style="padding: 4px; border: 1px solid #94a3b8; text-align: center; color: #006837;">20.0</td>
+                        <td style="padding: 4px; border: 1px solid #94a3b8; text-align: center; color: #006837;">6.0</td>
+                        <td style="padding: 4px; border: 1px solid #94a3b8; text-align: center;">0.0</td>
+                        <td style="padding: 4px; border: 1px solid #94a3b8; text-align: center;">0.0</td>
+                        <td style="padding: 4px; border: 1px solid #94a3b8; text-align: center;">0.0</td>
+                        <td style="padding: 4px; border: 1px solid #94a3b8; text-align: center; background: #006837; color: #fff;">26.0 h</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 18: PASSO 4 DESKTOP - ASSINATURA DIGITAL AVANÇADA
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-desktop">MÓDULO DESKTOP • PASSO 4</div>
+              <h2 class="slide-title">Assinatura Digital Avançada (3 Modos Interativos)</h2>
+              <p class="slide-subtitle">Desenhe sua rubrica, cole diretamente da área de transferência com Ctrl+V ou envie PNG</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">✍️</div>
+                <div class="feature-card-text">
+                  <h4>1. Desenho à Mão Livre (Canvas Touch/Mouse)</h4>
+                  <p>Assine diretamente na tela usando o mouse, caneta digital ou o dedo caso utilize notebook touch screen.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">📋</div>
+                <div class="feature-card-text">
+                  <h4>2. Colar Imagem com Ctrl + V</h4>
+                  <p>Inovação exclusiva: dê print na sua assinatura no WhatsApp, Word ou PDF e aperte <strong>Ctrl + V</strong> no sistema para colar na hora!</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🖼️</div>
+                <div class="feature-card-text">
+                  <h4>3. Carregar Imagem Oficial (PNG / JPG)</h4>
+                  <p>Envie o arquivo escaneado da sua rubrica oficial com fundo transparente para impressão em alta definição.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Painel de Assinatura Digital & Rubrica</div>
+                </div>
+                <div class="desktop-screen" style="padding: 14px; background: #0f172a; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                  
+                  <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 14px; width: 90%; text-align: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                      <span style="font-weight: 700; font-size: 11px; color: #34d399;">✍️ Assinar / Inserir Rubrica</span>
+                      <span style="font-size: 8px; color: #94a3b8;">Dica: Pressione Ctrl + V para colar</span>
+                    </div>
+
+                    <!-- Canvas Box com Rubrica -->
+                    <div style="background: #ffffff; border: 2px dashed #006837; border-radius: 8px; height: 110px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                      <!-- SVG de assinatura estilizada -->
+                      <svg width="220" height="70" viewBox="0 0 220 70">
+                        <path d="M 20 45 Q 40 10, 60 40 T 100 20 T 140 50 T 180 25 T 200 40" fill="none" stroke="#004d28" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M 50 50 L 190 48" fill="none" stroke="#004d28" stroke-width="1.8" stroke-dasharray="3,3"/>
+                      </svg>
+                      <span style="position: absolute; bottom: 4px; right: 8px; font-size: 8px; color: #94a3b8;">Assinatura Digital Registrada</span>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                      <button style="background: #334155; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 9px;">Limpar Canvas</button>
+                      <button style="background: #2563eb; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 9px;">📁 Carregar Arquivo</button>
+                      <button style="background: #006837; color: #fff; border: none; padding: 4px 12px; border-radius: 6px; font-size: 9px; font-weight: 700;">✓ Confirmar Assinatura</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 19: PASSO 5 DESKTOP - FLUXO DE PARECER DA FISCALIZAÇÃO
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-desktop">MÓDULO DESKTOP • PASSO 5</div>
+              <h2 class="slide-title">Parecer Técnico & Aprovação da Fiscalização CMPC</h2>
+              <p class="slide-subtitle">Homologação formal do relatório com parecer técnico emitido pelo engenheiro fiscal</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(16,185,129,0.2); border-color: #10b981; color: #34d399;">✅</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #6ee7b7;">Aprovação Integral (Status Aprovado)</h4>
+                  <p>Todos os serviços, horas apropriadas e evidências fotográficas atendem plenamente ao caderno de encargos da CMPC.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #fbbf24;">⚠️</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #fde68a;">Aprovado com Ressalvas</h4>
+                  <p>Permite registrar pendências técnicas pontuais para ajuste sem travar a medição física do contrato.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(239,68,68,0.2); border-color: #ef4444; color: #f87171;">🚫</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #fca5a5;">Reprovação / Rejeição Justificada</h4>
+                  <p>Devolve o relatório com parecer técnico detalhado para correção imediata pela contratada executante.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Módulo de Parecer da Fiscalização CMPC</div>
+                </div>
+                <div class="desktop-screen" style="padding: 16px; background: #f8fafc;">
+                  
+                  <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 10px;">
+                      <span style="font-weight: 800; font-size: 11px; color: #006837;">🛡️ Parecer Oficial da Fiscalização CMPC</span>
+                      <span style="font-size: 9px; color: #64748b;">Fiscal: Eng. Roberto Santos (CREA-RS 145892)</span>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                      <span style="font-size: 9px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Status da Homologação:</span>
+                      <div style="display: flex; gap: 8px;">
+                        <button style="flex: 1; background: #dcfce7; border: 2px solid #166534; color: #166534; padding: 6px; border-radius: 6px; font-size: 9px; font-weight: 800;">
+                          ✓ APROVADO
+                        </button>
+                        <button style="flex: 1; background: #fef3c7; border: 1px solid #d97706; color: #92400e; padding: 6px; border-radius: 6px; font-size: 9px; font-weight: 600;">
+                          ⚠️ COM RESSALVAS
+                        </button>
+                        <button style="flex: 1; background: #fee2e2; border: 1px solid #dc2626; color: #991b1b; padding: 6px; border-radius: 6px; font-size: 9px; font-weight: 600;">
+                          ✕ REJEITADO
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                      <span style="font-size: 9px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Parecer Técnico da Fiscalização:</span>
+                      <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; font-size: 9px; color: #0f172a; line-height: 1.4;">
+                        "Serviços de soldagem e montagem inspecionados em campo. Teste de Líquido Penetrante (LP) conforme norma ASME B31.3. Efetivo e horas compatíveis com o cronograma da Parada Geral. Relatório APROVADO."
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 8px; color: #64748b;">
+                      <span>Homologado em: 15/10/2026 às 17:40</span>
+                      <span style="background: #006837; color: #fff; font-weight: 700; padding: 3px 8px; border-radius: 4px;">Assinatura Digital Validada</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 20: PASSO 6 DESKTOP - BLOQUEIO DE 24 HORAS
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-desktop">MÓDULO DESKTOP • PASSO 6</div>
+              <h2 class="slide-title">Bloqueio Automático de 24 Horas & Integridade SGQ</h2>
+              <p class="slide-subtitle">Selo de segurança e tarja transversal de conformidade para evitar adulterações retroativas</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔒</div>
+                <div class="feature-card-text">
+                  <h4>Trava de Segurança após 24 Horas</h4>
+                  <p>Após 24h da emissão original, o relatório é bloqueado automaticamente para garantir a idoneidade e o rigor de auditoria do SGQ.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">⚠️</div>
+                <div class="feature-card-text">
+                  <h4>Tarja Transversal "BLOQUEADO APÓS 24HRS"</h4>
+                  <p>Ao visualizar ou imprimir relatórios fora do prazo, uma marca d'água técnica transversal é estampada na folha oficial.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🛡️</div>
+                <div class="feature-card-text">
+                  <h4>Conformidade com Normas ISO 9001</h4>
+                  <p>Garante que medições antigas e horas de trabalho passadas não possam ser infladas ou modificadas sem autorização superior.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Conformidade SGQ - Bloqueio de Segurança</div>
+                </div>
+                <div class="desktop-screen" style="background: #475569; position: relative; overflow-y: auto;">
+                  
+                  <div class="mock-sheet" style="position: relative;">
+                    <!-- Tarja Transversal Bloqueado -->
+                    <div class="stamp-bloqueado">BLOQUEADO APÓS 24HRS</div>
+
+                    <div class="mock-sheet-header">
+                      <div class="mock-sheet-logo"><img src="assets/logo cmpc.png" alt="CMPC"></div>
+                      <div class="mock-sheet-title">
+                        <span>SISTEMA DE GESTÃO DA QUALIDADE</span>
+                        <strong style="color: #006837;">ENGENHARIA CMPC</strong>
+                      </div>
+                      <div style="width: 25%; border-left: 1px solid #000; padding: 4px; text-align: center;">
+                        <span style="background: #fee2e2; color: #b91c1c; font-size: 7px; font-weight: 800; padding: 2px 4px; border-radius: 4px;">🔒 BLOQUEADO</span>
+                        <div style="font-size: 9px; font-weight: 700; margin-top: 2px;">0038/2026</div>
+                      </div>
+                    </div>
+
+                    <div style="padding: 10px; background: #fef2f2; border: 1px solid #f87171; border-radius: 6px; margin: 10px 0; text-align: center;">
+                      <span style="font-size: 9px; font-weight: 800; color: #991b1b;">
+                        🔒 Este relatório foi emitido há mais de 24 horas e está selado para edições normais.
+                      </span>
+                    </div>
+
+                    <div style="font-size: 8px; color: #64748b; line-height: 1.5;">
+                      As informações gravadas encontram-se arquivadas na nuvem corporativa e protegidas por assinatura criptográfica.
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 21: PASSO 7 DESKTOP - IMPRESSÃO OFICIAL & PDF
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-desktop">MÓDULO DESKTOP • PASSO 7</div>
+              <h2 class="slide-title">Impressão Oficial A4 & Geração de PDF Técnico</h2>
+              <p class="slide-subtitle">Layout limpo sem botões ou menus, com cabeçalho que se repete automaticamente em multipáginas</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🖨️</div>
+                <div class="feature-card-text">
+                  <h4>Geração de PDF com 1 Clique</h4>
+                  <p>Basta clicar no botão "Imprimir / PDF" para que o navegador gere a folha oficial limpa, pronta para arquivamento ou envio por e-mail.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">📑</div>
+                <div class="feature-card-text">
+                  <h4>Repetição Automática de Cabeçalho</h4>
+                  <p>Em relatórios com mais de uma página, o cabeçalho técnico CMPC é automaticamente repetido no topo de cada folha subsequente.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🎯</div>
+                <div class="feature-card-text">
+                  <h4>Sem Menus, Barras ou Cortes Indesejados</h4>
+                  <p>O CSS de impressão foi rigorosamente projetado para ocultar menus, botões de salvar e cabeçalhos de tela, gerando uma folha pura.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Visualização de Impressão / Salvar como PDF</div>
+                </div>
+                <div class="desktop-screen" style="padding: 14px; background: #334155; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  
+                  <div style="background: #ffffff; width: 85%; height: 90%; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); padding: 12px; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #006837; padding-bottom: 4px; margin-bottom: 8px;">
+                      <span style="font-size: 8px; font-weight: 800; color: #006837;">PDF OFICIAL CMPC • PADRÃO A4 RETRATO</span>
+                      <span style="background: #006837; color: #fff; font-size: 7px; padding: 2px 6px; border-radius: 2px;">Vetor 300 DPI</span>
+                    </div>
+
+                    <div style="border: 1px solid #000; padding: 4px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                      <img src="assets/logo cmpc.png" alt="CMPC" style="height: 16px;">
+                      <span style="font-size: 8px; font-weight: 800;">RELATÓRIO DIÁRIO DE OBRA - SGQ</span>
+                      <span style="font-size: 8px; font-weight: 700;">Nº 0042/2026</span>
+                    </div>
+
+                    <div style="height: 40px; background: #f8fafc; border: 1px solid #cbd5e1; margin-bottom: 6px; padding: 4px; font-size: 7px; color: #475569;">
+                      [Área de Efetivo e Horas A-J formatada sem cortes e com quebra de página inteligente]
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px;">
+                      <img src="assets/foto1.jpg" alt="Foto 1" style="width: 100%; height: 28px; object-fit: cover; border: 1px solid #cbd5e1;">
+                      <img src="assets/foto2.jpg" alt="Foto 2" style="width: 100%; height: 28px; object-fit: cover; border: 1px solid #cbd5e1;">
+                      <img src="assets/foto3.jpg" alt="Foto 3" style="width: 100%; height: 28px; object-fit: cover; border: 1px solid #cbd5e1;">
+                      <img src="assets/foto4.jpg" alt="Foto 4" style="width: 100%; height: 28px; object-fit: cover; border: 1px solid #cbd5e1;">
+                    </div>
+
+                    <div style="margin-top: auto; border-top: 1px solid #94a3b8; padding-top: 4px; display: flex; justify-content: space-between; font-size: 6px; color: #64748b;">
+                      <span>Visto Planejamento: OK</span>
+                      <span>Visto Produção: OK</span>
+                      <span style="color: #006837; font-weight: 700;">Fiscalização CMPC: APROVADO</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 22: APRESENTAÇÃO DO PAINEL ADMIN MASTER
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-admin">MÓDULO ADMIN MASTER • CORPORATIVO</div>
+              <h2 class="slide-title">Painel Admin Master: Gestão Central Multi-Empresas</h2>
+              <p class="slide-subtitle">Centro de governança global para a diretoria administrar todas as contratadas da planta</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #fbbf24;">🏢</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #fbbf24;">Multi-Tenant (Múltiplas Empresas)</h4>
+                  <p>Cadastre e monitore dezenas de empreiteiras e empresas de manutenção civil, mecânica, elétrica e instrumentação em um só lugar.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #fbbf24;">👥</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #fbbf24;">Controle Global de Acessos & Logins</h4>
+                  <p>Crie perfis, vincule operadores às suas empresas, resete senhas e defina permissões hierárquicas em segundos.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #fbbf24;">🌐</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #fbbf24;">Auditoria Geral & Disparo de Notificações</h4>
+                  <p>Supervisão centralizada de todos os RDOs gerados na planta com integração para envio de alertas por e-mail via API Brevo.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- DESKTOP MOCKUP ADMIN -->
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">http://localhost:8080/admin/ (Painel Master CMPC)</div>
+                </div>
+                <div class="desktop-screen" style="background: #0f172a; color: #fff;">
+                  
+                  <!-- Top Admin Header -->
+                  <div style="background: #1e293b; border-bottom: 1px solid #334155; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 14px;">👑</span>
+                      <span style="font-weight: 800; font-size: 10px; color: #fbbf24;">ADMIN MASTER CMPC</span>
+                    </div>
+                    <span style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">SuperAdmin</span>
+                  </div>
+
+                  <!-- Cards de Métricas Master -->
+                  <div style="padding: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                    <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; text-align: center;">
+                      <div style="font-size: 8px; color: #94a3b8;">EMPRESAS CADASTRADAS</div>
+                      <div style="font-size: 16px; font-weight: 800; color: #fbbf24;">18</div>
+                    </div>
+                    <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; text-align: center;">
+                      <div style="font-size: 8px; color: #94a3b8;">USUÁRIOS ATIVOS</div>
+                      <div style="font-size: 16px; font-weight: 800; color: #60a5fa;">84</div>
+                    </div>
+                    <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; text-align: center;">
+                      <div style="font-size: 8px; color: #94a3b8;">RDOs NESTE MÊS</div>
+                      <div style="font-size: 16px; font-weight: 800; color: #34d399;">528</div>
+                    </div>
+                  </div>
+
+                  <!-- Lista Empresas Mock -->
+                  <div style="padding: 0 12px 12px;">
+                    <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px;">
+                      <div style="font-size: 9px; font-weight: 700; color: #cbd5e1; margin-bottom: 6px;">Empresas Terceirizadas no Projeto:</div>
+                      <div style="font-size: 8px; color: #94a3b8; border-bottom: 1px solid #334155; padding: 4px 0; display: flex; justify-content: space-between;">
+                        <span>1. Manutenção Alpha Industrial</span>
+                        <span style="color: #34d399;">● Ativa (14 Usuários)</span>
+                      </div>
+                      <div style="font-size: 8px; color: #94a3b8; border-bottom: 1px solid #334155; padding: 4px 0; display: flex; justify-content: space-between;">
+                        <span>2. Engenharia Térmica Beta</span>
+                        <span style="color: #34d399;">● Ativa (8 Usuários)</span>
+                      </div>
+                      <div style="font-size: 8px; color: #94a3b8; padding: 4px 0; display: flex; justify-content: space-between;">
+                        <span>3. Limpidz Serviços Técnicos</span>
+                        <span style="color: #34d399;">● Ativa (6 Usuários)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 23: ADMIN PASSO 1 - GESTÃO MULTI-EMPRESAS & LOGO
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-admin">MÓDULO ADMIN MASTER • PASSO 1</div>
+              <h2 class="slide-title">Cadastro de Empresas & Replicação Automática de Logotipos</h2>
+              <p class="slide-subtitle">A identidade visual de cada contratada propagada automaticamente para todos os seus RDOs</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">🏢</div>
+                <div class="feature-card-text">
+                  <h4>CRUD Completo de Empresas</h4>
+                  <p>Cadastre Razão Social, Nome Fantasia, CNPJ, Contrato Padrão, E-mail do Responsável e Limite Máximo de Logins por empresa.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🖼️</div>
+                <div class="feature-card-text">
+                  <h4>Logotipo Padrão da Contratada</h4>
+                  <p>Ao fazer o upload da imagem da contratada, todos os encarregados daquela empresa passam a emitir RDOs com o logo oficial da empresa no topo.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔒</div>
+                <div class="feature-card-text">
+                  <h4>Ativação / Inativação Imediata</h4>
+                  <p>Suspenda o acesso de contratos encerrados ou reative empresas com apenas um clique no interruptor digital.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Cadastro de Empresa e Atribuição de Logotipo</div>
+                </div>
+                <div class="desktop-screen" style="padding: 14px; background: #0f172a; color: #fff;">
+                  
+                  <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px;">
+                    <div style="font-weight: 700; font-size: 10px; color: #fbbf24; margin-bottom: 8px;">Dados da Contratada:</div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 9px; margin-bottom: 8px;">
+                      <div>
+                        <span style="color: #94a3b8; display: block;">Razão Social:</span>
+                        <div style="background: #0f172a; padding: 4px 6px; border-radius: 4px; border: 1px solid #334155;">Manutenção Industrial Ltda</div>
+                      </div>
+                      <div>
+                        <span style="color: #94a3b8; display: block;">CNPJ:</span>
+                        <div style="background: #0f172a; padding: 4px 6px; border-radius: 4px; border: 1px solid #334155;">12.345.678/0001-90</div>
+                      </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 9px; margin-bottom: 10px;">
+                      <div>
+                        <span style="color: #94a3b8; display: block;">Nº do Contrato Padrão:</span>
+                        <div style="background: #0f172a; padding: 4px 6px; border-radius: 4px; border: 1px solid #334155;">CTR-CMPC-2026/045</div>
+                      </div>
+                      <div>
+                        <span style="color: #94a3b8; display: block;">Limite de Usuários:</span>
+                        <div style="background: #0f172a; padding: 4px 6px; border-radius: 4px; border: 1px solid #334155;">15 Operadores</div>
+                      </div>
+                    </div>
+
+                    <div style="background: #0f172a; border: 1px dashed #34d399; border-radius: 6px; padding: 8px; display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <img src="assets/logo cmpc.png" alt="Logo" style="height: 22px; background: #fff; padding: 2px; border-radius: 4px;">
+                        <span style="font-size: 9px; color: #cbd5e1;">Logotipo da Empresa Carregado</span>
+                      </div>
+                      <span style="background: #006837; color: #34d399; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Replicado</span>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 24: ADMIN PASSO 2 - GESTÃO CENTRAL DE USUÁRIOS
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-admin">MÓDULO ADMIN MASTER • PASSO 2</div>
+              <h2 class="slide-title">Gestão Centralizada de Usuários & Logins</h2>
+              <p class="slide-subtitle">Criação rápida de acessos, redefinição de senhas e bloqueio de usuários</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">👤</div>
+                <div class="feature-card-text">
+                  <h4>Associação Usuário ➔ Empresa</h4>
+                  <p>Cada novo login é vinculado a uma empresa específica, herdando automaticamente seus contratos e logotipos padrão.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🛡️</div>
+                <div class="feature-card-text">
+                  <h4>Definição Rigorosa de Papel (Role)</h4>
+                  <p>Escolha o perfil do usuário: <code>SuperAdmin</code>, <code>Admin da Empresa</code>, <code>Engenheiro / Fiscal CMPC</code> ou <code>Encarregado</code>.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔄</div>
+                <div class="feature-card-text">
+                  <h4>Troca de Senhas Sem Complicação</h4>
+                  <p>O administrador master pode redefinir senhas esquecidas em campo na hora, evitando paralisações operacionais.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Gerenciamento de Usuários e Permissões</div>
+                </div>
+                <div class="desktop-screen" style="padding: 12px; background: #0f172a; color: #fff;">
+                  
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 700; font-size: 10px; color: #fbbf24;">👥 Lista de Usuários do Sistema</span>
+                    <button style="background: #006837; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 8px; font-weight: 700;">+ Novo Usuário</button>
+                  </div>
+
+                  <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
+                    <thead>
+                      <tr style="background: #1e293b; text-align: left; border-bottom: 1px solid #334155;">
+                        <th style="padding: 4px;">Nome</th>
+                        <th style="padding: 4px;">E-mail</th>
+                        <th style="padding: 4px;">Empresa</th>
+                        <th style="padding: 4px;">Perfil</th>
+                        <th style="padding: 4px;">Status</th>
+                        <th style="padding: 4px; text-align: center;">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 4px; font-weight: 600;">Luciano Engel</td>
+                        <td style="padding: 4px; color: #94a3b8;">engel@cmpc.com</td>
+                        <td style="padding: 4px;">Engenharia CMPC</td>
+                        <td style="padding: 4px; color: #fbbf24; font-weight: 700;">SuperAdmin</td>
+                        <td style="padding: 4px; color: #34d399;">Ativo</td>
+                        <td style="padding: 4px; text-align: center;">✏️ 🔑</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 4px; font-weight: 600;">Vitor Schneider</td>
+                        <td style="padding: 4px; color: #94a3b8;">vitor@cmpc.com</td>
+                        <td style="padding: 4px;">Fiscalização CMPC</td>
+                        <td style="padding: 4px; color: #60a5fa; font-weight: 700;">Fiscal</td>
+                        <td style="padding: 4px; color: #34d399;">Ativo</td>
+                        <td style="padding: 4px; text-align: center;">✏️ 🔑</td>
+                      </tr>
+                      <tr style="border-bottom: 1px solid #1e293b;">
+                        <td style="padding: 4px; font-weight: 600;">Carlos Encarregado</td>
+                        <td style="padding: 4px; color: #94a3b8;">carlos@manutencao.com</td>
+                        <td style="padding: 4px;">Manutenção Alpha</td>
+                        <td style="padding: 4px; color: #a78bfa; font-weight: 700;">Encarregado</td>
+                        <td style="padding: 4px; color: #34d399;">Ativo</td>
+                        <td style="padding: 4px; text-align: center;">✏️ 🔑</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 25: ADMIN PASSO 3 - AUDITORIA GLOBAL
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-admin">MÓDULO ADMIN MASTER • PASSO 3</div>
+              <h2 class="slide-title">Auditoria Global & Painel Consolidado de Obras</h2>
+              <p class="slide-subtitle">Acompanhamento em tempo real de todas as frentes de trabalho da planta industrial</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">📈</div>
+                <div class="feature-card-text">
+                  <h4>Métricas Consolidadas de Homem-Hora (HH)</h4>
+                  <p>A diretoria visualiza a soma de HH de todas as empresas e equipes em um único painel, facilitando a gestão do avanço físico e orçamentário.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🎯</div>
+                <div class="feature-card-text">
+                  <h4>Filtros Globais Cruzados</h4>
+                  <p>Filtre por contratada, por período de Parada Geral, por status de homologação ou por engenheiro fiscal responsável.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">📜</div>
+                <div class="feature-card-text">
+                  <h4>Rastreabilidade para Auditorias ISO</h4>
+                  <p>Todos os relatórios gerados permanecem catalogados com registro de data, hora e histórico de alterações.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Visão Consolidada de Auditoria da Planta CMPC</div>
+                </div>
+                <div class="desktop-screen" style="padding: 12px; background: #0f172a; color: #fff;">
+                  
+                  <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+                    <div style="font-weight: 700; font-size: 10px; color: #34d399; margin-bottom: 6px;">Consolidado da Semana (Parada Geral):</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 9px; color: #cbd5e1;">
+                      <span>Total de Horas Trabalhadas:</span>
+                      <strong style="color: #fbbf24;">14.280 HH</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 9px; color: #cbd5e1; margin-top: 2px;">
+                      <span>Total de RDOs Emitidos:</span>
+                      <strong style="color: #38bdf8;">164 Relatórios</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 9px; color: #cbd5e1; margin-top: 2px;">
+                      <span>Índice de Aprovação Fiscalização:</span>
+                      <strong style="color: #4ade80;">99.4% Conforme</strong>
+                    </div>
+                  </div>
+
+                  <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; font-size: 8px;">
+                    <span style="font-weight: 700; color: #94a3b8; display: block; margin-bottom: 4px;">Status das Frentes em Campo:</span>
+                    <div style="display: flex; justify-content: space-between; padding: 2px 0;">
+                      <span>Caldeira de Recuperação (Manut. Alpha)</span>
+                      <span style="color: #34d399;">● 100% RDOs em dia</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 2px 0;">
+                      <span>Linha de Fibras (Térmica Beta)</span>
+                      <span style="color: #34d399;">● 100% RDOs em dia</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 2px 0;">
+                      <span>Tratamento de Água (Limpidz)</span>
+                      <span style="color: #34d399;">● 100% RDOs em dia</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 26: NUVEM FIREBASE & OPERAÇÃO OFFLINE
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-tech">INFRAESTRUTURA & RESILIÊNCIA</div>
+              <h2 class="slide-title">Nuvem Firebase Firestore & Operação 100% Offline</h2>
+              <p class="slide-subtitle">A obra nunca para: preenchimento sem sinal com sincronização automática</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">📶</div>
+                <div class="feature-card-text">
+                  <h4>Arquitetura Offline-First (Resiliente)</h4>
+                  <p>Mesmo em áreas industriais blindadas, subsolos ou locais sem cobertura 4G/Wi-Fi, o encarregado continua preenchendo o RDO normalmente.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">💾</div>
+                <div class="feature-card-text">
+                  <h4>Gravação Segura no LocalStorage</h4>
+                  <p>Todos os dados, fotos e cálculos ficam preservados na memória segura do navegador no dispositivo local.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔄</div>
+                <div class="feature-card-text">
+                  <h4>Sincronização Automática com o Firebase</h4>
+                  <p>Assim que o aparelho se conecta a qualquer rede (Wi-Fi do refeitório ou 4G), os relatórios pendentes sobem imediatamente para a nuvem.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Status de Nuvem & Sincronização Híbrida</div>
+                </div>
+                <div class="desktop-screen" style="padding: 18px; background: #0b1120; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                  
+                  <div style="background: rgba(16,185,129,0.15); border: 2px solid #10b981; border-radius: 14px; padding: 16px; width: 85%;">
+                    <div style="font-size: 32px; margin-bottom: 6px;">☁️ ⇄ 📱</div>
+                    <div style="font-weight: 800; font-size: 13px; color: #34d399;">Sincronização Híbrida Inteligente</div>
+                    <p style="font-size: 10px; color: #cbd5e1; margin-top: 6px; line-height: 1.5;">
+                      Banco de Dados Google Cloud Firestore no projeto corporativo <strong><code>rdocmpc</code></strong> garantindo latência zero e redundância total de dados.
+                    </p>
+                  </div>
+
+                  <div style="margin-top: 14px; display: flex; gap: 12px; font-size: 9px;">
+                    <div style="background: #1e293b; padding: 6px 12px; border-radius: 6px; border: 1px solid #334155;">
+                      <span style="color: #34d399;">●</span> Com Internet: Nuvem Ativa
+                    </div>
+                    <div style="background: #1e293b; padding: 6px 12px; border-radius: 6px; border: 1px solid #334155;">
+                      <span style="color: #f59e0b;">●</span> Sem Internet: Cache Local
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 27: PROTEÇÃO CONTRA EXCLUSÃO ACIDENTAL
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-tech">SEGURANÇA & AUDITORIA</div>
+              <h2 class="slide-title">Proteção contra Exclusão Acidental por Senha</h2>
+              <p class="slide-subtitle">Modal centralizado obrigatório para blindar dados contra cliques involuntários em campo</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle" style="background: rgba(239,68,68,0.2); border-color: #ef4444; color: #f87171;">🛡️</div>
+                <div class="feature-card-text">
+                  <h4 style="color: #fca5a5;">Proteção Absoluta do Histórico</h4>
+                  <p>Em canteiros de obra com telas molhadas ou toques acidentais, relatórios jamais são apagados por engano.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔑</div>
+                <div class="feature-card-text">
+                  <h4>Senha de Confirmação Global</h4>
+                  <p>Qualquer exclusão de RDO, usuário ou logotipo exige a digitação da senha mestra de proteção do sistema.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">⚖️</div>
+                <div class="feature-card-text">
+                  <h4>Validade Jurídica & Integridade</h4>
+                  <p>Atende aos requisitos de compliance e governança corporativa, mantendo a integridade do acervo técnico.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Modal de Segurança - Confirmação de Exclusão</div>
+                </div>
+                <div class="desktop-screen" style="padding: 16px; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;">
+                  
+                  <!-- Modal Mockup -->
+                  <div style="background: #ffffff; border-radius: 12px; padding: 16px; width: 85%; text-align: center; color: #0f172a; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0 auto 8px;">
+                      ⚠️
+                    </div>
+                    <div style="font-weight: 800; font-size: 12px; color: #991b1b; margin-bottom: 4px;">Confirmar Exclusão de Relatório</div>
+                    <p style="font-size: 9px; color: #64748b; margin-bottom: 10px;">
+                      Esta ação é permanente e removerá o RDO do banco da nuvem. Digite a senha global de segurança para autorizar:
+                    </p>
+
+                    <div style="margin-bottom: 12px;">
+                      <input type="password" value="••••••" readonly style="text-align: center; font-size: 14px; letter-spacing: 4px; padding: 6px; border: 2px solid #ef4444; border-radius: 6px; width: 140px; font-weight: 700; color: #dc2626;">
+                    </div>
+
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                      <button style="background: #e2e8f0; color: #334155; border: none; border-radius: 6px; padding: 6px 14px; font-size: 9px; font-weight: 700;">Cancelar</button>
+                      <button style="background: #dc2626; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 9px; font-weight: 700;">Confirmar Exclusão</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 28: BACKUPS GLOBAIS EM JSON
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge badge-tech">PORTABILIDADE & GOVERNANÇA</div>
+              <h2 class="slide-title">Exportação & Restauração de Backups em JSON com 1 Clique</h2>
+              <p class="slide-subtitle">Soberania completa dos dados com exportação portátil e restauração simplificada</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">💾</div>
+                <div class="feature-card-text">
+                  <h4>Exportação Instantânea em Arquivo JSON</h4>
+                  <p>Baixe uma cópia completa de todos os relatórios, fotos codificadas, efetivo e configurações com um único clique.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">🔄</div>
+                <div class="feature-card-text">
+                  <h4>Restauração de Segurança</h4>
+                  <p>Caso troque de computador ou precise recuperar o histórico em outra máquina, carregue o arquivo de backup para restaurar tudo na hora.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">📦</div>
+                <div class="feature-card-text">
+                  <h4>Arquivamento por Parada Geral</h4>
+                  <p>Permite gerar um pacote consolidado de dados ao fim de cada Parada Geral ou ano fiscal para histórico da engenharia.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mockup-container">
+              <div class="desktop-mockup">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Central de Backups e Portabilidade de Dados</div>
+                </div>
+                <div class="desktop-screen" style="padding: 16px; background: #0f172a; color: #fff;">
+                  
+                  <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px;">
+                    <div style="font-weight: 800; font-size: 11px; color: #34d399; margin-bottom: 6px;">📦 Exportar Cópia de Segurança (Backup JSON)</div>
+                    <p style="font-size: 9px; color: #94a3b8; margin-bottom: 12px; line-height: 1.4;">
+                      Gera um arquivo compacto contendo todos os RDOs, assinaturas digitais, fotos e configurações da empresa.
+                    </p>
+
+                    <div style="display: flex; gap: 8px;">
+                      <button style="flex: 1; background: #006837; color: #fff; border: 1px solid #10b981; border-radius: 6px; padding: 8px; font-size: 9px; font-weight: 700;">
+                        ⬇️ Baixar Backup Completo (.JSON)
+                      </button>
+                      <button style="flex: 1; background: #334155; color: #cbd5e1; border: 1px solid #475569; border-radius: 6px; padding: 8px; font-size: 9px; font-weight: 600;">
+                        ⬆️ Restaurar Backup
+                      </button>
+                    </div>
+
+                    <div style="margin-top: 14px; background: #0b1120; border-radius: 6px; padding: 8px; font-family: var(--font-mono); font-size: 8px; color: #38bdf8;">
+                      Último backup: backup_rdo_2026-10-15.json (1.2 MB • 142 RDOs)
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 29: BENEFÍCIOS, ROI & GANHOS OPERACIONAIS
+             ================================================================ -->
+        <div class="slide">
+          <div class="slide-header">
+            <div>
+              <div class="slide-module-badge">RETORNO SOBRE INVESTIMENTO</div>
+              <h2 class="slide-title">Ganhos Operacionais & Retorno sobre o Investimento</h2>
+              <p class="slide-subtitle">Impacto quantitativo comprovado na rotina de fiscais, engenheiros e contratadas</p>
+            </div>
+            <div class="slide-brand-watermark">
+              <img src="assets/logo cmpc.png" alt="CMPC">
+              <span>SGQ CMPC</span>
+            </div>
+          </div>
+
+          <div class="slide-grid-2col">
+            <div class="slide-content-left">
+              <div class="feature-card">
+                <div class="feature-icon-circle">⏱️</div>
+                <div class="feature-card-text">
+                  <h4>Redução de 85% no Tempo de Emissão</h4>
+                  <p>O tempo gasto pelo encarregado cai de 40 minutos diários de preenchimento manual para menos de 3 minutos no celular.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">💰</div>
+                <div class="feature-card-text">
+                  <h4>Zero Glosas e Divergências de Medição</h4>
+                  <p>Cálculo matemático automático de HH e amarração com fotos eliminam contestações em faturas de empreiteiras.</p>
+                </div>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-circle">📜</div>
+                <div class="feature-card-text">
+                  <h4>Auditoria SGQ em Menos de 1 Minuto</h4>
+                  <p>Localize qualquer relatório emitido em qualquer dia da obra com apenas 2 cliques e exporte em PDF oficial.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- QUADRO DE MÉTRICAS -->
+            <div class="mockup-container">
+              <div class="desktop-mockup" style="max-height: 380px;">
+                <div class="desktop-titlebar">
+                  <div class="desktop-window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                  </div>
+                  <div class="desktop-url-bar">Indicadores de Desempenho e Eficiência Operacional</div>
+                </div>
+                <div class="desktop-screen" style="padding: 16px; background: #0f172a; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; color: #fff;">
+                  
+                  <div style="background: rgba(0,104,55,0.25); border: 1px solid #10b981; border-radius: 10px; padding: 14px; text-align: center;">
+                    <div style="font-size: 26px; font-weight: 900; color: #34d399;">-85%</div>
+                    <div style="font-size: 10px; font-weight: 700; color: #fff; margin-top: 4px;">TEMPO DE PREENCHIMENTO</div>
+                    <div style="font-size: 8px; color: #94a3b8; margin-top: 2px;">De 40 min para 3 min no canteiro</div>
+                  </div>
+
+                  <div style="background: rgba(37,99,235,0.2); border: 1px solid #3b82f6; border-radius: 10px; padding: 14px; text-align: center;">
+                    <div style="font-size: 26px; font-weight: 900; color: #60a5fa;">0%</div>
+                    <div style="font-size: 10px; font-weight: 700; color: #fff; margin-top: 4px;">PERDA DE DOCUMENTOS</div>
+                    <div style="font-size: 8px; color: #94a3b8; margin-top: 2px;">Histórico 100% blindado na nuvem</div>
+                  </div>
+
+                  <div style="background: rgba(245,158,11,0.2); border: 1px solid #f59e0b; border-radius: 10px; padding: 14px; text-align: center;">
+                    <div style="font-size: 26px; font-weight: 900; color: #fbbf24;">100%</div>
+                    <div style="font-size: 10px; font-weight: 700; color: #fff; margin-top: 4px;">CONFORMIDADE SGQ</div>
+                    <div style="font-size: 8px; color: #94a3b8; margin-top: 2px;">Padrão A4 auditável e assinado</div>
+                  </div>
+
+                  <div style="background: rgba(147,51,234,0.2); border: 1px solid #a855f7; border-radius: 10px; padding: 14px; text-align: center;">
+                    <div style="font-size: 26px; font-weight: 900; color: #c084fc;">Instantâneo</div>
+                    <div style="font-size: 10px; font-weight: 700; color: #fff; margin-top: 4px;">PARECER DO FISCAL</div>
+                    <div style="font-size: 8px; color: #94a3b8; margin-top: 2px;">Visto no mesmo dia do serviço</div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================================
+             SLIDE 30: ENCERRAMENTO & DEMONSTRAÇÃO PRÁTICA
+             ================================================================ -->
+        <div class="slide cover-slide">
+          <div class="cover-logo-box">
+            <img src="assets/logo cmpc.png" alt="Logo CMPC">
+          </div>
+          <div class="slide-module-badge badge-desktop">IMPLANTAÇÃO IMEDIATA</div>
+          <h2 class="cover-title">Pronto para Modernizar suas Obras?</h2>
+          <p class="cover-subtitle">
+            O Sistema RDO Engenharia está pronto para operação em qualquer projeto, parada de manutenção ou contrato contínuo com setup em menos de 24 horas.
+          </p>
+
+          <div style="display: flex; gap: 20px; justify-content: center; max-width: 800px; margin: 0 auto 24px; text-align: left;">
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-card); border-radius: 12px; padding: 14px; flex: 1;">
+              <div style="font-weight: 700; color: #34d399; font-size: 1rem; margin-bottom: 4px;">💡 Idealizador Técnico</div>
+              <div style="font-size: 0.9rem; color: #ffffff;">Vitor Schneider Abrahão</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;">vitor.abrahao@cmpc.com</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-card); border-radius: 12px; padding: 14px; flex: 1;">
+              <div style="font-weight: 700; color: #34d399; font-size: 0.95rem; margin-bottom: 4px;">💻 Engenharia & Software</div>
+              <div style="font-size: 0.9rem; color: #ffffff;">Luciano Engel</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;">sistemasengenharia@cmpcrs.com.br</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; justify-content: center;">
+            <button class="btn-dock btn-primary-dock" onclick="presentation.goToSlide(0)" style="padding: 10px 24px; font-size: 1rem;">
+              <span>🔄 Reiniciar Apresentação</span>
+            </button>
+            <button class="btn-dock" onclick="presentation.printPresentation()" style="padding: 10px 20px;">
+              <span>🖨️ Salvar como PDF Oficial</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BARRA DE CONTROLES INFERIOR (DOCK) -->
+      <footer class="bottom-dock">
+        <div class="dock-left">
+          <span id="dock-slide-counter" class="dock-slide-counter">01 / 30</span>
+          <span id="dock-title-preview" class="dock-title-preview">Capa Principal</span>
+        </div>
+
+        <div class="dock-center">
+          <button type="button" class="btn-dock" onclick="presentation.prevSlide()" title="Slide Anterior (Seta Esquerda)">
+            <span>◀ Anterior</span>
+          </button>
+          <button type="button" class="btn-dock btn-primary-dock" onclick="presentation.nextSlide()" title="Próximo Slide (Espaço ou Seta Direita)">
+            <span>Próximo ▶</span>
+          </button>
+        </div>
+
+        <div class="dock-right">
+          <button type="button" id="btn-autoplay" class="btn-dock" onclick="presentation.toggleAutoplay()" title="Apresentação Automática">
+            <span>▶ Auto</span>
+          </button>
+          <button type="button" class="btn-dock" onclick="presentation.toggleDrawer()" title="Índice de Miniaturas (Tecla O)">
+            <span>📑 Índice</span>
+          </button>
+          <button type="button" class="btn-dock" onclick="presentation.printPresentation()" title="Exportar / Imprimir Apresentação em PDF (Tecla P)">
+            <span>🖨️ PDF</span>
+          </button>
+          <button type="button" class="btn-dock" onclick="presentation.toggleFullscreen()" title="Modo Apresentador Tela Cheia (Tecla F)">
+            <span>⛶ Tela Cheia</span>
+          </button>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- MODAL DRAWER DE MINIATURAS (ÍNDICE) -->
+  <div id="drawer-modal" class="drawer-modal" onclick="if(event.target === this) presentation.closeDrawer()">
+    <div class="drawer-card">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <span>📑 Índice Completo da Apresentação</span>
+          <span style="font-size: 0.85rem; color: #94a3b8; font-weight: normal;">(30 Slides Passo a Passo)</span>
+        </div>
+        <button type="button" class="btn-close-drawer" onclick="presentation.closeDrawer()">✕</button>
+      </div>
+      <div id="drawer-grid" class="drawer-grid">
+        <!-- Preenchido via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LIGHTBOX DE ZOOM (FOTOS E TELAS) -->
+  <div id="lightbox-modal" class="lightbox-modal" onclick="presentation.closeLightbox()">
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Zoom">
+  </div>
+
+  <script src="js/slides.js"></script>
+</body>
+</html>
