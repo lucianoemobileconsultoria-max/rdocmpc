@@ -257,12 +257,22 @@ const app = {
     setTimeout(() => {
       this.initSignatureCanvas();
       const existing = this.currentSignatures[target];
-      if (existing) {
-        this.loadSignatureImageToCanvas(existing);
-      } else if (session.signature) {
-        this.loadSignatureImageToCanvas(session.signature);
+
+      // Busca a assinatura salva no perfil do usuário no banco local/nuvem
+      const savedSig = existing ||
+        StorageService.getUserSignature(selectedName) ||
+        StorageService.getUserSignature(session.name) ||
+        StorageService.getUserSignature(session.id) ||
+        session.signature || '';
+
+      if (savedSig) {
+        this.loadSignatureImageToCanvas(savedSig);
         if (statusEl) {
-          statusEl.innerHTML = `<span style="color:#059669; font-weight:700;">✅ Sua assinatura permanente (${session.name}) foi carregada. Clique em "Confirmar Assinatura" ou altere abaixo.</span>`;
+          statusEl.innerHTML = `<span style="color:#059669; font-weight:700;">✅ Assinatura padrão do perfil de "${selectedName || session.name}" carregada no quadro!</span>`;
+        }
+      } else {
+        if (statusEl) {
+          statusEl.innerHTML = 'Pronto para assinar na tela, colar com <strong>Ctrl+V</strong> ou carregar imagem.';
         }
       }
     }, 60);
@@ -625,10 +635,15 @@ const app = {
       (session.email && matched && session.email.trim().toLowerCase() === matched.email.trim().toLowerCase())
     );
 
-    if (isMe && matched && matched.signature && !this.currentSignatures[target]) {
-      this.currentSignatures[target] = matched.signature;
-      this.updateSignatureBoxUI(target, matched.signature);
-      this.showToast(`Sua assinatura permanente (${matched.name}) foi carregada!`, 'info');
+    const userSig = StorageService.getUserSignature(selectedName) || matched?.signature || '';
+
+    if (isMe && userSig) {
+      this.currentSignatures[target] = userSig;
+      this.updateSignatureBoxUI(target, userSig);
+      this.showToast(`Assinatura padrão do perfil de "${selectedName}" carregada no campo!`, 'info');
+    } else if (!isMe) {
+      this.currentSignatures[target] = '';
+      this.updateSignatureBoxUI(target, '');
     } else {
       this.updateSignatureBoxUI(target, this.currentSignatures[target] || '');
     }
@@ -711,13 +726,12 @@ const app = {
       if (mainEmail) mainEmail.value = modalEmail.value;
 
       // Se o usuário selecionado no modal tem assinatura permanente salva e o canvas está em branco
-      const users = StorageService.getUsers() || [];
-      const matched = users.find(u => u.name === selectedName);
-      if (matched && matched.signature && (!this.sigPad.hasDrawn || !this.currentSignatures[target])) {
-        this.loadSignatureImageToCanvas(matched.signature);
+      const userSig = StorageService.getUserSignature(selectedName) || (matched ? matched.signature : '');
+      if (userSig && (!this.sigPad.hasDrawn || !this.currentSignatures[target])) {
+        this.loadSignatureImageToCanvas(userSig);
         const statusEl = document.getElementById('sig-status-indicator');
         if (statusEl) {
-          statusEl.innerHTML = `<span style="color:#059669; font-weight:700;">✅ Assinatura padrão do perfil de "${matched.name}" carregada no quadro!</span>`;
+          statusEl.innerHTML = `<span style="color:#059669; font-weight:700;">✅ Assinatura padrão do perfil de "${selectedName}" carregada no quadro!</span>`;
         }
       }
     }
@@ -738,18 +752,8 @@ const app = {
       return;
     }
 
-    const users = StorageService.getUsers() || [];
-    const userIndex = users.findIndex(u => u.name === selectedName);
-    if (userIndex < 0) {
-      this.showToast(`Usuário "${selectedName}" não encontrado no cadastro do sistema.`, 'error');
-      return;
-    }
-
     const dataUrl = canvas.toDataURL('image/png');
-    const targetUser = users[userIndex];
-    targetUser.signature = dataUrl;
-
-    StorageService.updateUser(targetUser.id, { signature: dataUrl });
+    StorageService.saveUserSignature(selectedName, dataUrl);
 
     // Aplica no target atual imediatamente
     const target = this.currentSigTarget;
@@ -924,7 +928,8 @@ const app = {
         id: matched.id,
         name: matched.name,
         email: matched.email,
-        role: matched.role
+        role: matched.role,
+        signature: matched.signature || StorageService.getUserSignature(matched.id) || ''
       });
       if (StorageService.sendPresenceHeartbeat) {
         StorageService.sendPresenceHeartbeat();

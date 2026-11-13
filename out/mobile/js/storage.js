@@ -478,6 +478,12 @@ const StorageService = {
     });
     this.saveUsersLocal(users);
 
+    // Sincroniza sessão ativa se for o próprio usuário
+    const session = this.getSession();
+    if (session && (session.id === id || (updatedUser && session.name === updatedUser.name))) {
+      this.setSession({ ...session, ...updatedData });
+    }
+
     if (db && updatedUser) {
       db.collection('users').doc(id).set(updatedUser, { merge: true })
         .catch(err => console.warn('Cloud updateUser error:', err));
@@ -716,6 +722,57 @@ const StorageService = {
     if (userId) {
       localStorage.removeItem(`cmpc_rdo_logo_${userId}`);
       this.updateUser(userId, { logo: '' });
+    }
+  },
+
+  // DIGITAL SIGNATURE PERSISTENCE PER USER
+  getUserSignature(userIdOrName) {
+    if (!userIdOrName) return '';
+    const users = this.getUsers() || [];
+    const query = String(userIdOrName).trim().toLowerCase();
+    const u = users.find(x =>
+      (x.id && String(x.id).toLowerCase() === query) ||
+      (x.name && x.name.trim().toLowerCase() === query) ||
+      (x.email && x.email.trim().toLowerCase() === query)
+    );
+    if (u && u.signature) return u.signature;
+
+    // Fallback: check session if matching
+    const session = this.getSession();
+    if (session && session.signature) {
+      if (
+        (session.id && String(session.id).toLowerCase() === query) ||
+        (session.name && session.name.trim().toLowerCase() === query) ||
+        (session.email && session.email.trim().toLowerCase() === query)
+      ) {
+        return session.signature;
+      }
+    }
+    return '';
+  },
+
+  saveUserSignature(userIdOrName, base64Sig) {
+    if (!userIdOrName) return;
+    const users = this.getUsers() || [];
+    const query = String(userIdOrName).trim().toLowerCase();
+    const u = users.find(x =>
+      (x.id && String(x.id).toLowerCase() === query) ||
+      (x.name && x.name.trim().toLowerCase() === query) ||
+      (x.email && x.email.trim().toLowerCase() === query)
+    );
+    if (u) {
+      this.updateUser(u.id, { signature: base64Sig });
+    }
+    const session = this.getSession();
+    if (session) {
+      if (
+        (session.id && String(session.id).toLowerCase() === query) ||
+        (session.name && session.name.trim().toLowerCase() === query) ||
+        (session.email && session.email.trim().toLowerCase() === query)
+      ) {
+        session.signature = base64Sig;
+        this.setSession(session);
+      }
     }
   },
 
