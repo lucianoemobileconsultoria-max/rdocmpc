@@ -197,6 +197,7 @@
           <table class="data-table">
             <thead>
               <tr>
+                <th class="rdo-logo-th">LOGO</th>
                 <th>CONTRATO</th>
                 <th>NÚMERO</th>
                 <th>DATA /<br>HORA</th>
@@ -258,13 +259,20 @@
               </svg>
               <span>Duplicar RDO</span>
             </button>
-            <button class="btn btn-primary" onclick="app.saveCurrentRDO()">
+            <button type="button" class="btn btn-outline btn-save-draft" onclick="app.saveCurrentRDO(true)" title="Salvar rascunho (NÃO envia o RDO)" style="color: #b45309; border-color: #fcd34d; background: #fffbeb; font-weight: 600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              </svg>
+              <span>Salvar Rascunho</span>
+            </button>
+            <button class="btn btn-primary" onclick="app.saveCurrentRDO()" title="Salva e abre a confirmação de envio do RDO">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                 <polyline points="17 21 17 13 7 13 7 21"></polyline>
                 <polyline points="7 3 7 8 15 8"></polyline>
               </svg>
-              <span>Salvar RDO</span>
+              <span>Salvar e Enviar RDO</span>
             </button>
           </div>
         </div>
@@ -435,6 +443,12 @@
 
                   <div class="table-responsive rdo-workers-scroll">
                     <table class="rdo-table workers-table" id="table-workers">
+                      <colgroup>
+                        <col class="cg-matricula"><col class="cg-funcao"><col class="cg-nome">
+                        <col class="cg-act"><col class="cg-act"><col class="cg-act"><col class="cg-act"><col class="cg-act">
+                        <col class="cg-act"><col class="cg-act"><col class="cg-act"><col class="cg-act"><col class="cg-act">
+                        <col class="cg-total">
+                      </colgroup>
                       <thead>
                         <tr>
                           <th rowspan="2" class="col-matricula">MATRÍCULA</th>
@@ -611,7 +625,11 @@
             <tr class="rdo-print-row">
               <td class="print-row-td">
                 <div class="rdo-photos-section">
-                  <div class="photos-header">REGISTRO FOTOGRÁFICO (4 IMAGENS):</div>
+                  <div class="photos-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="photos-header-title">REGISTRO FOTOGRÁFICO (4 IMAGENS):</span>
+                    <button type="button" class="btn btn-outline btn-xs no-print" onclick="app.addPhotoSlot()" title="Adicionar mais um campo de foto"
+                      style="color: #006837; border-color: #86efac; background: #f0fdf4; font-weight: 700;">+ Adicionar Foto</button>
+                  </div>
                   <div class="photos-grid">
                     <!-- Foto 1 (Obrigatória: FOTO DA PT) -->
                     <div class="photo-slot photo-slot-pt-required" id="photo-slot-0">
@@ -857,13 +875,20 @@
             </svg>
             <span>Imprimir RDO</span>
           </button>
-          <button class="btn btn-primary" onclick="app.saveCurrentRDO()">
+          <button type="button" class="btn btn-outline btn-save-draft" onclick="app.saveCurrentRDO(true)" title="Salvar rascunho (NÃO envia o RDO)" style="color: #b45309; border-color: #fcd34d; background: #fffbeb; font-weight: 600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              </svg>
+              <span>Salvar Rascunho</span>
+            </button>
+            <button class="btn btn-primary" onclick="app.saveCurrentRDO()" title="Salva e abre a confirmação de envio do RDO">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
               <polyline points="17 21 17 13 7 13 7 21"></polyline>
               <polyline points="7 3 7 8 15 8"></polyline>
             </svg>
-            <span>Salvar RDO</span>
+            <span>Salvar e Enviar RDO</span>
           </button>
         </div>
       </section>

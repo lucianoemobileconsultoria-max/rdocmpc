@@ -130,7 +130,88 @@ const app = {
     event.target.value = '';
   },
 
+  // ==========================================================================
+  // CAMPOS DE FOTO DINÂMICOS (4 fixos + quantos o usuário precisar)
+  // ==========================================================================
+  FIXED_PHOTO_SLOTS: 4,
+
+  getPhotoSlotCount() {
+    return document.querySelectorAll('.photos-grid .photo-slot').length;
+  },
+
+  updatePhotosHeaderTitle() {
+    const title = document.getElementById('photos-header-title');
+    if (title) {
+      const n = this.getPhotoSlotCount();
+      title.textContent = `REGISTRO FOTOGRÁFICO (${n} ${n === 1 ? 'IMAGEM' : 'IMAGENS'}):`;
+    }
+  },
+
+  createExtraPhotoSlot(index) {
+    const grid = document.querySelector('.photos-grid');
+    if (!grid) return;
+    const n = index + 1;
+    const slot = document.createElement('div');
+    slot.className = 'photo-slot photo-slot-extra';
+    slot.id = `photo-slot-${index}`;
+    slot.innerHTML = `
+      <input type="file" id="photo-input-${index}" accept="image/*" class="hidden" onchange="app.handlePhotoUpload(event, ${index})">
+      <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, ${index})" title="Clique para visualizar ou carregar foto ${n}">
+        <img id="photo-img-${index}" src="" alt="Foto ${n}" class="photo-thumb hidden">
+        <div class="photo-overlay hidden" id="photo-overlay-${index}">
+          <span class="badge-zoom">🔍 Clique para Ampliar</span>
+        </div>
+        <div id="photo-placeholder-${index}" class="photo-placeholder">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+          <span>Foto ${n}</span>
+          <small>Clique para carregar</small>
+        </div>
+      </div>
+      <div class="photo-actions">
+        <input type="text" id="photo-desc-${index}" class="rdo-input photo-caption-input" placeholder="Legenda Foto ${n}">
+        <button type="button" class="btn-change-photo no-print hidden" id="photo-change-${index}"
+          onclick="document.getElementById('photo-input-${index}').click()" title="Trocar foto">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+        </button>
+        <button type="button" class="btn-remove-photo no-print" id="photo-del-${index}"
+          onclick="app.removePhoto(${index})" title="Remover campo da Foto ${n}">&times;</button>
+      </div>`;
+    grid.appendChild(slot);
+  },
+
+  addPhotoSlot() {
+    const index = this.getPhotoSlotCount();
+    this.currentPhotos[index] = '';
+    this.createExtraPhotoSlot(index);
+    this.updatePhotoSlotUI(index, '', '');
+    this.updatePhotosHeaderTitle();
+    const slot = document.getElementById(`photo-slot-${index}`);
+    if (slot) slot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  },
+
   removePhoto(index) {
+    // Campos extras (5+) são removidos por completo e os seguintes são renumerados
+    if (index >= this.FIXED_PHOTO_SLOTS) {
+      const items = [];
+      const total = this.getPhotoSlotCount();
+      for (let i = 0; i < total; i++) {
+        if (i === index) continue;
+        items.push({
+          url: this.currentPhotos[i] || '',
+          caption: document.getElementById(`photo-desc-${i}`)?.value || ''
+        });
+      }
+      this.renderAllPhotosUI(items);
+      this.showToast('Campo de foto removido.', 'info');
+      return;
+    }
     this.currentPhotos[index] = '';
     const descInput = document.getElementById(`photo-desc-${index}`);
     if (descInput) {
@@ -166,13 +247,28 @@ const app = {
       img.classList.add('hidden');
       placeholder.classList.remove('hidden');
       if (overlay) overlay.classList.add('hidden');
-      if (delBtn) delBtn.classList.add('hidden');
+      // Campos extras mantêm o "×" visível para poder remover o campo vazio
+      if (delBtn && index < this.FIXED_PHOTO_SLOTS) delBtn.classList.add('hidden');
       if (changeBtn) changeBtn.classList.add('hidden');
     }
   },
 
   renderAllPhotosUI(photos = []) {
-    for (let i = 0; i < 4; i++) {
+    const total = Math.max(this.FIXED_PHOTO_SLOTS, photos.length);
+    // Ajusta a quantidade de campos extras no DOM
+    let current = this.getPhotoSlotCount();
+    while (current > total) {
+      document.getElementById(`photo-slot-${current - 1}`)?.remove();
+      current--;
+    }
+    while (current < total) {
+      this.createExtraPhotoSlot(current);
+      current++;
+    }
+    this.currentPhotos.length = total;
+    this.updatePhotosHeaderTitle();
+
+    for (let i = 0; i < total; i++) {
       const photoItem = photos[i];
       let url = '';
       let cap = i === 0 ? 'FOTO DA PT' : '';
@@ -1075,6 +1171,8 @@ const app = {
     const isRejected = Boolean(rdo.approvalStatus === 'reprovado');
     const isSent = Boolean(rdo.sent === true || rdo.status === 'enviado' || rdo.sentAt || isApproved);
     const isPendingApproval = isSent && !isApproved && !isRejected;
+    // Rascunho: ainda não enviado, sem prazo de 24h e sem bloqueio
+    const isDraft = Boolean(rdo.isDraft === true && !isSent);
 
     let createdTime = null;
     if (rdo.createdAt) {
@@ -1090,7 +1188,7 @@ const app = {
     const now = Date.now();
     const expiryTime = createdTime + (24 * 60 * 60 * 1000); // 24 horas a partir da criação
     const remainingMs = expiryTime - now;
-    const isExpired = !isSent && (remainingMs <= 0);
+    const isExpired = !isSent && !isDraft && (remainingMs <= 0);
 
     let text = '';
     let hours = 0;
@@ -1104,6 +1202,8 @@ const app = {
     } else if (isSent) {
       const sentDate = rdo.sentAt ? new Date(rdo.sentAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
       text = `Aguardando Aprovação${sentDate ? ' (' + sentDate + ')' : ''}`;
+    } else if (isDraft) {
+      text = 'Rascunho';
     } else if (isExpired) {
       text = 'Bloqueado (+24h)';
     } else {
@@ -1114,6 +1214,7 @@ const app = {
     }
 
     return {
+      isDraft,
       isSent,
       isApproved,
       isRejected,
@@ -1141,6 +1242,8 @@ const app = {
   renderRDOFormStatusBanner(rdo) {
     const banner = document.getElementById('rdo-form-status-banner');
     const sendBtnLabel = document.getElementById('btn-editor-send-label');
+    // Botão "Salvar Rascunho" só existe para RDOs novos ou que ainda são rascunho
+    document.querySelectorAll('.btn-save-draft').forEach(b => b.classList.toggle('hidden', !!(rdo && rdo.id && !rdo.isDraft)));
     if (!banner) return;
 
     if (!rdo || !rdo.id) {
@@ -1148,7 +1251,7 @@ const app = {
       banner.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px;">
           <span>⏱️</span>
-          <span><strong>Novo RDO:</strong> O prazo de 24 horas para envio e aprovação iniciará assim que o RDO for salvo.</span>
+          <span><strong>Novo RDO:</strong> use <strong>Salvar Rascunho</strong> para continuar depois (não envia o RDO). O envio só acontece em <strong>Salvar e Enviar RDO</strong>.</span>
         </div>
       `;
       if (sendBtnLabel) sendBtnLabel.textContent = 'Enviar RDO';
@@ -1159,7 +1262,19 @@ const app = {
     const canApprove = session && (session.role === 'Admin' || session.role === 'Engenheiro');
     const info = this.getRDOExpiryInfo(rdo);
 
-    if (info.isApproved) {
+    if (info.isDraft) {
+      banner.className = 'rdo-form-status-banner rdo-banner-draft';
+      banner.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.2rem;">📝</span>
+          <div>
+            <strong>Rascunho — RDO ainda não enviado.</strong>
+            <span style="font-size:0.82rem; margin-left:6px;">Só aparece para você, sem prazo de 24h. Quando terminar, clique em <strong>Salvar e Enviar RDO</strong>.</span>
+          </div>
+        </div>
+      `;
+      if (sendBtnLabel) sendBtnLabel.textContent = 'Enviar RDO';
+    } else if (info.isApproved) {
       const appDate = info.approvedAt ? new Date(info.approvedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
       banner.className = 'rdo-form-status-banner rdo-banner-approved';
       banner.innerHTML = `
@@ -1339,6 +1454,7 @@ const app = {
     this.renderAllPhotosUI(['', '', '', '']);
 
     this.calculateTotalHH();
+    this.syncAllWorkerPrintTexts();
     this.showTab('form');
   },
 
@@ -1483,6 +1599,7 @@ const app = {
     this.loadCompanyLogo(rdo.logo !== undefined ? rdo.logo : null);
 
     this.calculateTotalHH();
+    this.syncAllWorkerPrintTexts();
     this.showTab('form');
     this.showToast(`RDO ${rdo.numero} duplicado com sucesso! Fotos, comentários, observações e assinaturas foram reiniciados.`, 'success');
   },
@@ -1621,6 +1738,7 @@ const app = {
     this.loadCompanyLogo(rdo.logo !== undefined ? rdo.logo : null);
 
     this.calculateTotalHH();
+    this.syncAllWorkerPrintTexts();
     this.showTab('form');
   },
 
@@ -1646,8 +1764,8 @@ const app = {
 
     tr.innerHTML = `
       <td><input type="text" class="worker-cell-input worker-matricula text-center font-bold" value="${this.escapeHtml(matricula)}" placeholder="Matrícula"></td>
-      <td><input type="text" class="worker-cell-input worker-funcao" value="${this.escapeHtml(funcao)}" placeholder="Função"></td>
-      <td><input type="text" class="worker-cell-input worker-nome" value="${this.escapeHtml(nome)}" placeholder="Nome completo"></td>
+      <td><textarea rows="1" class="worker-cell-input worker-wrap-input worker-funcao" placeholder="Função" onkeydown="if(event.key==='Enter'){event.preventDefault();}" oninput="app.syncWorkerPrintText(this); app.autoSizeWorkerFields()">${this.escapeHtml(funcao)}</textarea><span class="worker-print-text">${this.escapeHtml(funcao)}</span></td>
+      <td><textarea rows="1" class="worker-cell-input worker-wrap-input worker-nome" placeholder="Nome completo" onkeydown="if(event.key==='Enter'){event.preventDefault();}" oninput="app.syncWorkerPrintText(this); app.autoSizeWorkerFields()">${this.escapeHtml(nome)}</textarea><span class="worker-print-text">${this.escapeHtml(nome)}</span></td>
       ${actCellsHtml}
       <td class="worker-total-cell">
         <div class="worker-total-wrap">
@@ -1661,6 +1779,110 @@ const app = {
 
     tbody.appendChild(tr);
     this.calculateTotalHH();
+    this.setupWorkerAutoSize();
+    this.autoSizeWorkerFields();
+  },
+
+  // Campos Função/Nome quebram linha e crescem em altura conforme o texto
+  autoSizeWorkerFields() {
+    document.querySelectorAll('#workers-tbody .worker-wrap-input').forEach(el => {
+      el.style.height = 'auto';
+      if (el.scrollHeight > 0) el.style.height = el.scrollHeight + 'px';
+    });
+  },
+
+  setupWorkerAutoSize() {
+    if (this._workerAutoSizeReady) return;
+    this._workerAutoSizeReady = true;
+    const table = document.getElementById('table-workers');
+    if (table && window.ResizeObserver) {
+      new ResizeObserver(() => this.autoSizeWorkerFields()).observe(table);
+    }
+    const sheet = document.getElementById('cmpc-rdo-sheet');
+    if (sheet) {
+      sheet.addEventListener('input', () => {
+        this.syncHeaderPrintTexts();
+        this.syncActivityPrintRows();
+      });
+      sheet.addEventListener('change', () => {
+        this.syncHeaderPrintTexts();
+        this.syncActivityPrintRows();
+      });
+    }
+    window.addEventListener('resize', () => this.autoSizeWorkerFields());
+  },
+
+  // Espelho de texto para IMPRESSÃO: <input> não quebra linha, então o texto de
+  // Função/Nome é replicado num <span> que quebra linha normalmente no papel.
+  syncWorkerPrintText(input) {
+    const span = input && input.parentElement ? input.parentElement.querySelector('.worker-print-text') : null;
+    if (span) span.textContent = input.value;
+  },
+
+  syncAllWorkerPrintTexts() {
+    document.querySelectorAll('#workers-tbody .worker-funcao, #workers-tbody .worker-nome')
+      .forEach(inp => this.syncWorkerPrintText(inp));
+    this.syncHeaderPrintTexts();
+    this.syncActivityPrintRows();
+  },
+
+  syncHeaderPrintTexts() {
+    const thead = document.querySelector('#cmpc-rdo-sheet > thead');
+    if (!thead) return;
+    thead.querySelectorAll('input:not([type="file"]), select').forEach(el => {
+      let span = el.nextElementSibling;
+      if (!span || !span.classList.contains('rdo-header-print-val')) {
+        span = document.createElement('span');
+        span.className = 'rdo-header-print-val';
+        if (el.classList.contains('text-center') || el.classList.contains('clima-select')) {
+          span.classList.add('text-center');
+        }
+        if (el.classList.contains('font-bold') || el.classList.contains('clima-select')) {
+          span.classList.add('font-bold');
+        }
+        if (el.classList.contains('clima-select')) {
+          span.classList.add('clima-print-val');
+        }
+        el.insertAdjacentElement('afterend', span);
+      }
+      let txt = '';
+      if (el.tagName === 'SELECT') {
+        if (el.value) {
+          const opt = el.options[el.selectedIndex];
+          txt = opt ? opt.text : el.value;
+        }
+      } else if (el.type === 'datetime-local') {
+        const val = el.value || '';
+        if (val.includes('T')) {
+          const [dPart, tPart] = val.split('T');
+          const [y, m, d] = dPart.split('-');
+          txt = `${d}/${m}/${y} ${tPart.slice(0, 5)}`;
+        } else if (val.includes('-')) {
+          txt = val.split('-').reverse().join('/');
+        } else {
+          txt = val;
+        }
+      } else {
+        txt = el.value || '';
+      }
+      span.textContent = txt;
+    });
+  },
+
+  syncActivityPrintRows() {
+    const rows = document.querySelectorAll('#activities-tbody tr[data-act]');
+    let hasAny = false;
+    rows.forEach(row => {
+      const desc = row.querySelector('.act-desc-input')?.value.trim() || '';
+      const ass = row.querySelector('.act-ass-input')?.value.trim() || '';
+      const isEmpty = !desc && !ass;
+      row.classList.toggle('act-row-empty', isEmpty);
+      if (!isEmpty) hasAny = true;
+    });
+    const tableRow = document.getElementById('table-activities')?.closest('.rdo-print-row');
+    if (tableRow) {
+      tableRow.classList.toggle('act-all-empty', !hasAny);
+    }
   },
 
   removeWorkerRow(btn) {
@@ -1806,7 +2028,9 @@ const app = {
     return true;
   },
 
-  saveCurrentRDO() {
+  saveCurrentRDO(draftMode = false) {
+    // draftMode === true: "Salvar Rascunho" (não envia, sem validações obrigatórias)
+    draftMode = (draftMode === true);
     const numero = document.getElementById('rdo-numero').value.trim();
     const data = document.getElementById('rdo-data').value;
     const diaSemana = document.getElementById('rdo-dia-semana').value;
@@ -1836,7 +2060,7 @@ const app = {
     }
 
     // Regra básica: cada colaborador não pode exceder 11 horas na jornada
-    if (!this.validateWorkerHoursLimit()) {
+    if (!draftMode && !this.validateWorkerHoursLimit()) {
       return;
     }
 
@@ -1845,7 +2069,7 @@ const app = {
     const descPTInput = document.getElementById('photo-desc-0');
     const descPT = descPTInput ? descPTInput.value.trim() : '';
 
-    if (!fotoPT) {
+    if (!draftMode && !fotoPT) {
       this.showToast('A FOTO DA PT (Foto 1) é obrigatória! Por favor, anexe a foto da PT.', 'error');
       const slot0 = document.getElementById('photo-slot-0');
       if (slot0) {
@@ -1946,14 +2170,28 @@ const app = {
 
     // Collect Photos
     const photos = [];
-    for (let i = 0; i < 4; i++) {
+    const photoSlotTotal = this.getPhotoSlotCount();
+    for (let i = 0; i < photoSlotTotal; i++) {
       const url = this.currentPhotos[i] || '';
       const caption = document.getElementById(`photo-desc-${i}`)?.value.trim() || '';
       photos.push({ url, caption });
     }
+    // Remove campos extras vazios no final da lista (sem foto e sem legenda)
+    while (photos.length > this.FIXED_PHOTO_SLOTS && !photos[photos.length - 1].url && !photos[photos.length - 1].caption) {
+      photos.pop();
+    }
 
     const session = StorageService.getSession();
     const existingRDO = this.currentRDOId ? StorageService.getRecordById(this.currentRDOId) : null;
+
+    if (draftMode && existingRDO && !existingRDO.isDraft) {
+      this.showToast('Este RDO já não é um rascunho. Use "Salvar e Enviar RDO".', 'warning');
+      return;
+    }
+
+    // Um RDO novo (ou que já é rascunho) permanece RASCUNHO até o envio ser confirmado
+    const isDraft = draftMode ? true : (existingRDO ? existingRDO.isDraft === true : true);
+    const rdoStatus = isDraft ? 'rascunho' : (existingRDO ? (existingRDO.status || 'pendente') : 'pendente');
 
     const rdoPayload = {
       id: this.currentRDOId,
@@ -1979,6 +2217,8 @@ const app = {
       obsAdicional: sendObs || (existingRDO ? (existingRDO.obsAdicional || '') : ''),
       equipments,
       photos,
+      isDraft,
+      status: rdoStatus,
       sigPlanejamento,
       sigEngenheiro,
       sigFiscalizacao,
@@ -1996,9 +2236,23 @@ const app = {
 
     const saved = StorageService.saveRecord(rdoPayload);
     this.currentRDOId = saved.id;
-    this.showToast('RDO salvo com sucesso!', 'success');
-    this.showTab('list');
+
+    if (draftMode) {
+      // Rascunho: salva e continua no editor, sem enviar nada
+      const heading = document.getElementById('editor-page-heading');
+      if (heading) heading.textContent = `Rascunho: RDO ${saved.numero}`;
+      this.renderRDOFormStatusBanner(saved);
+      this.showToast('Rascunho salvo! O RDO NÃO foi enviado. Continue quando quiser pelo Histórico de RDOs.', 'success');
+      return;
+    }
+
+    // Salvar e Enviar: abre a confirmação de envio; ao concluir/fechar volta ao histórico
+    this.showToast('RDO salvo! Confirme o envio na janela a seguir.', 'success');
+    this.goListAfterSend = true;
+    this.openSendModal(saved.id);
   },
+
+  goListAfterSend: false,
 
   pendingDeleteAction: null,
 
@@ -2095,6 +2349,7 @@ const app = {
   },
 
   printCurrentRDO() {
+    this.syncAllWorkerPrintTexts();
     window.print();
   },
 
@@ -2120,6 +2375,16 @@ const app = {
       });
     }
 
+    // Rascunhos aparecem somente para o próprio autor (nem para Admin/aprovadores)
+    records = records.filter(r => {
+      if (!r.isDraft || r.sent === true) return true;
+      return !!session && (
+        r.userId === session.id ||
+        r.createdBy === session.email ||
+        (!r.userId && r.encarregado && r.encarregado.toLowerCase() === session.name.toLowerCase())
+      );
+    });
+
     // Filtering
     records = records.filter(r => {
       const matchQuery = !query || 
@@ -2141,6 +2406,8 @@ const app = {
     }
 
     emptyState?.classList.add('hidden');
+
+    const listUsers = StorageService.getUsers() || [];
 
     tbody.innerHTML = records.map(r => {
       let formattedDate = '-';
@@ -2195,6 +2462,20 @@ const app = {
 
       const info = this.getRDOExpiryInfo(r);
 
+      // Logo do autor do RDO (usa o logo ATUAL do perfil; se o usuário trocou, reflete aqui)
+      const ownerName = (r.createdByName || r.encarregado || '').trim().toLowerCase();
+      const owner = listUsers.find(u =>
+        (r.userId && u.id === r.userId) ||
+        (r.createdBy && u.email && u.email.toLowerCase() === String(r.createdBy).toLowerCase()) ||
+        (!r.userId && ownerName && u.name && u.name.trim().toLowerCase() === ownerName)
+      );
+      const rowLogo = owner
+        ? (owner.logo || localStorage.getItem(`cmpc_rdo_logo_${owner.id}`) || '')
+        : (r.logo || '');
+      const logoCell = rowLogo
+        ? `<img src="${rowLogo}" alt="Logo" title="Logo de ${this.escapeHtml((owner && owner.name) || r.createdByName || r.encarregado || '')}" style="display:block; max-width:64px; max-height:30px; object-fit:contain;">`
+        : '';
+
       // Registros / Responsáveis (Planejamento Executante, Engenheiro de Produção Executante, Fiscalização CMPC)
       const planejaNome = (r.sigPlanejamento || '').trim();
       const planejaHasSig = !!(r.sigImgPlanejamento);
@@ -2214,7 +2495,13 @@ const app = {
         ? `<div style="font-weight:600; color:var(--slate-800); white-space:nowrap;" title="${this.escapeHtml(fiscalNome)}">${this.escapeHtml(fiscalNome)} ${fiscalHasSig ? '<span title="Assinatura / Visto anexado" style="font-size:0.75rem;">✍️</span>' : ''}</div>`
         : `<span style="color:var(--slate-400); font-size:0.8rem;">-</span>`;
       let statusBadge = '';
-      if (info.isApproved) {
+      if (info.isDraft) {
+        statusBadge = `
+          <span class="badge-status badge-status-draft" title="Rascunho: ainda não enviado, visível só para você">
+            📝 RASCUNHO
+          </span>
+        `;
+      } else if (info.isApproved) {
         const approvedName = info.approvedBy || r.sigFiscalizacao || 'Fiscalização';
         statusBadge = `
           <div>
@@ -2263,7 +2550,7 @@ const app = {
 
       const canApprove = session && (session.role === 'Admin' || session.role === 'Engenheiro');
       let approveBtn = '';
-      if (canApprove) {
+      if (canApprove && !info.isDraft) {
         if (info.isApproved) {
           approveBtn = `
             <button class="btn btn-outline btn-xs" style="color:#047857; border-color:#a7f3d0; background:#ecfdf5;" onclick="app.openApproveModal('${r.id}')" title="Aprovado pela Fiscalização - Clique para ver/alterar">
@@ -2293,6 +2580,7 @@ const app = {
 
       return `
         <tr>
+          <td class="rdo-logo-cell">${logoCell}</td>
           <td><span style="font-weight:700; color:var(--slate-800);">${this.escapeHtml(r.contrato || '-')}</span></td>
           <td><strong style="color: var(--primary-800);">${this.escapeHtml(r.numero || '-')}</strong></td>
           <td><span style="color: var(--slate-800); font-weight:600; white-space:nowrap;">${formattedDate}</span></td>
@@ -2493,6 +2781,16 @@ const app = {
     }
 
     const modal = document.getElementById('modal-send-rdo');
+    // Rascunho só pode ser enviado com a FOTO DA PT anexada
+    if (rdo.isDraft && !rdo.sent) {
+      const first = Array.isArray(rdo.photos) ? rdo.photos[0] : null;
+      const hasPT = first && (typeof first === 'string' ? first : first.url);
+      if (!hasPT) {
+        this.goListAfterSend = false;
+        this.showToast('Para enviar, abra o rascunho (Editar) e anexe a FOTO DA PT (obrigatória).', 'error');
+        return;
+      }
+    }
     const targetInput = document.getElementById('send-rdo-target-id');
     const emailInput = document.getElementById('send-rdo-email');
     const obsInput = document.getElementById('send-rdo-obs');
@@ -2531,6 +2829,10 @@ const app = {
     if (event && event.target && event.target !== event.currentTarget) return;
     const modal = document.getElementById('modal-send-rdo');
     if (modal) modal.classList.add('hidden');
+    if (this.goListAfterSend) {
+      this.goListAfterSend = false;
+      this.showTab('list');
+    }
   },
 
   // BREVO EMAIL SERVICE INTEGRATION
@@ -2879,6 +3181,7 @@ const app = {
   quickPrintRDO(rdoId) {
     this.editRDO(rdoId);
     setTimeout(() => {
+      this.syncAllWorkerPrintTexts();
       window.print();
     }, 250);
   },
@@ -2969,6 +3272,11 @@ const app = {
     event.target.value = '';
   }
 };
+
+// Garante que Função/Nome estejam atualizados (e com quebra de linha) antes de imprimir
+window.addEventListener('beforeprint', () => {
+  if (typeof app !== 'undefined' && app.syncAllWorkerPrintTexts) app.syncAllWorkerPrintTexts();
+});
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {

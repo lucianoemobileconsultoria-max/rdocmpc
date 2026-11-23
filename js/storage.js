@@ -603,7 +603,7 @@ const StorageService = {
       rdoData.createdAt = new Date().toISOString();
       rdoData.updatedAt = new Date().toISOString();
       rdoData.sent = false;
-      rdoData.status = 'pendente';
+      rdoData.status = rdoData.isDraft ? 'rascunho' : 'pendente';
       recordToSave = this.normalizeRecord(rdoData);
       records.unshift(recordToSave);
     }
@@ -635,6 +635,7 @@ const StorageService = {
     const updated = {
       ...records[idx],
       sent: true,
+      isDraft: false,
       status: 'enviado',
       sentAt: new Date().toISOString(),
       sentTo: email,
