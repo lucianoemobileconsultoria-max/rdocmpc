@@ -1455,3 +1455,184 @@ body {
 .btn-outline-mobile:active {
   background: var(--slate-200);
 }
+
+/* ================================================================
+   FOTOS DINÂMICAS, RASCUNHOS COM LOGO E BARRA INFERIOR MOBILE
+   ================================================================ */
+.btn-add-photo-mobile {
+  background: #f0fdf4;
+  color: #006837;
+  border: 1.5px solid #86efac;
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-add-photo-mobile:active {
+  background: #dcfce7;
+}
+
+.m-draft-banner {
+  background: #fffbeb;
+  border: 1.5px solid #fcd34d;
+  color: #92400e;
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.m-draft-count-badge {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.m-drafts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.m-draft-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+
+.m-draft-logo-wrap {
+  width: 44px;
+  height: 30px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid var(--slate-200);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.m-draft-logo {
+  max-width: 40px;
+  max-height: 26px;
+  object-fit: contain;
+  display: block;
+}
+
+.m-draft-logo-empty {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.m-draft-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.m-draft-top {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--slate-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-draft-ctr {
+  font-weight: 600;
+  color: var(--slate-600);
+  font-size: 12px;
+}
+
+.m-draft-sub {
+  font-size: 11px;
+  color: var(--slate-500);
+}
+
+.m-draft-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn-draft-open {
+  background: #006837;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-draft-del {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mobile-bottom-bar {
+  gap: 6px;
+  padding: 8px 10px;
+}
+.btn-reset-mobile {
+  flex: 0 0 auto;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.btn-draft-mobile {
+  flex: 1;
+  height: 50px;
+  background: #fffbeb;
+  color: #b45309;
+  border: 1.5px solid #fcd34d;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.btn-draft-mobile:active {
+  background: #fef3c7;
+}
+.btn-save-mobile {
+  flex: 1.6;
+  font-size: 13px;
+  padding: 0 8px;
+}
+
+.m-send-email-box {
+  background: #f8fafc;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.w-funcao,
+.w-nome,
+.act-desc-mobile {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

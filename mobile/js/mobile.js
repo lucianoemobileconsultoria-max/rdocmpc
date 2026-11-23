@@ -6,6 +6,9 @@
 const ACTIVITIES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 const mobileApp = {
+  currentRDOId: null,
+  lastSavedRDOId: null,
+  FIXED_PHOTO_SLOTS: 4,
   currentPhotos: ['', '', '', ''],
   currentSignatures: {
     planejamento: '',
@@ -155,6 +158,7 @@ const mobileApp = {
   // INICIALIZAÇÃO DE UM NOVO RDO
   // ================================================================
   initNewRDO() {
+    this.currentRDOId = null;
     const session = StorageService.getSession();
     const currentDT = this.getCurrentDateTimeLocal();
     const year = new Date().getFullYear();
@@ -222,12 +226,11 @@ const mobileApp = {
     // Renderiza atividades A até J
     this.renderActivitiesMobile();
 
-    // Reset de fotos
-    this.currentPhotos = ['', '', '', ''];
-    for (let i = 0; i < 4; i++) {
-      this.updatePhotoSlotUI(i, '', i === 0 ? 'FOTO DA PT' : '');
-    }
+    // Reset de fotos (dinâmicas)
+    this.renderAllPhotosUI(['', '', '', '']);
 
+    this.renderDraftStatusBanner(null);
+    this.renderMyDraftsMobile();
     this.recalculateAllHours();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
@@ -910,7 +913,73 @@ const mobileApp = {
     event.target.value = '';
   },
 
+  getPhotoSlotCount() {
+    return document.querySelectorAll('#photos-grid-mobile .photo-slot-mobile').length;
+  },
+
+  updatePhotosHeaderTitle() {
+    const title = document.getElementById('m-photos-header-title');
+    if (title) {
+      const n = this.getPhotoSlotCount();
+      title.textContent = `5. Registro Fotográfico (${n} ${n === 1 ? 'Foto' : 'Fotos'})`;
+    }
+  },
+
+  createExtraPhotoSlot(index) {
+    const grid = document.getElementById('photos-grid-mobile');
+    if (!grid) return;
+    const n = index + 1;
+    const slot = document.createElement('div');
+    slot.className = 'photo-slot-mobile photo-slot-extra-mobile';
+    slot.id = `photo-slot-mobile-${index}`;
+    slot.innerHTML = `
+      <input type="file" id="photo-file-${index}" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, ${index})">
+      <div class="photo-preview-mobile" id="photo-preview-${index}" onclick="mobileApp.handlePhotoSlotClick(${index})">
+        <div class="photo-empty-state" id="photo-empty-${index}">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span>Foto ${n}</span>
+          <small style="font-size: 10px; color: var(--slate-400);">Toque p/ foto</small>
+        </div>
+      </div>
+      <input type="text" id="photo-caption-${index}" class="photo-caption-mobile" placeholder="Legenda da foto ${n}">
+      <div class="photo-actions-mobile" id="photo-actions-${index}">
+        <button type="button" class="btn-photo-action hidden" id="photo-change-btn-${index}" onclick="document.getElementById('photo-file-${index}').click()">Trocar</button>
+        <button type="button" class="btn-photo-action btn-del" onclick="mobileApp.removePhoto(${index})">Excluir</button>
+      </div>
+    `;
+    grid.appendChild(slot);
+  },
+
+  addPhotoSlot() {
+    const index = this.getPhotoSlotCount();
+    this.currentPhotos[index] = '';
+    this.createExtraPhotoSlot(index);
+    this.updatePhotoSlotUI(index, '', '');
+    this.updatePhotosHeaderTitle();
+    const slot = document.getElementById(`photo-slot-mobile-${index}`);
+    if (slot) slot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  },
+
   removePhoto(index) {
+    if (index >= this.FIXED_PHOTO_SLOTS) {
+      const items = [];
+      const total = this.getPhotoSlotCount();
+      for (let i = 0; i < total; i++) {
+        if (i === index) continue;
+        items.push({
+          url: this.currentPhotos[i] || '',
+          caption: document.getElementById(`photo-caption-${i}`)?.value || ''
+        });
+      }
+      this.renderAllPhotosUI(items);
+      this.showToast('Campo de foto removido.', 'info');
+      return;
+    }
+
     this.currentPhotos[index] = '';
     const captionInput = document.getElementById(`photo-caption-${index}`);
     if (captionInput) {
@@ -924,6 +993,7 @@ const mobileApp = {
     const preview = document.getElementById(`photo-preview-${index}`);
     const emptyState = document.getElementById(`photo-empty-${index}`);
     const actions = document.getElementById(`photo-actions-${index}`);
+    const changeBtn = document.getElementById(`photo-change-btn-${index}`);
     const captionInput = document.getElementById(`photo-caption-${index}`);
 
     if (caption !== null && captionInput) {
@@ -942,11 +1012,44 @@ const mobileApp = {
       img.classList.remove('hidden');
       emptyState.classList.add('hidden');
       if (actions) actions.classList.remove('hidden');
+      if (changeBtn) changeBtn.classList.remove('hidden');
     } else if (preview && emptyState) {
       const img = preview.querySelector('img');
       if (img) img.remove();
       emptyState.classList.remove('hidden');
-      if (actions) actions.classList.add('hidden');
+      if (actions && index < this.FIXED_PHOTO_SLOTS) actions.classList.add('hidden');
+      if (changeBtn) changeBtn.classList.add('hidden');
+    }
+  },
+
+  renderAllPhotosUI(photos = []) {
+    const total = Math.max(this.FIXED_PHOTO_SLOTS, photos.length);
+    let current = this.getPhotoSlotCount();
+    while (current > total) {
+      document.getElementById(`photo-slot-mobile-${current - 1}`)?.remove();
+      current--;
+    }
+    while (current < total) {
+      this.createExtraPhotoSlot(current);
+      current++;
+    }
+    this.currentPhotos.length = total;
+    this.updatePhotosHeaderTitle();
+
+    for (let i = 0; i < total; i++) {
+      const item = photos[i];
+      let url = '';
+      let cap = i === 0 ? 'FOTO DA PT' : '';
+      if (item) {
+        if (typeof item === 'string') {
+          url = item;
+        } else {
+          url = item.url || '';
+          cap = item.caption || (i === 0 ? 'FOTO DA PT' : '');
+        }
+      }
+      this.currentPhotos[i] = url;
+      this.updatePhotoSlotUI(i, url, cap);
     }
   },
 
@@ -964,7 +1067,7 @@ const mobileApp = {
     const caption = (captionInput && captionInput.value.trim()) ? captionInput.value.trim() : 'Registro fotográfico da obra';
 
     if (img) img.src = url;
-    if (tag) tag.textContent = `Foto ${index + 1} de 4`;
+    if (tag) tag.textContent = `Foto ${index + 1} de ${this.getPhotoSlotCount()}`;
     if (captionEl) captionEl.textContent = caption;
 
     if (modal) modal.classList.remove('hidden');
@@ -976,9 +1079,209 @@ const mobileApp = {
   },
 
   // ================================================================
-  // SALVAR RDO COM REGRA BÁSICA DE NO MÁXIMO 11 HORAS
+  // RASCUNHOS DO PERFIL (COM LOGO À ESQUERDA), SALVAR E ENVIAR RDO
   // ================================================================
-  saveRDO() {
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  },
+
+  renderDraftStatusBanner(rdo) {
+    const banner = document.getElementById('m-draft-status-banner');
+    if (!banner) return;
+    if (!rdo || !rdo.isDraft) {
+      banner.classList.add('hidden');
+      banner.innerHTML = '';
+      return;
+    }
+    banner.classList.remove('hidden');
+    banner.innerHTML = `
+      <div>
+        <strong>📝 Editando Rascunho (${this.escapeHtml(rdo.numero || '-')})</strong>
+        <div style="font-size: 11px; margin-top: 2px;">Ainda não enviado. Só aparece no seu perfil. Quando terminar, toque em <strong>Salvar e Enviar RDO</strong>.</div>
+      </div>
+    `;
+  },
+
+  renderMyDraftsMobile() {
+    const card = document.getElementById('m-drafts-card');
+    const listEl = document.getElementById('m-drafts-list');
+    const countEl = document.getElementById('m-drafts-count');
+    if (!card || !listEl) return;
+
+    const session = StorageService.getSession();
+    if (!session) {
+      card.classList.add('hidden');
+      return;
+    }
+
+    const records = StorageService.getRecords() || [];
+    const users = StorageService.getUsers() || [];
+    const drafts = records.filter(r => {
+      if (!r.isDraft || r.sent === true) return false;
+      return r.userId === session.id ||
+        (r.createdBy && session.email && r.createdBy.toLowerCase() === session.email.toLowerCase()) ||
+        (!r.userId && r.encarregado && r.encarregado.toLowerCase() === (session.name || '').toLowerCase());
+    });
+
+    if (drafts.length === 0) {
+      card.classList.add('hidden');
+      listEl.innerHTML = '';
+      return;
+    }
+
+    card.classList.remove('hidden');
+    if (countEl) countEl.textContent = String(drafts.length);
+
+    listEl.innerHTML = drafts.map(r => {
+      const ownerName = (r.createdByName || r.encarregado || '').trim().toLowerCase();
+      const owner = users.find(u =>
+        (r.userId && u.id === r.userId) ||
+        (r.createdBy && u.email && u.email.toLowerCase() === String(r.createdBy).toLowerCase()) ||
+        (!r.userId && ownerName && u.name && u.name.trim().toLowerCase() === ownerName)
+      );
+      const rowLogo = owner
+        ? (owner.logo || localStorage.getItem(`cmpc_rdo_logo_${owner.id}`) || '')
+        : (r.logo || '');
+      const logoHtml = rowLogo
+        ? `<img src="${rowLogo}" alt="Logo" class="m-draft-logo">`
+        : `<div class="m-draft-logo-empty">📝</div>`;
+
+      let fmtDate = '-';
+      if (r.data) {
+        if (r.data.includes('T')) {
+          const [dPart, tPart] = r.data.split('T');
+          const [y, m, d] = dPart.split('-');
+          fmtDate = `${d}/${m}/${y} ${tPart.slice(0, 5)}`;
+        } else {
+          fmtDate = r.data.split('-').reverse().join('/');
+        }
+      }
+
+      return `
+        <div class="m-draft-item">
+          <div class="m-draft-logo-wrap">${logoHtml}</div>
+          <div class="m-draft-info">
+            <div class="m-draft-top">
+              <span class="m-draft-num">RDO ${this.escapeHtml(r.numero || '-')}</span>
+              ${r.contrato ? `<span class="m-draft-ctr">• ${this.escapeHtml(r.contrato)}</span>` : ''}
+            </div>
+            <div class="m-draft-sub">${this.escapeHtml(fmtDate)} • ${r.totalHH || 0} HH</div>
+          </div>
+          <div class="m-draft-actions">
+            <button type="button" class="btn-draft-open" onclick="mobileApp.loadRDO('${r.id}')">Continuar</button>
+            <button type="button" class="btn-draft-del" onclick="mobileApp.deleteDraftMobile('${r.id}')" title="Excluir rascunho">✕</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  loadRDO(rdoId) {
+    const rdo = StorageService.getRecordById(rdoId);
+    if (!rdo) {
+      this.showToast('Rascunho não encontrado.', 'error');
+      return;
+    }
+    this.currentRDOId = rdo.id;
+
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val || '';
+    };
+
+    let dateVal = rdo.data || '';
+    if (dateVal && dateVal.length === 10) dateVal += 'T08:00';
+
+    setVal('m-rdo-contrato', rdo.contrato);
+    setVal('m-rdo-numero', rdo.numero);
+    setVal('m-rdo-data', dateVal);
+    setVal('m-rdo-dia-semana', rdo.diaSemana || this.getDayOfWeekName(dateVal));
+    setVal('m-rdo-clima-manha', rdo.climaManha || 'Sol');
+    setVal('m-rdo-clima-tarde', rdo.climaTarde || 'Sol');
+    setVal('m-rdo-clima-noite', rdo.climaNoite || 'Sem Trabalho');
+    setVal('m-rdo-contratante', rdo.contratante || 'CMPC CELULOSE RIOGRANDENSE');
+    setVal('m-rdo-contratada', rdo.contratada);
+    setVal('m-rdo-encarregado', rdo.encarregado);
+    setVal('m-rdo-comentarios', rdo.comentarios);
+    setVal('m-rdo-obs-adicional', rdo.obsAdicional || rdo.sendObs);
+
+    const workersContainer = document.getElementById('workers-container-mobile');
+    if (workersContainer) {
+      workersContainer.innerHTML = '';
+      this.workerCounter = 0;
+      if (Array.isArray(rdo.workers) && rdo.workers.length > 0) {
+        rdo.workers.forEach(w => this.addWorker(w));
+      } else {
+        this.addWorker();
+      }
+    }
+
+    const equipContainer = document.getElementById('equipments-container-mobile');
+    if (equipContainer) {
+      equipContainer.innerHTML = '';
+      this.equipCounter = 0;
+      if (Array.isArray(rdo.equipments) && rdo.equipments.length > 0) {
+        rdo.equipments.forEach(eq => this.addEquipment(eq));
+      } else {
+        this.addEquipment();
+      }
+    }
+
+    this.renderActivitiesMobile();
+    ACTIVITIES.forEach(letter => {
+      const card = document.querySelector(`#activities-container-mobile .activity-card-mobile[data-act="${letter}"]`);
+      if (card) {
+        const descInp = card.querySelector('.act-desc-mobile');
+        const assInp = card.querySelector('.act-ass-mobile');
+        if (descInp) descInp.value = (rdo.activitiesDescriptions && rdo.activitiesDescriptions[letter]) || '';
+        if (assInp) assInp.value = (rdo.activitiesSignatures && rdo.activitiesSignatures[letter]) || '';
+      }
+    });
+
+    this.renderAllPhotosUI(rdo.photos || []);
+
+    this.populateSignatureDropdowns();
+    setVal('m-rdo-sig-planejamento', rdo.sigPlanejamento);
+    setVal('m-rdo-sig-engenheiro', rdo.sigEngenheiro);
+    setVal('m-rdo-sig-fiscalizacao', rdo.sigFiscalizacao);
+    setVal('m-rdo-sig-email-planejamento', rdo.sigEmailPlanejamento);
+    setVal('m-rdo-sig-email-engenheiro', rdo.sigEmailEngenheiro);
+    setVal('m-rdo-sig-email-fiscalizacao', rdo.sigEmailFiscalizacao);
+
+    this.currentSignatures = {
+      planejamento: rdo.sigImgPlanejamento || '',
+      engenheiro: rdo.sigImgEngenheiro || '',
+      fiscalizacao: rdo.sigImgFiscalizacao || ''
+    };
+    ['planejamento', 'engenheiro', 'fiscalizacao'].forEach(t => {
+      this.updateSignatureBoxUI(t, this.currentSignatures[t]);
+    });
+
+    this.renderDraftStatusBanner(rdo);
+    this.recalculateAllHours();
+    this.showToast(`Rascunho ${rdo.numero || ''} carregado!`, 'info');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  deleteDraftMobile(rdoId) {
+    if (!confirm('Deseja excluir este rascunho?')) return;
+    StorageService.deleteRecord(rdoId);
+    if (this.currentRDOId === rdoId) {
+      this.initNewRDO();
+    } else {
+      this.renderMyDraftsMobile();
+    }
+    this.showToast('Rascunho excluído.', 'info');
+  },
+
+  saveRDO(draftMode = false) {
+    draftMode = (draftMode === true);
     const numero = document.getElementById('m-rdo-numero')?.value.trim();
     const data = document.getElementById('m-rdo-data')?.value;
     const diaSemana = document.getElementById('m-rdo-dia-semana')?.value.trim();
@@ -1006,15 +1309,15 @@ const mobileApp = {
       this.showToast('Por favor, informe a data do RDO.', 'error');
       return;
     }
-    if (!encarregado) {
+    if (!draftMode && !encarregado) {
       this.showToast('Por favor, informe o nome do encarregado.', 'error');
       return;
     }
 
-    // Validação obrigatória da Foto da PT (Foto 1)
+    // Validação obrigatória da Foto da PT (Foto 1) apenas ao enviar/finalizar
     const fotoPT = this.currentPhotos[0];
     const capPT = document.getElementById('photo-caption-0')?.value.trim();
-    if (!fotoPT) {
+    if (!draftMode && !fotoPT) {
       this.showToast('A FOTO DA PT (Foto 1) é obrigatória! Por favor, tire ou anexe a foto da PT.', 'error');
       const preview0 = document.getElementById('photo-preview-0');
       if (preview0) {
@@ -1066,8 +1369,8 @@ const mobileApp = {
       }
     });
 
-    // REGRA BÁSICA: QUALQUER LINHA QUE PASSAR DE 11 HORAS BLOQUEIA O SALVAMENTO!
-    if (hasExceededWorker) {
+    // REGRA BÁSICA: QUALQUER LINHA QUE PASSAR DE 11 HORAS BLOQUEIA O ENVIO!
+    if (!draftMode && hasExceededWorker) {
       const fmtH = exceededWorkerHours % 1 === 0 ? exceededWorkerHours : exceededWorkerHours.toFixed(1);
       this.showToast(`⛔ Bloqueado! O colaborador "${exceededWorkerName}" está com ${fmtH} horas. A jornada máxima permitida na CMPC é de no máximo 11 horas!`, 'error');
       const firstExceeded = document.querySelector('.worker-card-exceeded');
@@ -1081,6 +1384,7 @@ const mobileApp = {
     const activitiesDescriptions = {};
     const activitiesSignatures = {};
     let totalHH = 0;
+    let totalHE = 0;
 
     ACTIVITIES.forEach(letter => {
       const card = document.querySelector(`#activities-container-mobile .activity-card-mobile[data-act="${letter}"]`);
@@ -1090,11 +1394,15 @@ const mobileApp = {
       }
     });
 
-    // Total HH somado dos colaboradores
+    // Total HH e Horas Extras (> 8h por colaborador)
     workers.forEach(w => {
+      let wHours = 0;
       ACTIVITIES.forEach(letter => {
-        totalHH += (parseFloat(w.activities[letter]) || 0);
+        const v = (parseFloat(w.activities[letter]) || 0);
+        totalHH += v;
+        wHours += v;
       });
+      if (wHours > 8) totalHE += (wHours - 8);
     });
 
     // Coleta comentários, observações adicionais, equipamentos e assinaturas
@@ -1118,18 +1426,25 @@ const mobileApp = {
       }
     });
 
-    // Coleta fotos
+    // Coleta fotos dinâmicas
     const photos = [];
-    for (let i = 0; i < 4; i++) {
+    const photoTotal = this.getPhotoSlotCount();
+    for (let i = 0; i < photoTotal; i++) {
       const url = this.currentPhotos[i] || '';
       const caption = document.getElementById(`photo-caption-${i}`)?.value.trim() || '';
       photos.push({ url, caption });
     }
+    while (photos.length > this.FIXED_PHOTO_SLOTS && !photos[photos.length - 1].url && !photos[photos.length - 1].caption) {
+      photos.pop();
+    }
 
     const session = StorageService.getSession();
+    const existingRDO = this.currentRDOId ? StorageService.getRecordById(this.currentRDOId) : null;
+    const isDraft = draftMode ? true : (existingRDO ? existingRDO.isDraft === true : true);
+    const rdoStatus = isDraft ? 'rascunho' : (existingRDO ? (existingRDO.status || 'pendente') : 'pendente');
 
     const rdoPayload = {
-      id: null,
+      id: this.currentRDOId,
       numero,
       data,
       diaSemana,
@@ -1144,6 +1459,7 @@ const mobileApp = {
       encarregado,
       workers,
       totalHH,
+      totalHE,
       activitiesDescriptions,
       activitiesSignatures,
       comentarios,
@@ -1151,6 +1467,8 @@ const mobileApp = {
       obsAdicional,
       equipments,
       photos,
+      isDraft,
+      status: rdoStatus,
       sigPlanejamento,
       sigEngenheiro,
       sigFiscalizacao,
@@ -1161,16 +1479,26 @@ const mobileApp = {
       sigImgEngenheiro: this.currentSignatures.engenheiro || '',
       sigImgFiscalizacao: this.currentSignatures.fiscalizacao || '',
       logo: StorageService.getUserLogo(session ? session.id : null),
-      userId: session ? session.id : null,
-      createdBy: session ? session.email : '',
-      createdByName: session ? session.name : '',
+      userId: existingRDO ? (existingRDO.userId || (session ? session.id : null)) : (session ? session.id : null),
+      createdBy: existingRDO ? (existingRDO.createdBy || (session ? session.email : '')) : (session ? session.email : ''),
+      createdByName: existingRDO ? (existingRDO.createdByName || (session ? session.name : '')) : (session ? session.name : ''),
       origem: 'mobile'
     };
 
     try {
       const saved = StorageService.saveRecord(rdoPayload);
+      this.currentRDOId = saved.id;
+      this.lastSavedRDOId = saved.id;
+      this.renderMyDraftsMobile();
+
+      if (draftMode) {
+        this.renderDraftStatusBanner(saved);
+        this.showToast('Rascunho salvo! O RDO NÃO foi enviado. Você pode continuar depois.', 'success');
+        return;
+      }
+
       this.openSuccessModal(saved);
-      this.showToast('RDO gravado com sucesso!', 'success');
+      this.showToast('RDO salvo! Confirme o envio por e-mail se desejar.', 'success');
     } catch (err) {
       console.error('Erro ao salvar RDO:', err);
       this.showToast('Erro ao salvar RDO.', 'error');
@@ -1178,10 +1506,15 @@ const mobileApp = {
   },
 
   openSuccessModal(savedRecord) {
+    this.lastSavedRDOId = savedRecord.id;
     const modal = document.getElementById('modal-success-mobile');
     const numEl = document.getElementById('success-rdo-num');
     const hhEl = document.getElementById('success-rdo-hh');
     const dateEl = document.getElementById('success-rdo-date');
+    const emailInput = document.getElementById('m-send-email-input');
+    const obsInput = document.getElementById('m-send-obs-input');
+    const statusMsg = document.getElementById('m-send-status-msg');
+    const sendBtn = document.getElementById('btn-m-confirm-send');
 
     if (numEl) numEl.textContent = savedRecord.numero;
     if (hhEl) hhEl.textContent = `${savedRecord.totalHH || 0} Horas`;
@@ -1189,8 +1522,125 @@ const mobileApp = {
       const dt = new Date(savedRecord.data);
       dateEl.textContent = !isNaN(dt.getTime()) ? dt.toLocaleDateString('pt-BR') : savedRecord.data;
     }
+    if (emailInput) emailInput.value = savedRecord.sentTo || savedRecord.sigEmailFiscalizacao || '';
+    if (obsInput) obsInput.value = savedRecord.sendObs || savedRecord.obsAdicional || '';
+    if (statusMsg) statusMsg.textContent = '';
+    if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<span>✉️ Confirmar e Enviar E-mail</span>';
+    }
 
     if (modal) modal.classList.remove('hidden');
+  },
+
+  BREVO_CONFIG: {
+    apiKey: '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',
+    senderName: 'Engenharia CMPC - SGQ',
+    senderEmail: 'sistemasengenharia@cmpcrs.com.br',
+    apiUrl: 'https://api.brevo.com/v3/smtp/email'
+  },
+
+  generateRDOEmailHtmlMobile(rdo, obs = '') {
+    let formattedDate = '-';
+    if (rdo.data) {
+      if (rdo.data.includes('T')) {
+        const [dPart, tPart] = rdo.data.split('T');
+        const [y, m, d] = dPart.split('-');
+        formattedDate = `${d}/${m}/${y} às ${tPart.slice(0, 5)}`;
+      } else {
+        formattedDate = rdo.data.split('-').reverse().join('/');
+      }
+    }
+    return `
+      <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;">
+        <div style="background: #065f46; color: #fff; padding: 20px; text-align: center;">
+          <h2 style="margin:0;">Sistema de Gestão da Qualidade - ENGENHARIA CMPC</h2>
+          <p style="margin:6px 0 0;">RDO N.º ${this.escapeHtml(rdo.numero || '-')} • ${this.escapeHtml(rdo.contrato || '-')}</p>
+        </div>
+        <div style="padding: 20px; font-size: 14px; color: #1e293b;">
+          ${obs ? `<p style="background:#eff6ff; border-left:4px solid #3b82f6; padding:10px;"><strong>Observação:</strong> ${this.escapeHtml(obs)}</p>` : ''}
+          <p><strong>Data / Hora:</strong> ${this.escapeHtml(formattedDate)} (${this.escapeHtml(rdo.diaSemana || '-')})</p>
+          <p><strong>Encarregado:</strong> ${this.escapeHtml(rdo.encarregado || '-')} • <strong>Total HH:</strong> ${rdo.totalHH || 0} HH</p>
+          <p><strong>Clima:</strong> ${this.escapeHtml(rdo.clima || '-')}</p>
+          <p style="margin-top: 16px;">
+            <a href="https://rdocmpc.netlify.app" target="_blank" style="background:#059669; color:#fff; padding:10px 18px; border-radius:6px; text-decoration:none; font-weight:700;">Acessar Sistema para Aprovar RDO</a>
+          </p>
+        </div>
+      </div>
+    `;
+  },
+
+  async handleConfirmSendMobile() {
+    const rdoId = this.lastSavedRDOId || this.currentRDOId;
+    const email = document.getElementById('m-send-email-input')?.value.trim() || '';
+    const obs = document.getElementById('m-send-obs-input')?.value.trim() || '';
+    const statusMsg = document.getElementById('m-send-status-msg');
+    const sendBtn = document.getElementById('btn-m-confirm-send');
+
+    if (!rdoId || !email) {
+      this.showToast('Informe ao menos um e-mail de destino válido.', 'error');
+      return;
+    }
+
+    const rdo = StorageService.getRecordById(rdoId);
+    if (!rdo) {
+      this.showToast('RDO não encontrado.', 'error');
+      return;
+    }
+
+    const emailList = email.split(/[,;]/).map(e => e.trim()).filter(e => e.length > 0 && e.includes('@'));
+    if (emailList.length === 0) {
+      this.showToast('Informe um endereço de e-mail válido.', 'error');
+      return;
+    }
+
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<span>Enviando...</span>';
+    }
+
+    try {
+      const cfg = StorageService.getBrevoConfig ? StorageService.getBrevoConfig() : {};
+      const apiKey = (cfg && cfg.apiKey) ? cfg.apiKey.trim() : this.BREVO_CONFIG.apiKey;
+      const senderEmail = (cfg && cfg.senderEmail) ? cfg.senderEmail.trim() : this.BREVO_CONFIG.senderEmail;
+      const senderName = (cfg && cfg.senderName) ? cfg.senderName.trim() : this.BREVO_CONFIG.senderName;
+
+      if (!apiKey) throw new Error('Chave de API Brevo não configurada.');
+
+      const res = await fetch(this.BREVO_CONFIG.apiUrl, {
+        method: 'POST',
+        headers: { 'accept': 'application/json', 'api-key': apiKey, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          sender: { name: senderName, email: senderEmail },
+          to: emailList.map(e => ({ email: e })),
+          subject: `[RDO CMPC] Relatório Diário de Obra Nº ${rdo.numero || '-'} - ${rdo.contrato || ''}`,
+          htmlContent: this.generateRDOEmailHtmlMobile(rdo, obs)
+        })
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.message || `Erro HTTP ${res.status}`);
+      }
+
+      StorageService.markRecordAsSent(rdoId, email, obs);
+      this.renderMyDraftsMobile();
+      this.renderDraftStatusBanner(null);
+      this.currentRDOId = null;
+      if (statusMsg) statusMsg.innerHTML = `<span style="color:#059669;">✅ RDO enviado com sucesso para ${this.escapeHtml(email)}!</span>`;
+      if (sendBtn) sendBtn.innerHTML = '<span>✅ Enviado!</span>';
+      this.showToast(`✅ RDO ${rdo.numero} enviado para ${email}!`, 'success');
+    } catch (err) {
+      StorageService.markRecordAsSent(rdoId, email, obs);
+      this.renderMyDraftsMobile();
+      this.renderDraftStatusBanner(null);
+      this.currentRDOId = null;
+      if (statusMsg) statusMsg.innerHTML = `<span style="color:#b45309;">⚠️ RDO confirmado, mas Brevo retornou: ${this.escapeHtml(err.message)}</span>`;
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<span>✉️ Tentar Reenviar E-mail</span>';
+      }
+      this.showToast(`⚠️ RDO confirmado, mas Brevo retornou: ${err.message}`, 'warning');
+    }
   },
 
   closeSuccessModal() {

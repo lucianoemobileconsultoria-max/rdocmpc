@@ -120,6 +120,23 @@
         <div class="welcome-badge">CAMPO</div>
       </div>
 
+      <!-- MEUS RASCUNHOS SALVOS (COM LOGO À ESQUERDA) -->
+      <section id="m-drafts-card" class="mobile-card hidden">
+        <div class="card-header-mobile">
+          <div class="card-title-group">
+            <span class="card-icon">📝</span>
+            <h3 class="card-title">Meus Rascunhos Salvos</h3>
+          </div>
+          <span id="m-drafts-count" class="m-draft-count-badge">0</span>
+        </div>
+        <div class="card-body-mobile" style="padding: 10px 12px;">
+          <div id="m-drafts-list" class="m-drafts-list"></div>
+        </div>
+      </section>
+
+      <!-- BANNER DE STATUS DE RASCUNHO ATUAL -->
+      <div id="m-draft-status-banner" class="m-draft-banner hidden"></div>
+
       <!-- CARD 1: DADOS GERAIS -->
       <section class="mobile-card">
         <div class="card-header-mobile">
@@ -292,18 +309,21 @@
         </div>
       </section>
 
-      <!-- CARD 5: REGISTRO FOTOGRÁFICO (4 FOTOS) -->
+      <!-- CARD 5: REGISTRO FOTOGRÁFICO (DINÂMICO) -->
       <section class="mobile-card">
         <div class="card-header-mobile">
           <div class="card-title-group">
             <span class="card-icon">📷</span>
-            <h3 class="card-title">5. Registro Fotográfico (4 Fotos)</h3>
+            <h3 class="card-title" id="m-photos-header-title">5. Registro Fotográfico (4 Fotos)</h3>
           </div>
+          <button type="button" class="btn-add-photo-mobile" onclick="mobileApp.addPhotoSlot()" title="Adicionar mais um campo de foto">
+            + Adicionar Foto
+          </button>
         </div>
         <div class="card-body-mobile">
-          <div class="photos-grid-mobile">
+          <div class="photos-grid-mobile" id="photos-grid-mobile">
             <!-- Foto 1 (Obrigatória: FOTO DA PT) -->
-            <div class="photo-slot-mobile" style="position: relative;">
+            <div class="photo-slot-mobile" id="photo-slot-mobile-0" style="position: relative;">
               <span style="position: absolute; top: 6px; right: 6px; background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 4px; z-index: 2;">PT Obrigatória</span>
               <input type="file" id="photo-file-0" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, 0)">
               <div class="photo-preview-mobile" id="photo-preview-0" onclick="mobileApp.handlePhotoSlotClick(0)" style="border: 1.5px dashed #f59e0b; background: #fffdf5;">
@@ -325,7 +345,7 @@
             </div>
 
             <!-- Foto 2 -->
-            <div class="photo-slot-mobile">
+            <div class="photo-slot-mobile" id="photo-slot-mobile-1">
               <input type="file" id="photo-file-1" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, 1)">
               <div class="photo-preview-mobile" id="photo-preview-1" onclick="mobileApp.handlePhotoSlotClick(1)">
                 <div class="photo-empty-state" id="photo-empty-1">
@@ -346,7 +366,7 @@
             </div>
 
             <!-- Foto 3 -->
-            <div class="photo-slot-mobile">
+            <div class="photo-slot-mobile" id="photo-slot-mobile-2">
               <input type="file" id="photo-file-2" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, 2)">
               <div class="photo-preview-mobile" id="photo-preview-2" onclick="mobileApp.handlePhotoSlotClick(2)">
                 <div class="photo-empty-state" id="photo-empty-2">
@@ -367,7 +387,7 @@
             </div>
 
             <!-- Foto 4 -->
-            <div class="photo-slot-mobile">
+            <div class="photo-slot-mobile" id="photo-slot-mobile-3">
               <input type="file" id="photo-file-3" accept="image/*" class="hidden" onchange="mobileApp.handlePhotoUpload(event, 3)">
               <div class="photo-preview-mobile" id="photo-preview-3" onclick="mobileApp.handlePhotoSlotClick(3)">
                 <div class="photo-empty-state" id="photo-empty-3">
@@ -472,18 +492,21 @@
 
     </main>
 
-    <!-- BARRA FIXA INFERIOR (SALVAR RDO) -->
+    <!-- BARRA FIXA INFERIOR (RASCUNHO / SALVAR E ENVIAR RDO) -->
     <div class="mobile-bottom-bar">
       <button type="button" class="btn-reset-mobile" onclick="mobileApp.initNewRDO()" title="Limpar formulário">
         <span>🔄 Limpar</span>
       </button>
-      <button type="button" class="btn-save-mobile" onclick="mobileApp.saveRDO()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <button type="button" class="btn-draft-mobile" id="btn-m-save-draft" onclick="mobileApp.saveRDO(true)" title="Salvar rascunho sem enviar">
+        <span>📝 Rascunho</span>
+      </button>
+      <button type="button" class="btn-save-mobile" onclick="mobileApp.saveRDO(false)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
           <polyline points="17 21 17 13 7 13 7 21"></polyline>
           <polyline points="7 3 7 8 15 8"></polyline>
         </svg>
-        <span>Salvar RDO</span>
+        <span>Salvar e Enviar RDO</span>
       </button>
     </div>
   </div>
@@ -501,6 +524,21 @@
         <div><strong>Número:</strong> <span id="success-rdo-num">0000/2026</span></div>
         <div><strong>Total HH:</strong> <span id="success-rdo-hh">0 Horas</span></div>
         <div><strong>Data:</strong> <span id="success-rdo-date">-</span></div>
+      </div>
+
+      <div id="m-send-email-section" class="m-send-email-box">
+        <div class="form-field" style="text-align: left; margin-bottom: 8px;">
+          <label class="form-label" for="m-send-email-input" style="font-size: 12px;">Enviar RDO por E-mail (Fiscalização / Destinatários):</label>
+          <input type="text" id="m-send-email-input" class="form-input" style="height: 40px; font-size: 13px;" placeholder="email@empresa.com (separe por vírgula)">
+        </div>
+        <div class="form-field" style="text-align: left; margin-bottom: 8px;">
+          <label class="form-label" for="m-send-obs-input" style="font-size: 12px;">Observação do envio (opcional):</label>
+          <input type="text" id="m-send-obs-input" class="form-input" style="height: 38px; font-size: 13px;" placeholder="Observação para o e-mail...">
+        </div>
+        <button type="button" id="btn-m-confirm-send" class="btn-primary-mobile" style="width: 100%; height: 44px; font-size: 14px; margin-top: 2px;" onclick="mobileApp.handleConfirmSendMobile()">
+          <span>✉️ Confirmar e Enviar E-mail</span>
+        </button>
+        <div id="m-send-status-msg" style="font-size: 12px; margin-top: 6px; font-weight: 600;"></div>
       </div>
 
       <div class="modal-actions">
