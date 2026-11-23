@@ -1861,6 +1861,15 @@ textarea.worker-wrap-input {
   pointer-events: none;
   z-index: 2;
 }
+.photo-slot-pt-optional .photo-preview-wrap {
+  border: 1.5px dashed #94a3b8;
+  background: #f8fafc;
+}
+.badge-pt-tag.pt-optional {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
 .photo-preview-wrap {
   width: 100%;
   height: 84px;

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2.8.0">
+  <link rel="stylesheet" href="css/style.css?v=2.8.1">
 </head>
 
 <body>
@@ -399,7 +399,7 @@
                         <input type="text" id="rdo-encarregado" class="rdo-input font-bold" placeholder="Nome do encarregado">
                       </div>
                       <div class="meta-val-box val-dia">
-                        <select id="rdo-dia-semana" class="rdo-input text-center">
+                        <select id="rdo-dia-semana" class="rdo-input text-center" onchange="app.updatePhotoPTRequirementUI()">
                           <option value="">Selecione...</option>
                           <option value="Segunda-feira">Segunda-feira</option>
                           <option value="Terça-feira">Terça-feira</option>
@@ -408,6 +408,7 @@
                           <option value="Sexta-feira">Sexta-feira</option>
                           <option value="Sábado">Sábado</option>
                           <option value="Domingo">Domingo</option>
+                          <option value="Feriado">Feriado</option>
                         </select>
                       </div>
                     </div>
@@ -631,12 +632,12 @@
                       style="color: #006837; border-color: #86efac; background: #f0fdf4; font-weight: 700;">+ Adicionar Foto</button>
                   </div>
                   <div class="photos-grid">
-                    <!-- Foto 1 (Obrigatória: FOTO DA PT) -->
+                    <!-- Foto 1 (Obrigatória em dias úteis; liberada em Sáb/Dom/Feriado) -->
                     <div class="photo-slot photo-slot-pt-required" id="photo-slot-0">
-                      <span class="badge-pt-tag no-print">PT Obrigatória</span>
+                      <span class="badge-pt-tag no-print" id="photo-pt-badge">PT Obrigatória</span>
                       <input type="file" id="photo-input-0" accept="image/*" class="hidden"
                         onchange="app.handlePhotoUpload(event, 0)">
-                      <div class="photo-preview-wrap" onclick="app.handlePhotoSlotClick(event, 0)"
+                      <div class="photo-preview-wrap" id="photo-preview-wrap-0" onclick="app.handlePhotoSlotClick(event, 0)"
                         title="Clique para visualizar ou carregar a Foto da PT (Obrigatória)">
                         <img id="photo-img-0" src="" alt="FOTO DA PT" class="photo-thumb hidden">
                         <div class="photo-overlay hidden" id="photo-overlay-0">
@@ -648,8 +649,8 @@
                             <circle cx="8.5" cy="8.5" r="1.5" />
                             <polyline points="21 15 16 10 5 21" />
                           </svg>
-                          <span style="font-weight: 800; color: #b45309;">FOTO DA PT *</span>
-                          <small style="color: #b45309; font-weight: 600;">Clique para carregar</small>
+                          <span id="photo-pt-title" style="font-weight: 800; color: #b45309;">FOTO DA PT *</span>
+                          <small id="photo-pt-sub" style="color: #b45309; font-weight: 600;">Clique para carregar</small>
                         </div>
                       </div>
                       <div class="photo-actions">
@@ -1673,9 +1674,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
   <!-- APP SCRIPTS -->
-  <script src="js/storage.js?v=2.8.0"></script>
-  <script src="js/admin.js?v=2.8.0"></script>
-  <script src="js/app.js?v=2.8.0"></script>
+  <script src="js/storage.js?v=2.8.1"></script>
+  <script src="js/admin.js?v=2.8.1"></script>
+  <script src="js/app.js?v=2.8.1"></script>
 </body>
 
 </html>

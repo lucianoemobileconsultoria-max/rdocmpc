@@ -181,7 +181,7 @@ const mobileApp = {
 
     if (numInput) numInput.value = nextNum;
     if (dataInput) dataInput.value = currentDT;
-    if (diaInput) diaInput.value = this.getDayOfWeekName(currentDT);
+    if (diaInput) diaInput.value = this.isBrazilianHoliday(currentDT) ? 'Feriado' : this.getDayOfWeekName(currentDT);
     if (turnoInput) turnoInput.value = 'Diurno';
     if (cManhaInput) cManhaInput.value = 'Sol';
     if (cTardeInput) cTardeInput.value = 'Sol';
@@ -228,6 +228,7 @@ const mobileApp = {
 
     // Reset de fotos (dinâmicas)
     this.renderAllPhotosUI(['', '', '', '']);
+    this.updatePhotoPTRequirementUI();
 
     this.renderDraftStatusBanner(null);
     this.renderMyDraftsMobile();
@@ -241,10 +242,98 @@ const mobileApp = {
     return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
   },
 
+  isBrazilianHoliday(dateString) {
+    if (!dateString) return false;
+    const datePart = String(dateString).split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    if (!year || !month || !day) return false;
+
+    const mmdd = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const fixedHolidays = ['01-01', '04-21', '05-01', '09-07', '09-20', '10-12', '11-02', '11-15', '11-20', '12-25'];
+    if (fixedHolidays.includes(mmdd)) return true;
+
+    const a = year % 19;
+    const b = Math.floor(year / 100);
+    const c = year % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const easterMonth = Math.floor((h + l - 7 * m + 114) / 31);
+    const easterDay = ((h + l - 7 * m + 114) % 31) + 1;
+
+    const easter = new Date(year, easterMonth - 1, easterDay);
+    const target = new Date(year, month - 1, day);
+    const diffDays = Math.round((target.getTime() - easter.getTime()) / 86400000);
+    return diffDays === -2 || diffDays === 60;
+  },
+
+  isPhotoPTExempt(dateString = null, diaSemana = null) {
+    const dayVal = diaSemana !== null ? diaSemana : (document.getElementById('m-rdo-dia-semana')?.value || '');
+    const norm = String(dayVal).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+    if (norm === 'sabado' || norm === 'domingo' || norm.includes('feriado')) {
+      return true;
+    }
+
+    const dateVal = dateString !== null ? dateString : (document.getElementById('m-rdo-data')?.value || '');
+    if (dateVal) {
+      const datePart = String(dateVal).split('T')[0];
+      const [year, month, day] = datePart.split('-').map(Number);
+      if (year && month && day) {
+        const d = new Date(year, month - 1, day);
+        if (d.getDay() === 0 || d.getDay() === 6) return true;
+        if (this.isBrazilianHoliday(dateVal)) return true;
+      }
+    }
+    return false;
+  },
+
+  updatePhotoPTRequirementUI() {
+    const exempt = this.isPhotoPTExempt();
+    const badge = document.getElementById('m-photo-pt-badge');
+    const preview = document.getElementById('photo-preview-0');
+    const title = document.getElementById('m-photo-pt-title');
+    const sub = document.getElementById('m-photo-pt-sub');
+    const emptySvg = document.querySelector('#photo-empty-0 svg');
+    const captionInput = document.getElementById('photo-caption-0');
+
+    if (badge) {
+      badge.textContent = exempt ? 'PT Liberada' : 'PT Obrigatória';
+      badge.style.background = exempt ? '#ecfdf5' : '#fef3c7';
+      badge.style.color = exempt ? '#065f46' : '#92400e';
+      badge.style.borderColor = exempt ? '#a7f3d0' : '#fcd34d';
+    }
+    if (preview) {
+      preview.style.border = exempt ? '1.5px dashed #94a3b8' : '1.5px dashed #f59e0b';
+      preview.style.background = exempt ? '#f8fafc' : '#fffdf5';
+    }
+    if (emptySvg) {
+      emptySvg.style.stroke = exempt ? '#047857' : '#d97706';
+    }
+    if (title) {
+      title.textContent = exempt ? 'FOTO DA PT (Opcional)' : 'FOTO DA PT *';
+      title.style.color = exempt ? '#065f46' : '#b45309';
+    }
+    if (sub) {
+      sub.textContent = exempt ? 'Liberado (Sáb/Dom/Fer.)' : 'Obrigatório (PT)';
+      sub.style.color = exempt ? '#047857' : '#b45309';
+    }
+    if (captionInput) {
+      captionInput.title = exempt ? 'Legenda: FOTO DA PT (opcional em Sáb/Dom/Feriado)' : 'Legenda obrigatória: FOTO DA PT';
+    }
+  },
+
   getDayOfWeekName(dateString) {
     if (!dateString) return '';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '';
+    const datePart = String(dateString).split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    if (!year || !month || !day) return '';
+    const date = new Date(year, month - 1, day);
     const days = [
       'Domingo',
       'Segunda-feira',
@@ -254,15 +343,16 @@ const mobileApp = {
       'Sexta-feira',
       'Sábado'
     ];
-    return days[date.getDay()];
+    return days[date.getDay()] || '';
   },
 
   handleDateChange(e) {
     const val = e.target.value;
     const diaInput = document.getElementById('m-rdo-dia-semana');
-    if (diaInput) {
-      diaInput.value = this.getDayOfWeekName(val);
+    if (diaInput && val) {
+      diaInput.value = this.isBrazilianHoliday(val) ? 'Feriado' : this.getDayOfWeekName(val);
     }
+    this.updatePhotoPTRequirementUI();
   },
 
   // TURNO SELECTION
@@ -986,7 +1076,16 @@ const mobileApp = {
       captionInput.value = index === 0 ? 'FOTO DA PT' : '';
     }
     this.updatePhotoSlotUI(index, '', index === 0 ? 'FOTO DA PT' : '');
-    this.showToast(index === 0 ? 'Foto da PT removida. Lembre-se: ela é obrigatória.' : `Foto ${index + 1} removida.`, 'info');
+    if (index === 0) {
+      this.showToast(
+        this.isPhotoPTExempt()
+          ? 'Foto da PT removida. Em Sábado/Domingo/Feriado ela é opcional.'
+          : 'Foto da PT removida. Lembre-se: ela é obrigatória em dias úteis.',
+        'info'
+      );
+    } else {
+      this.showToast(`Foto ${index + 1} removida.`, 'info');
+    }
   },
 
   updatePhotoSlotUI(index, base64Url, caption = null) {
@@ -1264,6 +1363,7 @@ const mobileApp = {
     });
 
     this.renderDraftStatusBanner(rdo);
+    this.updatePhotoPTRequirementUI();
     this.recalculateAllHours();
     this.showToast(`Rascunho ${rdo.numero || ''} carregado!`, 'info');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1314,11 +1414,12 @@ const mobileApp = {
       return;
     }
 
-    // Validação obrigatória da Foto da PT (Foto 1) apenas ao enviar/finalizar
+    // Validação obrigatória da Foto da PT (Foto 1) — liberada em Sábado, Domingo e Feriado
     const fotoPT = this.currentPhotos[0];
     const capPT = document.getElementById('photo-caption-0')?.value.trim();
-    if (!draftMode && !fotoPT) {
-      this.showToast('A FOTO DA PT (Foto 1) é obrigatória! Por favor, tire ou anexe a foto da PT.', 'error');
+    const ptOptional = this.isPhotoPTExempt(data, diaSemana);
+    if (!draftMode && !ptOptional && !fotoPT) {
+      this.showToast('A FOTO DA PT (Foto 1) é obrigatória de segunda a sexta (exceto feriados)! Por favor, tire ou anexe a foto da PT.', 'error');
       const preview0 = document.getElementById('photo-preview-0');
       if (preview0) {
         preview0.scrollIntoView({ behavior: 'smooth', block: 'center' });

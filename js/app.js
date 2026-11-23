@@ -218,7 +218,16 @@ const app = {
       descInput.value = index === 0 ? 'FOTO DA PT' : '';
     }
     this.updatePhotoSlotUI(index, '', index === 0 ? 'FOTO DA PT' : '');
-    this.showToast(index === 0 ? 'Foto da PT removida. Lembre-se: ela é obrigatória.' : `Foto ${index + 1} removida.`, 'info');
+    if (index === 0) {
+      this.showToast(
+        this.isPhotoPTExempt()
+          ? 'Foto da PT removida. Em Sábado/Domingo/Feriado ela é opcional.'
+          : 'Foto da PT removida. Lembre-se: ela é obrigatória em dias úteis.',
+        'info'
+      );
+    } else {
+      this.showToast(`Foto ${index + 1} removida.`, 'info');
+    }
   },
 
   updatePhotoSlotUI(index, base64Url, caption = null) {
@@ -1389,7 +1398,7 @@ const app = {
     // Reset Form fields
     document.getElementById('rdo-numero').value = nextNum;
     document.getElementById('rdo-data').value = currentDT;
-    document.getElementById('rdo-dia-semana').value = this.getDayOfWeekName(currentDT);
+    document.getElementById('rdo-dia-semana').value = this.isBrazilianHoliday(currentDT) ? 'Feriado' : this.getDayOfWeekName(currentDT);
     const turnoEl = document.getElementById('rdo-turno');
     if (turnoEl) turnoEl.value = 'Diurno';
     const cManhaEl = document.getElementById('rdo-clima-manha');
@@ -1452,6 +1461,7 @@ const app = {
 
     // Reset and render 4 photos
     this.renderAllPhotosUI(['', '', '', '']);
+    this.updatePhotoPTRequirementUI();
 
     this.calculateTotalHH();
     this.syncAllWorkerPrintTexts();
@@ -1495,7 +1505,7 @@ const app = {
 
     document.getElementById('rdo-numero').value = nextNum;
     document.getElementById('rdo-data').value = currentDT;
-    document.getElementById('rdo-dia-semana').value = this.getDayOfWeekName(currentDT);
+    document.getElementById('rdo-dia-semana').value = this.isBrazilianHoliday(currentDT) ? 'Feriado' : this.getDayOfWeekName(currentDT);
     const turnoEl = document.getElementById('rdo-turno');
     if (turnoEl) turnoEl.value = rdo.turno || 'Diurno';
 
@@ -1597,6 +1607,7 @@ const app = {
 
     // Logotipo
     this.loadCompanyLogo(rdo.logo !== undefined ? rdo.logo : null);
+    this.updatePhotoPTRequirementUI();
 
     this.calculateTotalHH();
     this.syncAllWorkerPrintTexts();
@@ -1736,6 +1747,7 @@ const app = {
 
     // Load company logo for this RDO
     this.loadCompanyLogo(rdo.logo !== undefined ? rdo.logo : null);
+    this.updatePhotoPTRequirementUI();
 
     this.calculateTotalHH();
     this.syncAllWorkerPrintTexts();
@@ -2064,13 +2076,14 @@ const app = {
       return;
     }
 
-    // Validação Obrigatória: FOTO DA PT (Foto 1)
+    // Validação Obrigatória: FOTO DA PT (Foto 1) — liberada em Sábado, Domingo e Feriado
     const fotoPT = this.currentPhotos[0];
     const descPTInput = document.getElementById('photo-desc-0');
     const descPT = descPTInput ? descPTInput.value.trim() : '';
+    const ptOptional = this.isPhotoPTExempt(data, diaSemana);
 
-    if (!draftMode && !fotoPT) {
-      this.showToast('A FOTO DA PT (Foto 1) é obrigatória! Por favor, anexe a foto da PT.', 'error');
+    if (!draftMode && !ptOptional && !fotoPT) {
+      this.showToast('A FOTO DA PT (Foto 1) é obrigatória de segunda a sexta (exceto feriados)! Por favor, anexe a foto da PT.', 'error');
       const slot0 = document.getElementById('photo-slot-0');
       if (slot0) {
         slot0.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2781,13 +2794,13 @@ const app = {
     }
 
     const modal = document.getElementById('modal-send-rdo');
-    // Rascunho só pode ser enviado com a FOTO DA PT anexada
+    // Rascunho só pode ser enviado com a FOTO DA PT anexada (exceto Sábado, Domingo e Feriado)
     if (rdo.isDraft && !rdo.sent) {
       const first = Array.isArray(rdo.photos) ? rdo.photos[0] : null;
       const hasPT = first && (typeof first === 'string' ? first : first.url);
-      if (!hasPT) {
+      if (!hasPT && !this.isPhotoPTExempt(rdo.data, rdo.diaSemana)) {
         this.goListAfterSend = false;
-        this.showToast('Para enviar, abra o rascunho (Editar) e anexe a FOTO DA PT (obrigatória).', 'error');
+        this.showToast('Para enviar, abra o rascunho (Editar) e anexe a FOTO DA PT (obrigatória em dias úteis).', 'error');
         return;
       }
     }
@@ -3191,12 +3204,100 @@ const app = {
   },
 
   // HELPERS
+  isBrazilianHoliday(dateString) {
+    if (!dateString) return false;
+    const datePart = String(dateString).split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    if (!year || !month || !day) return false;
+
+    const mmdd = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const fixedHolidays = ['01-01', '04-21', '05-01', '09-07', '09-20', '10-12', '11-02', '11-15', '11-20', '12-25'];
+    if (fixedHolidays.includes(mmdd)) return true;
+
+    const a = year % 19;
+    const b = Math.floor(year / 100);
+    const c = year % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const easterMonth = Math.floor((h + l - 7 * m + 114) / 31);
+    const easterDay = ((h + l - 7 * m + 114) % 31) + 1;
+
+    const easter = new Date(year, easterMonth - 1, easterDay);
+    const target = new Date(year, month - 1, day);
+    const diffDays = Math.round((target.getTime() - easter.getTime()) / 86400000);
+    return diffDays === -2 || diffDays === 60;
+  },
+
+  isPhotoPTExempt(dateString = null, diaSemana = null) {
+    const dayVal = diaSemana !== null ? diaSemana : (document.getElementById('rdo-dia-semana')?.value || '');
+    const norm = String(dayVal).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+    if (norm === 'sabado' || norm === 'domingo' || norm.includes('feriado')) {
+      return true;
+    }
+
+    const dateVal = dateString !== null ? dateString : (document.getElementById('rdo-data')?.value || '');
+    if (dateVal) {
+      const datePart = String(dateVal).split('T')[0];
+      const [year, month, day] = datePart.split('-').map(Number);
+      if (year && month && day) {
+        const d = new Date(year, month - 1, day);
+        if (d.getDay() === 0 || d.getDay() === 6) return true;
+        if (this.isBrazilianHoliday(dateVal)) return true;
+      }
+    }
+    return false;
+  },
+
+  updatePhotoPTRequirementUI() {
+    const exempt = this.isPhotoPTExempt();
+    const slot0 = document.getElementById('photo-slot-0');
+    const badge = document.getElementById('photo-pt-badge');
+    const title = document.getElementById('photo-pt-title');
+    const sub = document.getElementById('photo-pt-sub');
+    const wrap = document.getElementById('photo-preview-wrap-0');
+    const descInput = document.getElementById('photo-desc-0');
+
+    if (slot0) {
+      slot0.classList.toggle('photo-slot-pt-required', !exempt);
+      slot0.classList.toggle('photo-slot-pt-optional', exempt);
+    }
+    if (badge) {
+      badge.classList.toggle('pt-optional', exempt);
+      badge.textContent = exempt ? 'PT Liberada (FDS/Feriado)' : 'PT Obrigatória';
+    }
+    if (title) {
+      title.textContent = exempt ? 'FOTO DA PT (Opcional)' : 'FOTO DA PT *';
+      title.style.color = exempt ? '#065f46' : '#b45309';
+    }
+    if (sub) {
+      sub.textContent = exempt ? 'Liberado (Sáb/Dom/Feriado)' : 'Clique para carregar';
+      sub.style.color = exempt ? '#047857' : '#b45309';
+    }
+    if (wrap) {
+      wrap.title = exempt
+        ? 'Clique para visualizar ou carregar a Foto da PT (Opcional em Sáb/Dom/Feriado)'
+        : 'Clique para visualizar ou carregar a Foto da PT (Obrigatória)';
+    }
+    if (descInput) {
+      descInput.title = exempt ? 'Legenda: FOTO DA PT (opcional em Sáb/Dom/Feriado)' : 'Legenda obrigatória: FOTO DA PT';
+    }
+  },
+
   handleDateChange(e) {
     const val = e.target.value;
     if (val) {
-      const dayName = this.getDayOfWeekName(val);
-      document.getElementById('rdo-dia-semana').value = dayName;
+      const dayName = this.isBrazilianHoliday(val) ? 'Feriado' : this.getDayOfWeekName(val);
+      const diaEl = document.getElementById('rdo-dia-semana');
+      if (diaEl) diaEl.value = dayName;
     }
+    this.updatePhotoPTRequirementUI();
   },
 
   getDayOfWeekName(dateString) {
