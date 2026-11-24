@@ -74,8 +74,16 @@ const mobileApp = {
         this.closeLightbox();
         this.closeSuccessModal();
         this.closeSignatureModal();
+        this.closeRulesModal();
       }
     });
+
+    const rulesModal = document.getElementById('modal-rdo-rules-mobile');
+    if (rulesModal) {
+      rulesModal.addEventListener('click', (e) => {
+        if (e.target === rulesModal) this.closeRulesModal();
+      });
+    }
   },
 
   checkSession() {
@@ -94,6 +102,7 @@ const mobileApp = {
       if (userRoleEl) userRoleEl.textContent = session.role || 'Usuário';
 
       this.initNewRDO();
+      this.openRulesModal(false);
     } else {
       if (loginView) loginView.classList.remove('hidden');
       if (appView) appView.classList.add('hidden');
@@ -240,6 +249,60 @@ const mobileApp = {
     const now = new Date();
     const tzOffset = now.getTimezoneOffset() * 60000;
     return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+  },
+
+  openRulesModal(force = false) {
+    if (!force && sessionStorage.getItem('cmpc_rdo_rules_seen') === '1') return;
+    const modal = document.getElementById('modal-rdo-rules-mobile');
+    if (modal) modal.classList.remove('hidden');
+  },
+
+  closeRulesModal() {
+    const modal = document.getElementById('modal-rdo-rules-mobile');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  acknowledgeRulesModal() {
+    sessionStorage.setItem('cmpc_rdo_rules_seen', '1');
+    this.closeRulesModal();
+  },
+
+  getSubmissionDeadline(dateString) {
+    if (!dateString) return null;
+    const datePart = String(dateString).split('T')[0];
+    const [year, month, day] = datePart.split('-').map(Number);
+    if (!year || !month || !day) return null;
+
+    const candidate = new Date(year, month - 1, day + 1, 12, 0, 0, 0);
+    for (let i = 0; i < 15; i++) {
+      const dow = candidate.getDay();
+      const iso = `${candidate.getFullYear()}-${String(candidate.getMonth() + 1).padStart(2, '0')}-${String(candidate.getDate()).padStart(2, '0')}`;
+      if (dow !== 0 && dow !== 6 && !this.isBrazilianHoliday(iso)) {
+        return candidate;
+      }
+      candidate.setDate(candidate.getDate() + 1);
+    }
+    return candidate;
+  },
+
+  getAnalysisSlaInfo(sentAt) {
+    const start = sentAt ? new Date(sentAt) : new Date();
+    const base = isNaN(start.getTime()) ? new Date() : start;
+    let hasWeekendOrHoliday = false;
+    for (let i = 0; i <= 2; i++) {
+      const check = new Date(base.getTime() + i * 86400000);
+      const iso = `${check.getFullYear()}-${String(check.getMonth() + 1).padStart(2, '0')}-${String(check.getDate()).padStart(2, '0')}`;
+      const dow = check.getDay();
+      if (dow === 0 || dow === 6 || this.isBrazilianHoliday(iso)) {
+        hasWeekendOrHoliday = true;
+        break;
+      }
+    }
+    return {
+      hours: hasWeekendOrHoliday ? 72 : 48,
+      hasWeekendOrHoliday,
+      label: hasWeekendOrHoliday ? '24h a 48h (até 72h c/ FDS ou feriado)' : '24h a 48h'
+    };
   },
 
   isBrazilianHoliday(dateString) {
@@ -1370,8 +1433,17 @@ const mobileApp = {
   },
 
   deleteDraftMobile(rdoId) {
+    const existing = StorageService.getRecordById(rdoId);
+    if (existing && !existing.isDraft) {
+      this.showToast('RDO submetido não pode ser excluído (imutabilidade e rastreabilidade CMPC).', 'error');
+      return;
+    }
     if (!confirm('Deseja excluir este rascunho?')) return;
-    StorageService.deleteRecord(rdoId);
+    const res = StorageService.deleteRecord(rdoId);
+    if (res && res.blocked) {
+      this.showToast(res.reason || 'Não é permitido excluir um RDO já submetido.', 'error');
+      return;
+    }
     if (this.currentRDOId === rdoId) {
       this.initNewRDO();
     } else {
@@ -1509,6 +1581,19 @@ const mobileApp = {
     // Coleta comentários, observações adicionais, equipamentos e assinaturas
     const comentarios = document.getElementById('m-rdo-comentarios')?.value.trim() || '';
     const obsAdicional = document.getElementById('m-rdo-obs-adicional')?.value.trim() || '';
+
+    // Regra CMPC: Emissão obrigatória inclusive nos dias sem atividade, com indicação do motivo
+    const hasActivityDesc = Object.values(activitiesDescriptions).some(d => Boolean(d && d.trim()));
+    if (!draftMode && totalHH === 0 && !hasActivityDesc && !comentarios && !obsAdicional) {
+      this.showToast('Dia sem atividade: informe obrigatoriamente o motivo em Comentários ou Observações Adicionais.', 'error');
+      const comInput = document.getElementById('m-rdo-comentarios');
+      if (comInput) {
+        comInput.focus();
+        comInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
     const sigPlanejamento = document.getElementById('m-rdo-sig-planejamento')?.value.trim() || '';
     const sigEngenheiro = document.getElementById('m-rdo-sig-engenheiro')?.value.trim() || '';
     const sigFiscalizacao = document.getElementById('m-rdo-sig-fiscalizacao')?.value.trim() || '';
@@ -1544,6 +1629,25 @@ const mobileApp = {
     const isDraft = draftMode ? true : (existingRDO ? existingRDO.isDraft === true : true);
     const rdoStatus = isDraft ? 'rascunho' : (existingRDO ? (existingRDO.status || 'pendente') : 'pendente');
 
+    let revisionReason = '';
+    const isAlreadySubmitted = Boolean(
+      existingRDO && (existingRDO.sent === true || existingRDO.sentAt || existingRDO.status === 'enviado' || existingRDO.approved === true)
+    );
+    if (isAlreadySubmitted) {
+      const promptMsg = 'Este RDO já foi submetido. Para preservar o histórico e a rastreabilidade das revisões, informe o motivo desta correção:';
+      const typedReason = window.prompt(promptMsg);
+      if (typedReason === null) return;
+      revisionReason = typedReason.trim();
+      if (!revisionReason) {
+        this.showToast('Informe o motivo da revisão para registrar alteração em RDO submetido.', 'error');
+        return;
+      }
+    }
+
+    const deadlineDate = this.getSubmissionDeadline(data);
+    const submissionDeadline = deadlineDate ? deadlineDate.toISOString() : null;
+    const isIntempestivo = !isDraft && deadlineDate ? (Date.now() > deadlineDate.getTime()) : false;
+
     const rdoPayload = {
       id: this.currentRDOId,
       numero,
@@ -1570,6 +1674,9 @@ const mobileApp = {
       photos,
       isDraft,
       status: rdoStatus,
+      intempestivo: isIntempestivo,
+      submissionDeadline,
+      _revisionReason: revisionReason,
       sigPlanejamento,
       sigEngenheiro,
       sigFiscalizacao,
@@ -1625,7 +1732,14 @@ const mobileApp = {
     }
     if (emailInput) emailInput.value = savedRecord.sentTo || savedRecord.sigEmailFiscalizacao || '';
     if (obsInput) obsInput.value = savedRecord.sendObs || savedRecord.obsAdicional || '';
-    if (statusMsg) statusMsg.textContent = '';
+    if (statusMsg) {
+      const deadlineDate = this.getSubmissionDeadline(savedRecord.data);
+      if (deadlineDate && Date.now() > deadlineDate.getTime()) {
+        statusMsg.innerHTML = `<span style="color:#b45309; font-weight:600;">⚠️ Atenção: Prazo limite (12h do dia útil subsequente) encerrado em ${deadlineDate.toLocaleString('pt-BR')}. O envio será registrado como <strong>INTEMPESTIVO</strong>, sujeito à aceitação e validação da CMPC.</span>`;
+      } else {
+        statusMsg.textContent = '';
+      }
+    }
     if (sendBtn) {
       sendBtn.disabled = false;
       sendBtn.innerHTML = '<span>✉️ Confirmar e Enviar E-mail</span>';
@@ -1723,15 +1837,32 @@ const mobileApp = {
         throw new Error(d.message || `Erro HTTP ${res.status}`);
       }
 
-      StorageService.markRecordAsSent(rdoId, email, obs);
+      const deadlineDate = this.getSubmissionDeadline(rdo.data);
+      const isIntempestivo = deadlineDate ? (Date.now() > deadlineDate.getTime()) : false;
+      const slaInfo = this.getAnalysisSlaInfo(new Date().toISOString());
+      const sendMeta = {
+        intempestivo: isIntempestivo,
+        submissionDeadline: deadlineDate ? deadlineDate.toISOString() : null,
+        analysisSlaHours: slaInfo.hours
+      };
+
+      StorageService.markRecordAsSent(rdoId, email, obs, sendMeta);
       this.renderMyDraftsMobile();
       this.renderDraftStatusBanner(null);
       this.currentRDOId = null;
-      if (statusMsg) statusMsg.innerHTML = `<span style="color:#059669;">✅ RDO enviado com sucesso para ${this.escapeHtml(email)}!</span>`;
+      if (statusMsg) statusMsg.innerHTML = `<span style="color:#059669;">✅ RDO enviado${isIntempestivo ? ' (⚠️ INTEMPESTIVO)' : ''} com sucesso para ${this.escapeHtml(email)}!</span>`;
       if (sendBtn) sendBtn.innerHTML = '<span>✅ Enviado!</span>';
-      this.showToast(`✅ RDO ${rdo.numero} enviado para ${email}!`, 'success');
+      this.showToast(isIntempestivo ? `⚠️ RDO ${rdo.numero} enviado como INTEMPESTIVO para ${email}!` : `✅ RDO ${rdo.numero} enviado para ${email}!`, isIntempestivo ? 'warning' : 'success');
     } catch (err) {
-      StorageService.markRecordAsSent(rdoId, email, obs);
+      const deadlineDate = this.getSubmissionDeadline(rdo.data);
+      const isIntempestivo = deadlineDate ? (Date.now() > deadlineDate.getTime()) : false;
+      const slaInfo = this.getAnalysisSlaInfo(new Date().toISOString());
+      const sendMeta = {
+        intempestivo: isIntempestivo,
+        submissionDeadline: deadlineDate ? deadlineDate.toISOString() : null,
+        analysisSlaHours: slaInfo.hours
+      };
+      StorageService.markRecordAsSent(rdoId, email, obs, sendMeta);
       this.renderMyDraftsMobile();
       this.renderDraftStatusBanner(null);
       this.currentRDOId = null;

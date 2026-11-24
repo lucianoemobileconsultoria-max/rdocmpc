@@ -542,12 +542,47 @@ const StorageService = {
     r.activitiesDescriptions = r.activitiesDescriptions || {};
     r.activitiesSignatures = r.activitiesSignatures || {};
     r.comentarios = r.comentarios || '';
+    r.revisions = Array.isArray(r.revisions) ? r.revisions : [];
+    r.approvalHistory = Array.isArray(r.approvalHistory) ? r.approvalHistory : [];
+    r.revisionNumber = Number(r.revisionNumber) || 0;
     if (r.workers.length > 0) {
       r.totalHH = this.calculateRecordHH(r);
     } else {
       r.totalHH = parseFloat(r.totalHH) || 0;
     }
     return r;
+  },
+
+  buildLightweightSnapshot(rec) {
+    if (!rec || typeof rec !== 'object') return null;
+    const photosCount = Array.isArray(rec.photos)
+      ? rec.photos.filter(p => p && (typeof p === 'string' ? p : p.url)).length
+      : 0;
+    return {
+      numero: rec.numero || '',
+      data: rec.data || '',
+      diaSemana: rec.diaSemana || '',
+      contrato: rec.contrato || '',
+      contratante: rec.contratante || '',
+      contratada: rec.contratada || '',
+      encarregado: rec.encarregado || '',
+      clima: rec.clima || '',
+      totalHH: parseFloat(rec.totalHH) || 0,
+      totalHE: parseFloat(rec.totalHE) || 0,
+      workers: Array.isArray(rec.workers) ? JSON.parse(JSON.stringify(rec.workers)) : [],
+      activitiesDescriptions: rec.activitiesDescriptions ? JSON.parse(JSON.stringify(rec.activitiesDescriptions)) : {},
+      equipments: Array.isArray(rec.equipments) ? JSON.parse(JSON.stringify(rec.equipments)) : [],
+      comentarios: rec.comentarios || '',
+      obsAdicional: rec.obsAdicional || rec.sendObs || '',
+      photosCount,
+      sigPlanejamento: rec.sigPlanejamento || '',
+      sigEngenheiro: rec.sigEngenheiro || '',
+      sigFiscalizacao: rec.sigFiscalizacao || '',
+      status: rec.status || '',
+      approvalStatus: rec.approvalStatus || '',
+      sentAt: rec.sentAt || null,
+      intempestivo: Boolean(rec.intempestivo)
+    };
   },
 
   getRecords() {
@@ -587,24 +622,71 @@ const StorageService = {
     if (rdoData.id) {
       const idx = records.findIndex(r => r.id === rdoData.id);
       const existing = idx >= 0 ? records[idx] : null;
-      recordToSave = this.normalizeRecord({
-        ...existing,
-        ...rdoData,
-        createdAt: rdoData.createdAt || (existing && existing.createdAt) || new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      });
+      const revisionReason = (rdoData._revisionReason || '').trim();
+      const cleanIncoming = { ...rdoData };
+      delete cleanIncoming._revisionReason;
+
+      const isAlreadySubmitted = Boolean(
+        existing && (existing.sent === true || existing.sentAt || existing.status === 'enviado' || existing.approved === true)
+      );
+
+      if (isAlreadySubmitted) {
+        const sessionUser = this.getSession();
+        const originalSnapshot = existing.originalSnapshot || this.buildLightweightSnapshot(existing);
+        const nextRevisionNumber = (Number(existing.revisionNumber) || 0) + 1;
+        const existingRevisions = Array.isArray(existing.revisions) ? [...existing.revisions] : [];
+        existingRevisions.push({
+          revisionNumber: nextRevisionNumber,
+          timestamp: new Date().toISOString(),
+          editedBy: (sessionUser && sessionUser.name) || cleanIncoming.encarregado || 'Usuário',
+          editedByEmail: (sessionUser && sessionUser.email) || '',
+          reason: revisionReason || 'Correção pós-submissão',
+          previousSnapshot: this.buildLightweightSnapshot(existing)
+        });
+
+        recordToSave = this.normalizeRecord({
+          ...existing,
+          ...cleanIncoming,
+          sent: true,
+          isDraft: false,
+          status: 'enviado',
+          sentAt: existing.sentAt || new Date().toISOString(),
+          sentTo: existing.sentTo || cleanIncoming.sentTo || '',
+          originalCreatedAt: existing.originalCreatedAt || existing.createdAt,
+          originalSnapshot,
+          revisionNumber: nextRevisionNumber,
+          revisions: existingRevisions,
+          approved: false,
+          approvalStatus: 'pendente',
+          approvedBy: '',
+          approvedAt: null,
+          approvalNotes: '',
+          createdAt: existing.createdAt || cleanIncoming.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      } else {
+        recordToSave = this.normalizeRecord({
+          ...existing,
+          ...cleanIncoming,
+          createdAt: cleanIncoming.createdAt || (existing && existing.createdAt) || new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      }
+
       if (idx >= 0) {
         records[idx] = recordToSave;
       } else {
         records.push(recordToSave);
       }
     } else {
-      rdoData.id = 'rdo-' + Date.now();
-      rdoData.createdAt = new Date().toISOString();
-      rdoData.updatedAt = new Date().toISOString();
-      rdoData.sent = false;
-      rdoData.status = rdoData.isDraft ? 'rascunho' : 'pendente';
-      recordToSave = this.normalizeRecord(rdoData);
+      const cleanNew = { ...rdoData };
+      delete cleanNew._revisionReason;
+      cleanNew.id = 'rdo-' + Date.now();
+      cleanNew.createdAt = new Date().toISOString();
+      cleanNew.updatedAt = new Date().toISOString();
+      cleanNew.sent = false;
+      cleanNew.status = cleanNew.isDraft ? 'rascunho' : 'pendente';
+      recordToSave = this.normalizeRecord(cleanNew);
       records.unshift(recordToSave);
     }
 
@@ -627,27 +709,42 @@ const StorageService = {
     return recordToSave;
   },
 
-  markRecordAsSent(id, email, obs = '') {
+  markRecordAsSent(id, email, obs = '', meta = {}) {
     const records = this.getRecords();
     const idx = records.findIndex(r => r.id === id);
     if (idx < 0) return null;
 
+    const current = records[idx];
+    const nowIso = new Date().toISOString();
     const updated = {
-      ...records[idx],
+      ...current,
       sent: true,
       isDraft: false,
       status: 'enviado',
-      sentAt: new Date().toISOString(),
+      sentAt: current.sentAt || nowIso,
+      lastSentAt: nowIso,
       sentTo: email,
       sendObs: obs,
-      updatedAt: new Date().toISOString()
+      intempestivo: meta.intempestivo !== undefined ? Boolean(meta.intempestivo) : Boolean(current.intempestivo),
+      submissionDeadline: meta.submissionDeadline || current.submissionDeadline || null,
+      analysisSlaHours: meta.analysisSlaHours || current.analysisSlaHours || 48,
+      originalSnapshot: current.originalSnapshot || this.buildLightweightSnapshot({
+        ...current,
+        sent: true,
+        isDraft: false,
+        status: 'enviado',
+        sentAt: current.sentAt || nowIso,
+        intempestivo: meta.intempestivo !== undefined ? Boolean(meta.intempestivo) : Boolean(current.intempestivo)
+      }),
+      updatedAt: nowIso
     };
 
     records[idx] = updated;
     this.saveRecordsLocal(records);
 
     if (db) {
-      db.collection('rdos').doc(id).set(updated, { merge: true })
+      const cleanDoc = JSON.parse(JSON.stringify(updated));
+      db.collection('rdos').doc(id).set(cleanDoc, { merge: true })
         .then(() => console.log('☁️ RDO marcado como enviado no Firebase:', id))
         .catch(err => console.warn('Cloud markRecordAsSent error:', err));
     }
@@ -661,27 +758,39 @@ const StorageService = {
     if (idx < 0) return null;
 
     const current = records[idx];
-    const isApproved = approvalData.status === 'aprovado';
-    const isRejected = approvalData.status === 'reprovado';
-    
-    const updated = {
-      ...current,
-      approved: isApproved,
-      approvalStatus: approvalData.status || (isApproved ? 'aprovado' : 'pendente'),
+    const st = approvalData.status || 'pendente';
+    const isApproved = (st === 'aprovado' || st === 'aprovado_com_ressalvas');
+    const nowIso = new Date().toISOString();
+    const history = Array.isArray(current.approvalHistory) ? [...current.approvalHistory] : [];
+    history.push({
+      status: st,
       approvedBy: approvalData.approvedBy || '',
       approvedByEmail: approvalData.approvedByEmail || '',
       approvedByRole: approvalData.approvedByRole || '',
-      approvedAt: new Date().toISOString(),
+      notes: approvalData.notes || '',
+      timestamp: nowIso
+    });
+
+    const updated = {
+      ...current,
+      approved: isApproved,
+      approvalStatus: st,
+      approvedBy: approvalData.approvedBy || '',
+      approvedByEmail: approvalData.approvedByEmail || '',
+      approvedByRole: approvalData.approvedByRole || '',
+      approvedAt: nowIso,
       approvalNotes: approvalData.notes || '',
+      approvalHistory: history,
       sigFiscalizacao: approvalData.sigFiscalizacao || current.sigFiscalizacao || approvalData.approvedBy || '',
-      updatedAt: new Date().toISOString()
+      updatedAt: nowIso
     };
 
     records[idx] = updated;
     this.saveRecordsLocal(records);
 
     if (db) {
-      db.collection('rdos').doc(id).set(updated, { merge: true })
+      const cleanDoc = JSON.parse(JSON.stringify(updated));
+      db.collection('rdos').doc(id).set(cleanDoc, { merge: true })
         .then(() => console.log('☁️ RDO aprovação salva no Firebase com sucesso:', id))
         .catch(err => console.warn('Cloud markRecordApproval error:', err));
     }
@@ -691,6 +800,10 @@ const StorageService = {
 
   deleteRecord(id) {
     let records = this.getRecords();
+    const target = records.find(r => r.id === id);
+    if (target && (target.sent === true || target.sentAt || target.status === 'enviado' || target.approved === true)) {
+      return { blocked: true, reason: 'submitted' };
+    }
     records = records.filter(r => r.id !== id);
     this.saveRecordsLocal(records);
 
@@ -699,6 +812,7 @@ const StorageService = {
         .then(() => console.log('☁️ RDO excluído da nuvem Firebase:', id))
         .catch(err => console.warn('Cloud deleteRecord error:', err));
     }
+    return { blocked: false };
   },
 
   // LOGO (Per User & Global Fallback)

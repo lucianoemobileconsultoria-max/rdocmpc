@@ -127,6 +127,10 @@
         <a href="../mobile/" class="btn btn-outline btn-xs no-print" title="Mudar para Versão Mobile (Celular)" style="text-decoration: none; color: #0284c7; border-color: #bae6fd; background: #f0f9ff; display: inline-flex; align-items: center; gap: 5px;">
           <span>📱 Versão Mobile</span>
         </a>
+        <button class="btn btn-outline btn-xs no-print" onclick="app.openRulesModal(true)"
+          title="Consultar Regras Oficiais do RDO CMPC" style="color: #92400e; border-color: #fcd34d; background: #fffbeb;">
+          <span>📜 Regras RDO</span>
+        </button>
         <button class="btn btn-outline btn-xs no-print" onclick="app.openManualModal()"
           title="Abrir Manual de Uso & Mapa Visual">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1535,13 +1539,21 @@
               Decisão da Fiscalização: <span style="color: #dc2626;">*</span>
             </label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <label id="label-decision-aprovado" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 2px solid #10b981; border-radius: 8px; background: #ecfdf5; cursor: pointer; font-weight: 600; color: #065f46;">
+              <label id="label-decision-aprovado" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 2px solid #10b981; border-radius: 8px; background: #ecfdf5; cursor: pointer; font-weight: 600; font-size: 0.85rem; color: #065f46;">
                 <input type="radio" name="approval_decision" value="aprovado" checked onchange="app.onApprovalDecisionChange(this.value)">
-                <span>✅ APROVADO</span>
+                <span>✅ Aprovar</span>
               </label>
-              <label id="label-decision-reprovado" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; color: #64748b;">
-                <input type="radio" name="approval_decision" value="reprovado" onchange="app.onApprovalDecisionChange(this.value)">
-                <span>❌ REPROVADO</span>
+              <label id="label-decision-aprovado_com_ressalvas" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; font-size: 0.85rem; color: #64748b;">
+                <input type="radio" name="approval_decision" value="aprovado_com_ressalvas" onchange="app.onApprovalDecisionChange(this.value)">
+                <span>⚠️ Aprovar c/ Ressalvas</span>
+              </label>
+              <label id="label-decision-devolvido" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; font-size: 0.85rem; color: #64748b;">
+                <input type="radio" name="approval_decision" value="devolvido" onchange="app.onApprovalDecisionChange(this.value)">
+                <span>↩️ Devolver p/ Correção</span>
+              </label>
+              <label id="label-decision-contestado" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; font-weight: 600; font-size: 0.85rem; color: #64748b;">
+                <input type="radio" name="approval_decision" value="contestado" onchange="app.onApprovalDecisionChange(this.value)">
+                <span>❌ Contestar</span>
               </label>
             </div>
           </div>
@@ -1555,9 +1567,13 @@
 
           <div class="form-group" style="margin-bottom: 14px;">
             <label for="approve-notes" style="font-weight: 600; font-size: 0.88rem; color: var(--slate-700); margin-bottom: 6px; display: block;">
-              Parecer Técnico / Observações da Aprovação:
+              Parecer Técnico / Ressalvas / Contestação: <span id="approve-notes-req" style="color: #dc2626; display: none;">* (obrigatório)</span>
             </label>
             <textarea id="approve-notes" class="form-control" rows="3" placeholder="Ex: Atividades vistoriadas e em conformidade com as especificações de projeto e segurança." style="resize: vertical;"></textarea>
+          </div>
+
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 9px 12px; font-size: 0.76rem; color: #475569; line-height: 1.4;">
+            <strong>⚖️ Nota Contratual:</strong> A validação do RDO ou a ausência de manifestação da CMPC no prazo (24h a 48h, até 72h em FDS/feriado) não caracteriza aceite tácito, aprovação de pleitos, reconhecimento de impactos de prazo/custo, nem autorização automática para medição ou faturamento.
           </div>
         </div>
 
@@ -1667,6 +1683,71 @@
     </div>
   </div>
 
+  <!-- MODAL CENTRALIZADO: REGRAS OFICIAIS DO RDO CMPC -->
+  <div id="modal-rdo-rules" class="modal-backdrop hidden" onclick="app.closeRulesModal(event)" style="z-index: 9998;">
+    <div class="modal-dialog modal-rules-dialog" onclick="event.stopPropagation()">
+      <div class="modal-header" style="background: linear-gradient(135deg, #004d28 0%, #006837 100%); color: #fff; padding: 18px 24px; border-radius: 12px 12px 0 0;">
+        <div class="modal-title-group" style="display: flex; align-items: center; gap: 12px;">
+          <div style="background: rgba(255,255,255,0.18); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+            📜
+          </div>
+          <div>
+            <h3 class="modal-title" style="color: #fff; font-size: 1.12rem; font-weight: 800; margin: 0;">RDO - RELATÓRIO DIÁRIO DE OBRA</h3>
+            <span class="modal-subtitle" style="color: rgba(255,255,255,0.88); font-size: 0.8rem;">Diretrizes Oficiais de Emissão, Prazos e Rastreabilidade — CMPC</span>
+          </div>
+        </div>
+        <button class="btn-close" style="color: #fff; opacity: 0.85;" onclick="app.closeRulesModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 22px 24px; max-height: 70vh; overflow-y: auto; background: #fff;">
+        <div class="rules-block">
+          <div class="rules-block-title">1. Obrigatoriedade e Conteúdo Mínimo</div>
+          <p>A CONTRATADA deverá emitir diariamente o Relatório Diário de Obra – RDO, por meio da ferramenta digital acordada ou definida pela CMPC, constituindo este o registro oficial das atividades executadas. O RDO deverá contemplar, no mínimo, efetivo e horas trabalhadas, equipamentos utilizados, atividades executadas, condições climáticas, ocorrências, paralisações, interferências, registros fotográficos da PT e das atividades, sendo obrigatória sua emissão inclusive nos dias sem atividade, com indicação do respectivo motivo.</p>
+        </div>
+
+        <div class="rules-block">
+          <div class="rules-block-title">2. Prazos de Submissão, Análise e Ausência de Aceite Tácito</div>
+          <p>O RDO deverá ser preenchido, conferido e submetido pela CONTRATADA até as <strong>12h do dia útil subsequente</strong> à data de referência, permanecendo sujeito à análise e validação da fiscalização da CMPC em um prazo de <strong>24h a 48h (até 72h quando há fim de semana ou feriado)</strong>, que poderá <strong>aprovar</strong>, <strong>aprovar com ressalvas</strong>, <strong>devolver para correção</strong> ou <strong>contestar</strong> as informações registradas. A ausência de manifestação da CMPC não caracterizará aceite tácito, aprovação de pleitos, reconhecimento de impactos de prazo ou custo, nem autorização automática para medição ou faturamento.</p>
+        </div>
+
+        <div class="rules-block rules-block-warn">
+          <div class="rules-block-title">3. RDO Intempestivo e Pleitos</div>
+          <p>O RDO apresentado fora do prazo será considerado <strong>intempestivo</strong> e ficará sujeito à aceitação e validação da CMPC. A ausência de registro tempestivo poderá comprometer a validação de ocorrências utilizadas como fundamento de pleitos (prazos ou financeiros), não constituindo a emissão ou validação do RDO reconhecimento ou aprovação de qualquer pleito pela CMPC.</p>
+        </div>
+
+        <div class="rules-block rules-block-lock">
+          <div class="rules-block-title">4. Imutabilidade e Rastreabilidade de Revisões</div>
+          <p>Após a submissão do RDO, qualquer correção deverá preservar o histórico e a rastreabilidade das revisões, <strong>não sendo permitida a alteração ou exclusão do registro original</strong>.</p>
+        </div>
+      </div>
+      <div class="modal-footer" style="background: var(--slate-50); border-top: 1px solid var(--slate-200); padding: 14px 24px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn btn-primary" onclick="app.acknowledgeRulesModal()" style="font-weight: 700; padding: 8px 20px;">
+          ✓ Li e estou ciente das regras
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CENTRALIZADO: HISTÓRICO DE REVISÕES E RASTREABILIDADE -->
+  <div id="modal-revision-history" class="modal-backdrop hidden" onclick="app.closeRevisionHistoryModal(event)" style="z-index: 9997;">
+    <div class="modal-dialog modal-rules-dialog" onclick="event.stopPropagation()" style="max-width: 720px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: #fff; padding: 16px 22px; border-radius: 12px 12px 0 0;">
+        <div class="modal-title-group" style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.3rem;">🕒</span>
+          <div>
+            <h3 class="modal-title" id="rev-history-title" style="color: #fff; margin: 0;">Histórico de Revisões & Rastreabilidade</h3>
+            <span class="modal-subtitle" style="color: rgba(255,255,255,0.8); font-size: 0.78rem;">Registro original imutável, revisões pós-submissão e pareceres CMPC</span>
+          </div>
+        </div>
+        <button class="btn-close" style="color: #fff;" onclick="app.closeRevisionHistoryModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="rev-history-body" style="padding: 20px 24px; max-height: 68vh; overflow-y: auto; background: #f8fafc;">
+      </div>
+      <div class="modal-footer" style="background: #fff; border-top: 1px solid var(--slate-200); padding: 12px 22px; display: flex; justify-content: flex-end;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="app.closeRevisionHistoryModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- FIREBASE CLOUD SDKs (Zero-Build Vanilla Web App Integration) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -1674,9 +1755,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
   <!-- APP SCRIPTS -->
-  <script src="js/storage.js?v=2.8.1"></script>
-  <script src="js/admin.js?v=2.8.1"></script>
-  <script src="js/app.js?v=2.8.1"></script>
+  <script src="js/storage.js?v=2.9.0"></script>
+  <script src="js/admin.js?v=2.9.0"></script>
+  <script src="js/app.js?v=2.9.0"></script>
 </body>
 
 </html>

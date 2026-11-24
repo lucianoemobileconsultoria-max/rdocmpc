@@ -912,6 +912,56 @@ input, select, textarea, button {
   font-weight: 700;
 }
 
+.badge-status-caveats {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+  font-weight: 700;
+}
+
+.badge-status-returned {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fdba74;
+  font-weight: 700;
+}
+
+.badge-status-contested {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  font-weight: 700;
+}
+
+.badge-status-intempestivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #f87171;
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: 3px;
+  white-space: nowrap;
+}
+
+.badge-revision {
+  display: inline-flex;
+  align-items: center;
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px solid #c7d2fe;
+  font-size: 0.63rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
 .approval-tag-approved {
   display: inline-flex;
   align-items: center;
@@ -1007,6 +1057,89 @@ input, select, textarea, button {
   background: #fffbeb;
   border: 1px solid #fde68a;
   color: #92400e;
+}
+
+.rdo-banner-caveats {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+}
+
+.rdo-banner-returned {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+}
+
+/* Modal Centralizado de Regras Oficiais & Histórico de Revisões */
+.modal-rules-dialog {
+  max-width: 700px;
+  width: 94%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.rules-block {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #006837;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.rules-block:last-child {
+  margin-bottom: 0;
+}
+
+.rules-block-warn {
+  border-left-color: #d97706;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.rules-block-lock {
+  border-left-color: #dc2626;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.rules-block-title {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.rules-block p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #334155;
+  text-align: justify;
+}
+
+.revision-timeline-item {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-left: 4px solid #334155;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  font-size: 0.82rem;
+  color: #334155;
+}
+
+.revision-timeline-item.is-original {
+  border-left-color: #059669;
+  background: #f0fdf4;
+}
+
+.revision-timeline-item.is-approval {
+  border-left-color: #2563eb;
+  background: #eff6ff;
 }
 
 .print-master-header-cell,

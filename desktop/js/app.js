@@ -955,12 +955,121 @@ const app = {
     if (modal) modal.classList.add('hidden');
   },
 
+  // MODAL CENTRALIZADO: REGRAS OFICIAIS DO RDO CMPC
+  openRulesModal(force = false) {
+    if (!force && sessionStorage.getItem('cmpc_rdo_rules_seen') === '1') return;
+    const modal = document.getElementById('modal-rdo-rules');
+    if (modal) modal.classList.remove('hidden');
+  },
+
+  closeRulesModal(event = null) {
+    if (event && event.target !== event.currentTarget) return;
+    sessionStorage.setItem('cmpc_rdo_rules_seen', '1');
+    const modal = document.getElementById('modal-rdo-rules');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  acknowledgeRulesModal() {
+    sessionStorage.setItem('cmpc_rdo_rules_seen', '1');
+    const modal = document.getElementById('modal-rdo-rules');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  // MODAL CENTRALIZADO: HISTÓRICO DE REVISÕES E RASTREABILIDADE
+  openRevisionHistoryModal(rdoId) {
+    const rdo = StorageService.getRecordById(rdoId);
+    if (!rdo) {
+      this.showToast('RDO não encontrado.', 'error');
+      return;
+    }
+    const modal = document.getElementById('modal-revision-history');
+    const titleEl = document.getElementById('rev-history-title');
+    const bodyEl = document.getElementById('rev-history-body');
+    if (titleEl) {
+      titleEl.textContent = `Histórico de Revisões — RDO ${rdo.numero || ''} ${rdo.revisionNumber ? `(Rev. ${rdo.revisionNumber})` : '(Original)'}`;
+    }
+
+    const fmtTs = (ts) => {
+      if (!ts) return '-';
+      const d = new Date(ts);
+      return isNaN(d.getTime()) ? String(ts) : d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    };
+
+    const parts = [];
+    const orig = rdo.originalSnapshot || (rdo.sent ? StorageService.buildLightweightSnapshot(rdo) : null);
+    if (orig || rdo.sentAt) {
+      parts.push(`
+        <div class="revision-timeline-item is-original">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <strong style="color:#065f46;">📌 Registro Original Submetido (Imutável)</strong>
+            <span style="font-size:0.75rem; color:#047857;">${fmtTs(rdo.sentAt || rdo.originalCreatedAt || rdo.createdAt)}</span>
+          </div>
+          <div><strong>RDO:</strong> ${this.escapeHtml((orig && orig.numero) || rdo.numero || '-')} • <strong>Contrato:</strong> ${this.escapeHtml((orig && orig.contrato) || rdo.contrato || '-')} • <strong>Total HH:</strong> ${(orig && orig.totalHH) ?? rdo.totalHH ?? 0} HH</div>
+          <div><strong>Encarregado:</strong> ${this.escapeHtml((orig && orig.encarregado) || rdo.encarregado || '-')} • <strong>Fotos:</strong> ${(orig && orig.photosCount) ?? (Array.isArray(rdo.photos) ? rdo.photos.filter(p => p && p.url).length : 0)}</div>
+          ${(orig && orig.intempestivo) || rdo.intempestivo ? '<div style="margin-top:4px;"><span class="badge-status-intempestivo">⚠️ Submetido fora do prazo (Intempestivo)</span></div>' : ''}
+        </div>
+      `);
+    }
+
+    if (Array.isArray(rdo.revisions) && rdo.revisions.length > 0) {
+      rdo.revisions.forEach(rev => {
+        const prev = rev.previousSnapshot || {};
+        parts.push(`
+          <div class="revision-timeline-item">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong>📝 Revisão Rev. ${rev.revisionNumber || '-'}</strong>
+              <span style="font-size:0.75rem; color:#64748b;">${fmtTs(rev.timestamp)}</span>
+            </div>
+            <div><strong>Alterado por:</strong> ${this.escapeHtml(rev.editedBy || '-')} ${rev.editedByEmail ? `(${this.escapeHtml(rev.editedByEmail)})` : ''}</div>
+            <div><strong>Motivo da correção:</strong> ${this.escapeHtml(rev.reason || '-')}</div>
+            <div style="font-size:0.75rem; color:#64748b; margin-top:4px;">Estado imediatamente anterior: Total ${prev.totalHH ?? '-'} HH • Comentários: ${this.escapeHtml((prev.comentarios || '-').slice(0, 120))}</div>
+          </div>
+        `);
+      });
+    } else {
+      parts.push(`<div class="revision-timeline-item">Nenhuma revisão pós-submissão registrada até o momento.</div>`);
+    }
+
+    if (Array.isArray(rdo.approvalHistory) && rdo.approvalHistory.length > 0) {
+      const labelMap = {
+        aprovado: '✅ Aprovado',
+        aprovado_com_ressalvas: '⚠️ Aprovado com Ressalvas',
+        devolvido: '↩️ Devolvido para Correção',
+        contestado: '❌ Contestado',
+        reprovado: '❌ Contestado / Reprovado'
+      };
+      rdo.approvalHistory.forEach(ap => {
+        parts.push(`
+          <div class="revision-timeline-item is-approval">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="color:#1e40af;">⚖️ Parecer CMPC: ${labelMap[ap.status] || this.escapeHtml(ap.status)}</strong>
+              <span style="font-size:0.75rem; color:#1d4ed8;">${fmtTs(ap.timestamp)}</span>
+            </div>
+            <div><strong>Fiscalizador:</strong> ${this.escapeHtml(ap.approvedBy || '-')}</div>
+            ${ap.notes ? `<div><strong>Parecer / Observações:</strong> ${this.escapeHtml(ap.notes)}</div>` : ''}
+          </div>
+        `);
+      });
+    }
+
+    if (bodyEl) bodyEl.innerHTML = parts.join('');
+    if (modal) modal.classList.remove('hidden');
+  },
+
+  closeRevisionHistoryModal(event = null) {
+    if (event && event.target !== event.currentTarget) return;
+    const modal = document.getElementById('modal-revision-history');
+    if (modal) modal.classList.add('hidden');
+  },
+
   bindEvents() {
     // Escape key to close lightbox and modals
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.closeLightbox();
         this.closeManualModal();
+        this.closeRulesModal();
+        this.closeRevisionHistoryModal();
         this.closeCreditsModal();
         this.closeDeleteModal();
         this.closeSendModal();
@@ -1083,6 +1192,9 @@ const app = {
       }
     }
 
+    // Exibe modal centralizado com as regras oficiais do RDO na entrada da sessão
+    this.openRulesModal(false);
+
     this.showTab('list');
     this.renderRDOList();
   },
@@ -1155,18 +1267,71 @@ const app = {
     event.target.value = '';
   },
 
+  // Prazo oficial de submissão: até 12h00 do dia útil subsequente à data de referência
+  getSubmissionDeadline(dateString) {
+    let refPart = String(dateString || '').split('T')[0];
+    let [y, m, d] = refPart.split('-').map(Number);
+    if (!y || !m || !d) {
+      const now = new Date();
+      y = now.getFullYear();
+      m = now.getMonth() + 1;
+      d = now.getDate();
+    }
+    const dt = new Date(y, m - 1, d, 12, 0, 0, 0);
+    dt.setDate(dt.getDate() + 1);
+    let guard = 0;
+    while (guard < 15) {
+      const iso = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+      const dow = dt.getDay();
+      if (dow !== 0 && dow !== 6 && !this.isBrazilianHoliday(iso)) break;
+      dt.setDate(dt.getDate() + 1);
+      guard++;
+    }
+    return dt;
+  },
+
+  // Prazo de análise da CMPC: 24h a 48h (até 72h quando inclui fim de semana ou feriado)
+  getAnalysisSlaInfo(sentAt) {
+    const start = sentAt ? new Date(sentAt) : new Date();
+    const base = isNaN(start.getTime()) ? new Date() : start;
+    let hasWeekendOrHoliday = false;
+    for (let i = 0; i <= 2; i++) {
+      const check = new Date(base.getTime() + i * 86400000);
+      const iso = `${check.getFullYear()}-${String(check.getMonth() + 1).padStart(2, '0')}-${String(check.getDate()).padStart(2, '0')}`;
+      const dow = check.getDay();
+      if (dow === 0 || dow === 6 || this.isBrazilianHoliday(iso)) {
+        hasWeekendOrHoliday = true;
+        break;
+      }
+    }
+    return {
+      hours: hasWeekendOrHoliday ? 72 : 48,
+      hasWeekendOrHoliday,
+      label: hasWeekendOrHoliday ? '24h a 48h (até 72h c/ FDS ou feriado)' : '24h a 48h'
+    };
+  },
+
   getRDOExpiryInfo(rdo) {
     if (!rdo) {
       return {
+        isDraft: false,
         isSent: false,
         isApproved: false,
+        isApprovedStrict: false,
+        isApprovedWithCaveats: false,
+        isReturned: false,
+        isContested: false,
         isRejected: false,
         isPendingApproval: false,
+        isIntempestivo: false,
         isExpired: false,
         remainingMs: 0,
         text: '',
         hours: 0,
         minutes: 0,
+        submissionDeadline: null,
+        deadlineText: '',
+        analysisSlaLabel: '24h a 48h',
         sentTo: '',
         sentAt: null,
         approvedBy: '',
@@ -1176,92 +1341,107 @@ const app = {
       };
     }
 
-    const isApproved = Boolean(rdo.approved === true || rdo.approvalStatus === 'aprovado' || rdo.status === 'aprovado');
-    const isRejected = Boolean(rdo.approvalStatus === 'reprovado');
-    const isSent = Boolean(rdo.sent === true || rdo.status === 'enviado' || rdo.sentAt || isApproved);
+    const st = rdo.approvalStatus || rdo.status || '';
+    const isApprovedWithCaveats = (st === 'aprovado_com_ressalvas');
+    const isApprovedStrict = Boolean(!isApprovedWithCaveats && (st === 'aprovado' || rdo.approved === true));
+    const isApproved = isApprovedStrict || isApprovedWithCaveats;
+    const isReturned = (st === 'devolvido');
+    const isContested = (st === 'contestado' || st === 'reprovado');
+    const isRejected = isReturned || isContested;
+    const isSent = Boolean(rdo.sent === true || rdo.status === 'enviado' || rdo.sentAt || isApproved || isRejected);
     const isPendingApproval = isSent && !isApproved && !isRejected;
-    // Rascunho: ainda não enviado, sem prazo de 24h e sem bloqueio
     const isDraft = Boolean(rdo.isDraft === true && !isSent);
 
-    let createdTime = null;
-    if (rdo.createdAt) {
-      createdTime = new Date(rdo.createdAt).getTime();
-    } else if (rdo.data) {
-      createdTime = new Date(rdo.data).getTime();
-    }
-
-    if (!createdTime || isNaN(createdTime)) {
-      createdTime = Date.now();
-    }
-
+    const deadlineDate = this.getSubmissionDeadline(rdo.data || rdo.createdAt);
+    const deadlineText = deadlineDate.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
     const now = Date.now();
-    const expiryTime = createdTime + (24 * 60 * 60 * 1000); // 24 horas a partir da criação
-    const remainingMs = expiryTime - now;
-    const isExpired = !isSent && !isDraft && (remainingMs <= 0);
+    const remainingMs = deadlineDate.getTime() - now;
+    const isLateNow = !isSent && (remainingMs <= 0);
+    const isIntempestivo = Boolean(rdo.intempestivo || (!isDraft && isLateNow));
+    const isExpired = false; // Prazo vencido marca como INTEMPESTIVO, sem bloquear envio nem exigir desbloqueio
+    const slaInfo = this.getAnalysisSlaInfo(rdo.sentAt);
 
     let text = '';
     let hours = 0;
     let minutes = 0;
 
-    if (isApproved) {
+    if (isApprovedStrict) {
       const appDate = rdo.approvedAt ? new Date(rdo.approvedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
       text = `Aprovado${appDate ? ' (' + appDate + ')' : ''}`;
-    } else if (isRejected) {
-      text = 'Reprovado';
+    } else if (isApprovedWithCaveats) {
+      text = 'Aprovado c/ Ressalvas';
+    } else if (isReturned) {
+      text = 'Devolvido p/ Correção';
+    } else if (isContested) {
+      text = 'Contestado';
     } else if (isSent) {
       const sentDate = rdo.sentAt ? new Date(rdo.sentAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
-      text = `Aguardando Aprovação${sentDate ? ' (' + sentDate + ')' : ''}`;
+      text = `Aguardando CMPC${sentDate ? ' (' + sentDate + ')' : ''}`;
     } else if (isDraft) {
       text = 'Rascunho';
-    } else if (isExpired) {
-      text = 'Bloqueado (+24h)';
+    } else if (isLateNow) {
+      text = `Intempestivo (após ${deadlineText})`;
     } else {
       const totalMinutes = Math.max(0, Math.floor(remainingMs / (1000 * 60)));
       hours = Math.floor(totalMinutes / 60);
       minutes = totalMinutes % 60;
-      text = `Expira em ${hours}h ${minutes}m`;
+      text = `Prazo até 12h (${hours}h ${minutes}m)`;
     }
 
     return {
       isDraft,
       isSent,
       isApproved,
+      isApprovedStrict,
+      isApprovedWithCaveats,
+      isReturned,
+      isContested,
       isRejected,
       isPendingApproval,
+      isIntempestivo,
+      isLateNow,
       isExpired,
       remainingMs,
       hours,
       minutes,
+      submissionDeadline: deadlineDate.toISOString(),
+      deadlineText,
+      analysisSlaHours: rdo.analysisSlaHours || slaInfo.hours,
+      analysisSlaLabel: slaInfo.label,
       text,
       sentTo: rdo.sentTo || '',
       sentAt: rdo.sentAt || null,
       approvedBy: rdo.approvedBy || '',
       approvedAt: rdo.approvedAt || null,
       approvalNotes: rdo.approvalNotes || '',
-      approvalStatus: rdo.approvalStatus || (isApproved ? 'aprovado' : (isRejected ? 'reprovado' : 'pendente'))
+      approvalStatus: rdo.approvalStatus || (isApprovedStrict ? 'aprovado' : (isApprovedWithCaveats ? 'aprovado_com_ressalvas' : (isReturned ? 'devolvido' : (isContested ? 'contestado' : 'pendente'))))
     };
   },
 
   isRDOLocked(rdo) {
-    if (!rdo) return false;
-    const info = this.getRDOExpiryInfo(rdo);
-    return info.isExpired;
+    // RDO fora do prazo torna-se INTEMPESTIVO, mas continua passível de submissão/revisão rastreada
+    return false;
   },
 
   renderRDOFormStatusBanner(rdo) {
     const banner = document.getElementById('rdo-form-status-banner');
     const sendBtnLabel = document.getElementById('btn-editor-send-label');
-    // Botão "Salvar Rascunho" só existe para RDOs novos ou que ainda são rascunho
-    document.querySelectorAll('.btn-save-draft').forEach(b => b.classList.toggle('hidden', !!(rdo && rdo.id && !rdo.isDraft)));
+    // Botão "Salvar Rascunho" só existe para RDOs novos ou que ainda são rascunho não submetido
+    document.querySelectorAll('.btn-save-draft').forEach(b => b.classList.toggle('hidden', !!(rdo && rdo.id && (!rdo.isDraft || rdo.sent))));
     if (!banner) return;
 
     if (!rdo || !rdo.id) {
-      banner.className = 'rdo-form-status-banner rdo-banner-new';
+      const refVal = document.getElementById('rdo-data')?.value || '';
+      const dl = this.getSubmissionDeadline(refVal);
+      const dlTxt = dl.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+      const late = Date.now() > dl.getTime();
+      banner.className = `rdo-form-status-banner ${late ? 'rdo-banner-returned' : 'rdo-banner-new'}`;
       banner.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px;">
-          <span>⏱️</span>
-          <span><strong>Novo RDO:</strong> use <strong>Salvar Rascunho</strong> para continuar depois (não envia o RDO). O envio só acontece em <strong>Salvar e Enviar RDO</strong>.</span>
+          <span>${late ? '⚠️' : '⏱️'}</span>
+          <span><strong>Novo RDO:</strong> prazo oficial de submissão até <strong>${dlTxt}</strong> (12h do dia útil subsequente). ${late ? '<strong style="color:#b91c1c;">Fora do prazo (será marcado como INTEMPESTIVO).</strong>' : 'Use <strong>Salvar Rascunho</strong> para continuar depois ou <strong>Salvar e Enviar RDO</strong> para submeter.'}</span>
         </div>
+        <button type="button" class="btn btn-outline btn-xs" onclick="app.openRulesModal(true)">📜 Ver Regras</button>
       `;
       if (sendBtnLabel) sendBtnLabel.textContent = 'Enviar RDO';
       return;
@@ -1270,50 +1450,94 @@ const app = {
     const session = StorageService.getSession();
     const canApprove = session && (session.role === 'Admin' || session.role === 'Engenheiro');
     const info = this.getRDOExpiryInfo(rdo);
+    const revBadge = rdo.revisionNumber > 0 ? `<span class="badge-revision">Rev. ${rdo.revisionNumber}</span>` : '';
+    const intempBadge = info.isIntempestivo ? `<span class="badge-status-intempestivo" style="margin-left:6px; margin-top:0;">⚠️ INTEMPESTIVO</span>` : '';
+    const hasHistory = Boolean(info.isSent || rdo.revisionNumber > 0 || (rdo.revisions && rdo.revisions.length > 0) || (rdo.approvalHistory && rdo.approvalHistory.length > 0));
+    const historyBtn = hasHistory ? `<button type="button" class="btn btn-outline btn-xs" style="background:#fff; color:#334155; border-color:#cbd5e1;" onclick="app.openRevisionHistoryModal('${rdo.id}')">🕒 Histórico (${rdo.revisionNumber || 0} rev.)</button>` : '';
 
     if (info.isDraft) {
-      banner.className = 'rdo-form-status-banner rdo-banner-draft';
+      banner.className = `rdo-form-status-banner ${info.isLateNow ? 'rdo-banner-returned' : 'rdo-banner-draft'}`;
       banner.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:1.2rem;">📝</span>
           <div>
-            <strong>Rascunho — RDO ainda não enviado.</strong>
-            <span style="font-size:0.82rem; margin-left:6px;">Só aparece para você, sem prazo de 24h. Quando terminar, clique em <strong>Salvar e Enviar RDO</strong>.</span>
+            <strong>Rascunho — RDO ainda não submetido.</strong> ${info.isLateNow ? '<span class="badge-status-intempestivo" style="margin-left:6px;">⚠️ Prazo 12h vencido (será INTEMPESTIVO)</span>' : `<span style="font-size:0.82rem; margin-left:6px;">Submeter até <strong>${info.deadlineText}</strong>.</span>`}
+            <div style="font-size:0.78rem; margin-top:2px;">Após a submissão não poderá ser excluído e alterações gerarão revisão rastreável.</div>
           </div>
         </div>
       `;
       if (sendBtnLabel) sendBtnLabel.textContent = 'Enviar RDO';
-    } else if (info.isApproved) {
+    } else if (info.isApprovedStrict) {
       const appDate = info.approvedAt ? new Date(info.approvedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
       banner.className = 'rdo-form-status-banner rdo-banner-approved';
       banner.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:1.25rem;">✅</span>
           <div>
-            <strong>RDO Aprovado pela Fiscalização / Engenharia!</strong>
+            <strong>RDO Aprovado pela Fiscalização CMPC!</strong> ${revBadge}${intempBadge}
             <span style="font-size:0.82rem; margin-left:6px; opacity:0.95;">Aprovador: <strong>${this.escapeHtml(info.approvedBy || rdo.sigFiscalizacao || 'Fiscalização')}</strong>${appDate ? ' • ' + appDate : ''}</span>
             ${info.approvalNotes ? `<div style="font-size:0.8rem; font-style:italic; margin-top:2px;">Parecer: "${this.escapeHtml(info.approvalNotes)}"</div>` : ''}
           </div>
         </div>
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          ${historyBtn}
           ${canApprove ? `<button type="button" class="btn btn-outline btn-xs" style="background:#fff; color:#065f46; border-color:#a7f3d0;" onclick="app.openApproveModal('${rdo.id}')">Alterar Parecer</button>` : ''}
           <button type="button" class="btn btn-outline btn-xs" style="background:#fff; color:#065f46; border-color:#a7f3d0;" onclick="app.openSendModal('${rdo.id}')">Reenviar E-mail</button>
         </div>
       `;
       if (sendBtnLabel) sendBtnLabel.textContent = 'Reenviar';
-    } else if (info.isRejected) {
+    } else if (info.isApprovedWithCaveats) {
+      const appDate = info.approvedAt ? new Date(info.approvedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
+      banner.className = 'rdo-form-status-banner rdo-banner-caveats';
+      banner.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.25rem;">⚠️</span>
+          <div>
+            <strong>RDO Aprovado com Ressalvas pela CMPC</strong> ${revBadge}${intempBadge}
+            <span style="font-size:0.82rem; margin-left:6px;">Por: <strong>${this.escapeHtml(info.approvedBy || 'Fiscalização')}</strong>${appDate ? ' • ' + appDate : ''}</span>
+            ${info.approvalNotes ? `<div style="font-size:0.8rem; font-style:italic; margin-top:2px;">Ressalva: "${this.escapeHtml(info.approvalNotes)}"</div>` : ''}
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          ${historyBtn}
+          ${canApprove ? `<button type="button" class="btn btn-outline btn-xs" style="background:#fff; color:#92400e; border-color:#fcd34d;" onclick="app.openApproveModal('${rdo.id}')">Alterar Parecer</button>` : ''}
+          <button type="button" class="btn btn-outline btn-xs" onclick="app.openSendModal('${rdo.id}')">Reenviar E-mail</button>
+        </div>
+      `;
+      if (sendBtnLabel) sendBtnLabel.textContent = 'Reenviar';
+    } else if (info.isReturned) {
+      const appDate = info.approvedAt ? new Date(info.approvedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
+      banner.className = 'rdo-form-status-banner rdo-banner-returned';
+      banner.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.25rem;">↩️</span>
+          <div>
+            <strong>RDO Devolvido para Correção pela CMPC</strong> ${revBadge}${intempBadge}
+            <span style="font-size:0.82rem; margin-left:6px;">Motivo: <strong>${this.escapeHtml(info.approvalNotes || 'Ajuste solicitado')}</strong>${appDate ? ' • ' + appDate : ''}</span>
+            <div style="font-size:0.78rem; margin-top:2px;">Ao salvar a correção, o original será preservado e será registrada uma nova Revisão.</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          ${historyBtn}
+          ${canApprove ? `<button type="button" class="btn btn-primary btn-xs btn-approve-quick" onclick="app.openApproveModal('${rdo.id}')">Reavaliar</button>` : ''}
+          <button type="button" class="btn btn-outline btn-xs" onclick="app.openSendModal('${rdo.id}')">Reenviar E-mail</button>
+        </div>
+      `;
+      if (sendBtnLabel) sendBtnLabel.textContent = 'Reenviar';
+    } else if (info.isContested) {
       const appDate = info.approvedAt ? new Date(info.approvedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
       banner.className = 'rdo-form-status-banner rdo-banner-rejected';
       banner.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:1.25rem;">❌</span>
           <div>
-            <strong>RDO Reprovado / Ajustes Solicitados pela Fiscalização</strong>
-            <span style="font-size:0.82rem; margin-left:6px; opacity:0.95;">Parecer: <strong>${this.escapeHtml(info.approvalNotes || 'Não aprovado')}</strong>${appDate ? ' • ' + appDate : ''}</span>
+            <strong>RDO Contestado pela Fiscalização CMPC</strong> ${revBadge}${intempBadge}
+            <span style="font-size:0.82rem; margin-left:6px;">Contestação: <strong>${this.escapeHtml(info.approvalNotes || 'Informações contestadas')}</strong>${appDate ? ' • ' + appDate : ''}</span>
           </div>
         </div>
-        <div style="display:flex; gap:8px;">
-          ${canApprove ? `<button type="button" class="btn btn-primary btn-xs btn-approve-quick" onclick="app.openApproveModal('${rdo.id}')">Reavaliar / Aprovar</button>` : ''}
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          ${historyBtn}
+          ${canApprove ? `<button type="button" class="btn btn-primary btn-xs btn-approve-quick" onclick="app.openApproveModal('${rdo.id}')">Reavaliar</button>` : ''}
           <button type="button" class="btn btn-outline btn-xs" onclick="app.openSendModal('${rdo.id}')">Reenviar E-mail</button>
         </div>
       `;
@@ -1325,14 +1549,15 @@ const app = {
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:1.25rem;">⏳</span>
           <div>
-            <strong>RDO Enviado — Aguardando Aprovação (Check) da Fiscalização</strong>
-            <span style="font-size:0.82rem; margin-left:6px; opacity:0.95;">Enviado para: <strong>${this.escapeHtml(info.sentTo || 'Cadastrado')}</strong>${sentDate ? ' • ' + sentDate : ''}</span>
+            <strong>RDO Submetido — Em análise da Fiscalização CMPC (${info.analysisSlaLabel})</strong> ${revBadge}${intempBadge}
+            <div style="font-size:0.8rem; opacity:0.95;">Enviado para: <strong>${this.escapeHtml(info.sentTo || 'Cadastrado')}</strong>${sentDate ? ' • ' + sentDate : ''} • <em>Ausência de manifestação não caracteriza aceite tácito.</em></div>
           </div>
         </div>
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          ${historyBtn}
           ${canApprove ? `<button type="button" class="btn btn-primary btn-xs btn-approve-quick" onclick="app.openApproveModal('${rdo.id}')">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            <span>Aprovar RDO</span>
+            <span>Analisar RDO</span>
           </button>` : ''}
           <button type="button" class="btn btn-outline btn-xs" style="background:#fff; color:#1e40af; border-color:#bfdbfe;" onclick="app.openSendModal('${rdo.id}')">
             Reenviar
@@ -1340,26 +1565,14 @@ const app = {
         </div>
       `;
       if (sendBtnLabel) sendBtnLabel.textContent = 'Reenviar';
-    } else if (info.isExpired) {
-      banner.className = 'rdo-form-status-banner rdo-banner-expired';
-      banner.innerHTML = `
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:1.2rem;">🔒</span>
-          <div>
-            <strong>RDO Bloqueado (+24 horas sem envio):</strong>
-            <span style="font-size:0.82rem; margin-left:6px;">O prazo regulamentar de 24 horas encerrou-se sem envio de confirmação.</span>
-          </div>
-        </div>
-      `;
-      if (sendBtnLabel) sendBtnLabel.textContent = 'Enviar RDO';
     } else {
-      banner.className = 'rdo-form-status-banner rdo-banner-countdown';
+      banner.className = `rdo-form-status-banner ${info.isLateNow ? 'rdo-banner-returned' : 'rdo-banner-countdown'}`;
       banner.innerHTML = `
         <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-size:1.2rem;">⏳</span>
+          <span style="font-size:1.2rem;">${info.isLateNow ? '⚠️' : '⏳'}</span>
           <div>
-            <strong>Contador Regressivo de Envio:</strong>
-            <span>Restam <strong>${info.hours}h ${info.minutes}m</strong> para confirmar o envio por e-mail antes do bloqueio de 24h.</span>
+            <strong>${info.isLateNow ? 'Submissão Fora do Prazo (Intempestivo):' : 'Prazo de Submissão (12h dia útil seguinte):'}</strong>
+            <span>${info.isLateNow ? `O prazo (${info.deadlineText}) já encerrou. O RDO será registrado como <strong>INTEMPESTIVO</strong> e sujeito à aceitação da CMPC.` : `Restam <strong>${info.hours}h ${info.minutes}m</strong> (até <strong>${info.deadlineText}</strong>).`}</span>
           </div>
         </div>
         <button type="button" class="btn btn-primary btn-xs" style="background:#059669; border-color:#059669; display:inline-flex; align-items:center; gap:5px;" onclick="app.openSendModal('${rdo.id}')">
@@ -1476,6 +1689,10 @@ const app = {
     }
 
     const session = StorageService.getSession();
+    if (rdo.sent === true || rdo.sentAt || rdo.status === 'enviado' || rdo.approved === true) {
+      this.showToast('⛔ Regra CMPC: após a submissão do RDO, não é permitida a exclusão do registro original.', 'error');
+      return;
+    }
     const isOwner = session && (
       rdo.userId === session.id ||
       rdo.createdBy === session.email ||
@@ -1631,6 +1848,10 @@ const app = {
     }
 
     const session = StorageService.getSession();
+    if (rdo.sent === true || rdo.sentAt || rdo.status === 'enviado' || rdo.approved === true) {
+      this.showToast('⛔ Regra CMPC: após a submissão do RDO, não é permitida a exclusão do registro original.', 'error');
+      return;
+    }
     const isOwner = session && (
       rdo.userId === session.id ||
       rdo.createdBy === session.email ||
@@ -2196,11 +2417,40 @@ const app = {
 
     const session = StorageService.getSession();
     const existingRDO = this.currentRDOId ? StorageService.getRecordById(this.currentRDOId) : null;
+    const isAlreadySubmitted = Boolean(existingRDO && (existingRDO.sent === true || existingRDO.sentAt));
 
-    if (draftMode && existingRDO && !existingRDO.isDraft) {
-      this.showToast('Este RDO já não é um rascunho. Use "Salvar e Enviar RDO".', 'warning');
+    // Regra CMPC: emissão obrigatória inclusive em dias sem atividade, indicando o respectivo motivo
+    if (!draftMode) {
+      const hasAnyActDesc = Object.values(activitiesDescriptions).some(v => v && v.trim().length > 0);
+      if (totalHH === 0 && !hasAnyActDesc && !comentarios && !sendObs) {
+        this.showToast('Dia sem atividade: informe obrigatoriamente o motivo em COMENTÁRIOS ou Observações.', 'error');
+        const comEl = document.getElementById('rdo-comentarios');
+        if (comEl) {
+          comEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          comEl.focus();
+        }
+        return;
+      }
+    }
+
+    if (draftMode && existingRDO && (!existingRDO.isDraft || existingRDO.sent)) {
+      this.showToast('Este RDO já foi submetido. Use "Salvar e Enviar RDO" para registrar uma Revisão.', 'warning');
       return;
     }
+
+    let revisionReason = '';
+    if (isAlreadySubmitted) {
+      const promptMsg = 'Este RDO já foi submetido. Para preservar o histórico e a rastreabilidade sem alterar o original, informe o MOTIVO DA REVISÃO / CORREÇÃO:';
+      const typed = window.prompt(promptMsg, '');
+      if (typed === null || !typed.trim()) {
+        this.showToast('Correção cancelada: é obrigatório informar o motivo da revisão para manter a rastreabilidade.', 'warning');
+        return;
+      }
+      revisionReason = typed.trim();
+    }
+
+    const deadlineDate = this.getSubmissionDeadline(data);
+    const isIntempestivo = Boolean((existingRDO && existingRDO.intempestivo) || (Date.now() > deadlineDate.getTime()));
 
     // Um RDO novo (ou que já é rascunho) permanece RASCUNHO até o envio ser confirmado
     const isDraft = draftMode ? true : (existingRDO ? existingRDO.isDraft === true : true);
@@ -2208,6 +2458,9 @@ const app = {
 
     const rdoPayload = {
       id: this.currentRDOId,
+      _revisionReason: revisionReason,
+      intempestivo: isAlreadySubmitted ? Boolean(existingRDO.intempestivo) : (isDraft ? false : isIntempestivo),
+      submissionDeadline: deadlineDate.toISOString(),
       numero,
       data,
       diaSemana,
@@ -2256,6 +2509,12 @@ const app = {
       if (heading) heading.textContent = `Rascunho: RDO ${saved.numero}`;
       this.renderRDOFormStatusBanner(saved);
       this.showToast('Rascunho salvo! O RDO NÃO foi enviado. Continue quando quiser pelo Histórico de RDOs.', 'success');
+      return;
+    }
+
+    if (isAlreadySubmitted) {
+      this.renderRDOFormStatusBanner(saved);
+      this.showToast(`✅ Revisão Rev. ${saved.revisionNumber} salva! Registro original e histórico preservados.`, 'success');
       return;
     }
 
@@ -2339,6 +2598,10 @@ const app = {
     if (!rdo) return;
 
     const session = StorageService.getSession();
+    if (rdo.sent === true || rdo.sentAt || rdo.status === 'enviado' || rdo.approved === true) {
+      this.showToast('⛔ Regra CMPC: após a submissão do RDO, não é permitida a exclusão do registro original.', 'error');
+      return;
+    }
     const isOwner = session && (
       rdo.userId === session.id ||
       rdo.createdBy === session.email ||
@@ -2508,13 +2771,15 @@ const app = {
         ? `<div style="font-weight:600; color:var(--slate-800); white-space:nowrap;" title="${this.escapeHtml(fiscalNome)}">${this.escapeHtml(fiscalNome)} ${fiscalHasSig ? '<span title="Assinatura / Visto anexado" style="font-size:0.75rem;">✍️</span>' : ''}</div>`
         : `<span style="color:var(--slate-400); font-size:0.8rem;">-</span>`;
       let statusBadge = '';
+      const intempTag = info.isIntempestivo ? `<div class="badge-status-intempestivo" title="Apresentado fora do prazo (após 12h do dia útil subsequente)">⚠️ INTEMPESTIVO</div>` : '';
       if (info.isDraft) {
         statusBadge = `
-          <span class="badge-status badge-status-draft" title="Rascunho: ainda não enviado, visível só para você">
+          <span class="badge-status badge-status-draft" title="Rascunho: ainda não submetido, visível só para você">
             📝 RASCUNHO
           </span>
+          ${info.isLateNow ? '<div class="badge-status-intempestivo" title="Prazo das 12h vencido">⚠️ PRAZO VENCIDO</div>' : ''}
         `;
-      } else if (info.isApproved) {
+      } else if (info.isApprovedStrict) {
         const approvedName = info.approvedBy || r.sigFiscalizacao || 'Fiscalização';
         statusBadge = `
           <div>
@@ -2523,40 +2788,56 @@ const app = {
               APROVADO
             </span>
             <div class="rdo-subtext" title="${this.escapeHtml(approvedName)}">✍️ ${this.escapeHtml(approvedName)}</div>
+            ${intempTag}
           </div>
         `;
-      } else if (info.isRejected) {
+      } else if (info.isApprovedWithCaveats) {
+        const approvedName = info.approvedBy || r.sigFiscalizacao || 'Fiscalização';
         statusBadge = `
           <div>
-            <span class="badge-status badge-status-rejected" title="${this.escapeHtml(info.approvalNotes || 'Reprovado')}">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              REPROVADO
+            <span class="badge-status badge-status-caveats" title="${this.escapeHtml(info.approvalNotes || 'Aprovado com ressalvas')}">
+              ⚠️ APROV. C/ RESSALVAS
+            </span>
+            <div class="rdo-subtext" title="${this.escapeHtml(approvedName)}">✍️ ${this.escapeHtml(approvedName)}</div>
+            ${intempTag}
+          </div>
+        `;
+      } else if (info.isReturned) {
+        statusBadge = `
+          <div>
+            <span class="badge-status badge-status-returned" title="${this.escapeHtml(info.approvalNotes || 'Devolvido para correção')}">
+              ↩️ DEVOLVIDO
             </span>
             ${info.approvalNotes ? `<div class="rdo-subtext" title="${this.escapeHtml(info.approvalNotes)}">${this.escapeHtml(info.approvalNotes)}</div>` : ''}
+            ${intempTag}
+          </div>
+        `;
+      } else if (info.isContested) {
+        statusBadge = `
+          <div>
+            <span class="badge-status badge-status-contested" title="${this.escapeHtml(info.approvalNotes || 'Contestado')}">
+              ❌ CONTESTADO
+            </span>
+            ${info.approvalNotes ? `<div class="rdo-subtext" title="${this.escapeHtml(info.approvalNotes)}">${this.escapeHtml(info.approvalNotes)}</div>` : ''}
+            ${intempTag}
           </div>
         `;
       } else if (info.isSent) {
         statusBadge = `
           <div>
-            <span class="badge-status badge-status-pending-approval" title="Enviado para: ${this.escapeHtml(info.sentTo)} - Aguardando aprovação">
+            <span class="badge-status badge-status-pending-approval" title="Análise CMPC (${info.analysisSlaLabel}) - Sem aceite tácito">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              AGUARDANDO APROVAÇÃO
+              AGUARDANDO CMPC
             </span>
             ${info.sentTo ? `<div class="rdo-subtext" title="${this.escapeHtml(info.sentTo)}">✉️ ${this.escapeHtml(info.sentTo)}</div>` : ''}
+            ${intempTag}
           </div>
-        `;
-      } else if (info.isExpired) {
-        statusBadge = `
-          <span class="badge-status badge-status-expired" title="Prazo de 24 horas encerrado sem envio">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            Bloqueado (+24h)
-          </span>
         `;
       } else {
         statusBadge = `
-          <span class="badge-status badge-status-countdown" title="Contador regressivo para expiração de 24h">
+          <span class="badge-status ${info.isLateNow ? 'badge-status-expired' : 'badge-status-countdown'}" title="Submissão até ${info.deadlineText}">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            Expira em ${info.hours}h ${info.minutes}m
+            ${info.isLateNow ? 'Intempestivo' : `Até 12h (${info.hours}h ${info.minutes}m)`}
           </span>
         `;
       }
@@ -2564,7 +2845,7 @@ const app = {
       const canApprove = session && (session.role === 'Admin' || session.role === 'Engenheiro');
       let approveBtn = '';
       if (canApprove && !info.isDraft) {
-        if (info.isApproved) {
+        if (info.isApprovedStrict) {
           approveBtn = `
             <button class="btn btn-outline btn-xs" style="color:#047857; border-color:#a7f3d0; background:#ecfdf5;" onclick="app.openApproveModal('${r.id}')" title="Aprovado pela Fiscalização - Clique para ver/alterar">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -2573,13 +2854,20 @@ const app = {
           `;
         } else {
           approveBtn = `
-            <button class="btn btn-primary btn-xs btn-approve-quick" onclick="app.openApproveModal('${r.id}')" title="Avaliar e Aprovar RDO">
+            <button class="btn btn-primary btn-xs btn-approve-quick" onclick="app.openApproveModal('${r.id}')" title="Analisar RDO (Aprovar / Ressalvas / Devolver / Contestar)">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span>Aprovar</span>
+              <span>Analisar</span>
             </button>
           `;
         }
       }
+
+      const revBadgeList = r.revisionNumber > 0 ? `<span class="badge-revision" onclick="app.openRevisionHistoryModal('${r.id}')" style="cursor:pointer;" title="Ver histórico de revisões">Rev.${r.revisionNumber}</span>` : '';
+      const delBtnHtml = info.isSent
+        ? `<button class="btn btn-ghost btn-xs btn-icon" style="color: #cbd5e1; cursor: not-allowed;" onclick="app.deleteRDO('${r.id}')" title="Proibida a exclusão após submissão do RDO">🔒</button>`
+        : `<button class="btn btn-ghost btn-xs btn-icon" style="color: #ef4444;" onclick="app.deleteRDO('${r.id}')" title="Excluir Rascunho">
+             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+           </button>`;
 
       const sendBtn = info.isSent
         ? `<button class="btn btn-outline btn-xs" style="color: #047857; border-color: #a7f3d0; background: #ecfdf5;" onclick="app.openSendModal('${r.id}')" title="Reenviar RDO por E-mail">
@@ -2595,7 +2883,7 @@ const app = {
         <tr>
           <td class="rdo-logo-cell">${logoCell}</td>
           <td><span style="font-weight:700; color:var(--slate-800);">${this.escapeHtml(r.contrato || '-')}</span></td>
-          <td><strong style="color: var(--primary-800);">${this.escapeHtml(r.numero || '-')}</strong></td>
+          <td><strong style="color: var(--primary-800);">${this.escapeHtml(r.numero || '-')}</strong>${revBadgeList}</td>
           <td><span style="color: var(--slate-800); font-weight:600; white-space:nowrap;">${formattedDate}</span></td>
           <td>${statusBadge}</td>
           <td>
@@ -2611,9 +2899,9 @@ const app = {
             <div class="actions-row">
               ${approveBtn}
               ${sendBtn}
-              <button class="btn btn-outline btn-xs" onclick="app.editRDO('${r.id}')" title="Editar RDO">
+              <button class="btn btn-outline btn-xs" onclick="app.editRDO('${r.id}')" title="${info.isSent ? 'Abrir / Revisar RDO' : 'Editar RDO'}">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                <span>Editar</span>
+                <span>${info.isSent ? 'Revisar' : 'Editar'}</span>
               </button>
               <button class="btn btn-outline btn-xs btn-duplicate" onclick="app.duplicateRDO('${r.id}')" title="Duplicar RDO (mantém equipe e dados base, limpando fotos, comentários e assinaturas)">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -2622,9 +2910,7 @@ const app = {
               <button class="btn btn-outline btn-xs" onclick="app.quickPrintRDO('${r.id}')" title="Imprimir / PDF">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
               </button>
-              <button class="btn btn-ghost btn-xs btn-icon" style="color: #ef4444;" onclick="app.deleteRDO('${r.id}')" title="Excluir RDO">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              </button>
+              ${delBtnHtml}
             </div>
           </td>
         </tr>
@@ -2660,6 +2946,7 @@ const app = {
           formattedDate = rdo.data.split('-').reverse().join('/');
         }
       }
+      const info = this.getRDOExpiryInfo(rdo);
       summaryBox.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
           <div><strong style="color:var(--primary-800); font-size:1.05rem;">RDO Nº: ${this.escapeHtml(rdo.numero || 'S/N')}</strong></div>
@@ -2671,10 +2958,12 @@ const app = {
           <div>👥 <strong>Total Efetivo:</strong> ${this.escapeHtml(rdo.totalHH || '0')} HH</div>
           <div>🏢 <strong>Contratada:</strong> ${this.escapeHtml(rdo.contratada || '-')}</div>
         </div>
+        ${info.isIntempestivo ? '<div style="margin-top:8px; padding:6px 10px; background:#fef2f2; border:1px solid #f87171; border-radius:6px; color:#b91c1c; font-weight:700; font-size:0.78rem;">⚠️ RDO INTEMPESTIVO: apresentado fora do prazo oficial das 12h do dia útil subsequente.</div>' : ''}
       `;
     }
 
-    const currentDecision = (rdo.approvalStatus === 'reprovado') ? 'reprovado' : 'aprovado';
+    const mappedStatus = rdo.approvalStatus === 'reprovado' ? 'contestado' : (rdo.approvalStatus || 'aprovado');
+    const currentDecision = ['aprovado', 'aprovado_com_ressalvas', 'devolvido', 'contestado'].includes(mappedStatus) ? mappedStatus : 'aprovado';
     const radioBtn = document.querySelector(`input[name="approval_decision"][value="${currentDecision}"]`);
     if (radioBtn) radioBtn.checked = true;
     this.onApprovalDecisionChange(currentDecision);
@@ -2697,40 +2986,34 @@ const app = {
   },
 
   onApprovalDecisionChange(val) {
-    const labelAprovado = document.getElementById('label-decision-aprovado');
-    const labelReprovado = document.getElementById('label-decision-reprovado');
+    const styles = {
+      aprovado: { border: '#10b981', bg: '#ecfdf5', color: '#065f46', btn: '#059669' },
+      aprovado_com_ressalvas: { border: '#f59e0b', bg: '#fffbeb', color: '#92400e', btn: '#d97706' },
+      devolvido: { border: '#ea580c', bg: '#fff7ed', color: '#9a3412', btn: '#ea580c' },
+      contestado: { border: '#ef4444', bg: '#fef2f2', color: '#991b1b', btn: '#dc2626' }
+    };
     const saveBtn = document.getElementById('btn-save-approval');
-
-    if (val === 'aprovado') {
-      if (labelAprovado) {
-        labelAprovado.style.borderColor = '#10b981';
-        labelAprovado.style.background = '#ecfdf5';
-        labelAprovado.style.color = '#065f46';
+    const reqSpan = document.getElementById('approve-notes-req');
+    Object.keys(styles).forEach(k => {
+      const el = document.getElementById(`label-decision-${k}`);
+      if (!el) return;
+      if (k === val) {
+        el.style.borderColor = styles[k].border;
+        el.style.background = styles[k].bg;
+        el.style.color = styles[k].color;
+      } else {
+        el.style.borderColor = '#cbd5e1';
+        el.style.background = '#ffffff';
+        el.style.color = '#64748b';
       }
-      if (labelReprovado) {
-        labelReprovado.style.borderColor = '#cbd5e1';
-        labelReprovado.style.background = '#ffffff';
-        labelReprovado.style.color = '#64748b';
-      }
-      if (saveBtn) {
-        saveBtn.style.background = '#2563eb';
-        saveBtn.style.borderColor = '#2563eb';
-      }
-    } else {
-      if (labelReprovado) {
-        labelReprovado.style.borderColor = '#ef4444';
-        labelReprovado.style.background = '#fef2f2';
-        labelReprovado.style.color = '#991b1b';
-      }
-      if (labelAprovado) {
-        labelAprovado.style.borderColor = '#cbd5e1';
-        labelAprovado.style.background = '#ffffff';
-        labelAprovado.style.color = '#64748b';
-      }
-      if (saveBtn) {
-        saveBtn.style.background = '#dc2626';
-        saveBtn.style.borderColor = '#dc2626';
-      }
+    });
+    const cur = styles[val] || styles.aprovado;
+    if (saveBtn) {
+      saveBtn.style.background = cur.btn;
+      saveBtn.style.borderColor = cur.btn;
+    }
+    if (reqSpan) {
+      reqSpan.style.display = val === 'aprovado' ? 'none' : 'inline';
     }
   },
 
@@ -2746,6 +3029,12 @@ const app = {
 
     if (!fiscalName) {
       this.showToast('Por favor, informe o nome / identificação do fiscalizador.', 'warning');
+      return;
+    }
+    if (decision !== 'aprovado' && !notes) {
+      this.showToast('Informe o parecer técnico / motivo da ressalva, devolução ou contestação.', 'warning');
+      const notesEl = document.getElementById('approve-notes');
+      if (notesEl) notesEl.focus();
       return;
     }
 
@@ -2767,11 +3056,13 @@ const app = {
       if (sigFisc) sigFisc.value = updated.sigFiscalizacao || '';
     }
 
-    if (decision === 'aprovado') {
-      this.showToast(`✅ RDO ${updated ? updated.numero : ''} APROVADO com sucesso pela Fiscalização!`, 'success');
-    } else {
-      this.showToast(`❌ RDO ${updated ? updated.numero : ''} marcado como REPROVADO com ressalvas.`, 'warning');
-    }
+    const msgs = {
+      aprovado: `✅ RDO ${updated ? updated.numero : ''} APROVADO pela Fiscalização CMPC!`,
+      aprovado_com_ressalvas: `⚠️ RDO ${updated ? updated.numero : ''} APROVADO COM RESSALVAS.`,
+      devolvido: `↩️ RDO ${updated ? updated.numero : ''} DEVOLVIDO PARA CORREÇÃO.`,
+      contestado: `❌ RDO ${updated ? updated.numero : ''} CONTESTADO pela Fiscalização.`
+    };
+    this.showToast(msgs[decision] || 'Parecer salvo.', decision === 'aprovado' ? 'success' : 'warning');
   },
 
   // SEND RDO MODAL HANDLERS
@@ -3133,15 +3424,24 @@ const app = {
     if (submitBtn) submitBtn.disabled = true;
     if (submitLabel) submitLabel.textContent = 'Enviando via Brevo...';
 
+    const deadlineDate = this.getSubmissionDeadline(rdo.data || rdo.createdAt);
+    const isIntempestivo = Boolean(rdo.intempestivo || (Date.now() > deadlineDate.getTime()));
+    const slaInfo = this.getAnalysisSlaInfo(new Date().toISOString());
+    const sendMeta = {
+      intempestivo: isIntempestivo,
+      submissionDeadline: deadlineDate.toISOString(),
+      analysisSlaHours: slaInfo.hours
+    };
+
     try {
       // 1. Send via Brevo REST API
       await this.sendEmailViaBrevo(rdo, email, obs);
 
       // 2. Mark as sent in Storage & Firestore
-      const updated = StorageService.markRecordAsSent(rdoId, email, obs);
+      const updated = StorageService.markRecordAsSent(rdoId, email, obs, sendMeta);
 
       this.closeSendModal();
-      this.showToast(`✅ RDO ${updated ? updated.numero : ''} enviado com sucesso via Brevo para ${email}!`, 'success');
+      this.showToast(`✅ RDO ${updated ? updated.numero : ''} submetido${isIntempestivo ? ' (INTEMPESTIVO)' : ''} via Brevo para ${email}!`, isIntempestivo ? 'warning' : 'success');
 
       // Update Form/Editor view if current
       if (this.currentRDOId === rdoId) {
@@ -3157,7 +3457,7 @@ const app = {
       this.filterRDOs();
     } catch (err) {
       console.error('Erro no envio via Brevo:', err);
-      const updated = StorageService.markRecordAsSent(rdoId, email, obs);
+      const updated = StorageService.markRecordAsSent(rdoId, email, obs, sendMeta);
       this.closeSendModal();
       this.showToast(`⚠️ RDO confirmado, mas Brevo retornou: ${err.message}`, 'warning');
 

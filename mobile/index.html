@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/mobile.css?v=2.8.1">
+  <link rel="stylesheet" href="css/mobile.css?v=2.9.0">
 </head>
 
 <body>
@@ -82,6 +82,9 @@
       </div>
 
       <div class="appbar-actions">
+        <button type="button" class="btn-desktop-switch" onclick="mobileApp.openRulesModal(true)" title="Regras Oficiais RDO CMPC">
+          <span>📜 Regras</span>
+        </button>
         <a href="../desktop/" class="btn-desktop-switch" title="Ir para versão Desktop">
           <span>🖥️ Desktop</span>
         </a>
@@ -637,14 +640,58 @@
     </div>
   </div>
 
+  <!-- MODAL CENTRALIZADO: REGRAS OFICIAIS DO RDO CMPC -->
+  <div id="modal-rdo-rules-mobile" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-rules-mobile-title">
+    <div class="modal-dialog modal-rules-mobile">
+      <div class="modal-header">
+        <div>
+          <h3 id="modal-rules-mobile-title">📜 RDO - RELATÓRIO DIÁRIO DE OBRA</h3>
+          <p style="font-size:0.74rem; color:#64748b; margin-top:2px;">Regras Oficiais CMPC — Leitura obrigatória antes de preencher o RDO</p>
+        </div>
+        <button type="button" class="btn-close-modal" onclick="mobileApp.closeRulesModal()" title="Fechar">&times;</button>
+      </div>
+      <div class="modal-body rules-mobile-body">
+        <div class="rules-block-m">
+          <h4>1. Emissão Diária Obrigatória</h4>
+          <p>
+            A CONTRATADA deverá emitir diariamente o Relatório Diário de Obra – RDO, por meio da ferramenta digital acordada ou definida pela CMPC, constituindo este o registro oficial das atividades executadas. O RDO deverá contemplar, no mínimo, efetivo e horas trabalhadas, equipamentos utilizados, atividades executadas, condições climáticas, ocorrências, paralisações, interferências, registros fotográficos da PT e das atividades, sendo obrigatória sua emissão inclusive nos dias sem atividade, com indicação do respectivo motivo.
+          </p>
+        </div>
+        <div class="rules-block-m">
+          <h4>2. Prazo de Envio (até 12h do Dia Útil Subsequente) &amp; Análise CMPC</h4>
+          <p>
+            O RDO deverá ser preenchido, conferido e submetido pela CONTRATADA até as 12h do dia útil subsequente à data de referência, permanecendo sujeito à análise e validação da fiscalização da CMPC em um prazo de 24h a 48h (até 72h quando há fim de semana ou feriado), que poderá aprovar, aprovar com ressalvas, devolver para correção ou contestar as informações registradas. A ausência de manifestação da CMPC não caracterizará aceite tácito, aprovação de pleitos, reconhecimento de impactos de prazo ou custo, nem autorização automática para medição ou faturamento.
+          </p>
+        </div>
+        <div class="rules-block-m rules-block-m-warn">
+          <h4>3. RDO Intempestivo (Fora do Prazo)</h4>
+          <p>
+            O RDO apresentado fora do prazo será considerado intempestivo e ficará sujeito à aceitação e validação da CMPC. A ausência de registro tempestivo poderá comprometer a validação de ocorrências utilizadas como fundamento de pleitos (prazos ou financeiros), não constituindo a emissão ou validação do RDO reconhecimento ou aprovação de qualquer pleito pela CMPC.
+          </p>
+        </div>
+        <div class="rules-block-m rules-block-m-lock">
+          <h4>4. Imutabilidade, Histórico e Rastreabilidade das Revisões</h4>
+          <p>
+            Após a submissão do RDO, qualquer correção deverá preservar o histórico e a rastreabilidade das revisões, não sendo permitida a alteração ou exclusão do registro original.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-primary-full" onclick="mobileApp.acknowledgeRulesModal()">
+          ✓ Li e estou ciente das regras
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- FIREBASE CLOUD SDKs (Compatíveis) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
   <!-- APP SCRIPTS -->
-  <script src="js/storage.js?v=2.8.1"></script>
-  <script src="js/mobile.js?v=2.8.1"></script>
+  <script src="js/storage.js?v=2.9.0"></script>
+  <script src="js/mobile.js?v=2.9.0"></script>
 </body>
 
 </html>

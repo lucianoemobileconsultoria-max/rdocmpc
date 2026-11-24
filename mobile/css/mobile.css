@@ -1636,3 +1636,77 @@ body {
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+
+/* ============================================================
+   MODAL CENTRALIZADO: REGRAS OFICIAIS CMPC RDO (MOBILE)
+   ============================================================ */
+.modal-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-rules-mobile {
+  max-width: 560px;
+  width: 94%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+.rules-mobile-body {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+}
+
+.rules-block-m {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #0284c7;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.rules-block-m h4 {
+  margin: 0 0 5px 0;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.rules-block-m p {
+  margin: 0;
+  font-size: 0.79rem;
+  line-height: 1.5;
+  color: #334155;
+  text-align: justify;
+}
+
+.rules-block-m-warn {
+  background: #fffbeb;
+  border-color: #fde68a;
+  border-left-color: #d97706;
+}
+
+.rules-block-m-lock {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  border-left-color: #16a34a;
+}
+
+.btn-primary-full {
+  width: 100%;
+  padding: 11px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
